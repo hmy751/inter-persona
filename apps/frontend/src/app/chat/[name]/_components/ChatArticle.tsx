@@ -1,5 +1,5 @@
 import { createContext, useMemo, useContext } from "react";
-import Avatar from "@/components/Avatar";
+import Avatar from "@repo/ui/Avatar";
 import { Box, Flex, Skeleton } from "@chakra-ui/react";
 
 export type ChatType = "user" | "bot" | "";

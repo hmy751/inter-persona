@@ -8,19 +8,13 @@ import {
   VStack,
   Text,
   Input,
-  keyframes,
+  // keyframes,
 } from "@chakra-ui/react";
 import { useMutation } from "@tanstack/react-query";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import useUserStore from "@/store/useUserStore";
 import { fetchLogin } from "@/apis/user";
-
-const neonGlow = keyframes`
-  0% { box-shadow: 0 0 5px #00FF00, 0 0 10px #00FF00, 0 0 20px #00FF00; }
-  50% { box-shadow: 0 0 10px #00FF00, 0 0 20px #00FF00, 0 0 40px #00FF00; }
-  100% { box-shadow: 0 0 5px #00FF00, 0 0 10px #00FF00, 0 0 20px #00FF00; }
-`;
 
 const Mainpage = () => {
   const [nickname, setNickname] = useState<string>("");
@@ -78,7 +72,7 @@ const Mainpage = () => {
         borderRadius="md"
         bg="#0f0f0f"
         boxShadow="0px 0px 15px rgba(0, 255, 0, 0.7)"
-        animation={`${neonGlow} 1.5s ease-in-out infinite alternate`}
+        /* animation={`${neonGlow} 1.5s ease-in-out infinite alternate`} */
       >
         <VStack spacing={6}>
           <Text
