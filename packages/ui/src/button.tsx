@@ -1,20 +1,11 @@
-"use client";
+import {
+  Button as CButton,
+  ButtonProps as CButtonProps,
+  Image,
+} from "@chakra-ui/react";
 
-import { ReactNode } from "react";
+interface ButtonProps extends CButtonProps {}
 
-interface ButtonProps {
-  children: ReactNode;
-  className?: string;
-  appName: string;
+export default function Button({ children, ...restProps }: ButtonProps) {
+  return <CButton {...restProps}>{children}</CButton>;
 }
-
-export const Button = ({ children, className, appName }: ButtonProps) => {
-  return (
-    <button
-      className={className}
-      onClick={() => alert(`Hello from your ${appName} app!`)}
-    >
-      {children}
-    </button>
-  );
-};
