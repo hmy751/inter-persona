@@ -58,9 +58,7 @@ function* requestInterviewSaga(action: RequestInterviewAction) {
   }
 }
 
-function* speechToTextSaga(
-  action: SendRecordAction
-): Generator<any, void, Response> {
+function* speechToTextSaga(action: SendRecordAction) {
   try {
     yield put(triggerChat({ speaker: "user" }));
     yield call(delay, 500);
@@ -68,12 +66,13 @@ function* speechToTextSaga(
     const data: SpeechToTextData = yield call(fetchSpeechToText, {
       formData: action.payload.formData,
     });
+    const chatId: number = yield select(selectChatState);
 
     if (data.text) {
       yield put(updateContent({ content: data.text }));
       yield* requestInterviewSaga({
         type: "REQUEST_INTERVIEW",
-        payload: { content: data.text as unknown as string },
+        payload: { content: data.text as unknown as string, chatId },
       });
     } else {
       yield put(removeContent());
