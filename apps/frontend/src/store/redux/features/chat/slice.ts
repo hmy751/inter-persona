@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { StatusType } from "@/store/redux/type";
 
-interface ChatContent {
+export interface ChatContent {
   status: StatusType;
   speaker: "user" | "bot";
   content: string;
@@ -43,7 +43,7 @@ const slice = createSlice({
       action: PayloadAction<{ speaker: "user" | "bot" }>
     ) => {
       const current = {
-        status: "loading" as "loading",
+        status: "loading" as const,
         speaker: action.payload.speaker,
         content: "",
         timeStamp: new Date(),
@@ -51,9 +51,13 @@ const slice = createSlice({
       state.contents.push(current);
     },
     updateContent: (state, action: PayloadAction<{ content: string }>) => {
-      state.contents[state.contents.length - 1].content =
-        action.payload.content;
-      state.contents[state.contents.length - 1].status = "success";
+      if (state?.contents?.length > 0) {
+        const lastContent = state.contents[
+          state.contents.length - 1
+        ] as ChatContent;
+        lastContent.content = action.payload.content;
+        lastContent.status = "success";
+      }
     },
     removeContent: (state) => {
       state.contents.pop();
