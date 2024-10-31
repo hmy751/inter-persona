@@ -38,7 +38,7 @@ export const detectSilence = (
     // RMS 계산
     let rms = 0;
     for (let i = 0; i < dataArray.length; i++) {
-      const normalized = dataArray[i] / 128 - 1;
+      const normalized = (dataArray[i] as number) / 128 - 1;
       rms += normalized * normalized;
     }
     rms = Math.sqrt(rms / dataArray.length);

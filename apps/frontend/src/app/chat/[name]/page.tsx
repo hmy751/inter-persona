@@ -9,7 +9,7 @@ import InterviewerProfile from "./_components/InterviewerProfile";
 import ChatArticle from "./_components/ChatArticle";
 import RecordButton from "./_components/RecordButton";
 import {
-  selectChat,
+  selectChatContents,
   selectChatLimit,
 } from "@/store/redux/features/chat/selector";
 import {
@@ -73,7 +73,7 @@ const RecordButtonWrapper = ({ children }: { children: React.ReactNode }) => {
 };
 
 export default function Page() {
-  const chatContents = useSelector(selectChat);
+  const chatContents = useSelector(selectChatContents);
   const dispatch = useDispatch();
   const chatLimit = useSelector(selectChatLimit);
   const router = useRouter();
@@ -104,13 +104,13 @@ export default function Page() {
     return () => {
       dispatch(initializeChatState(null));
     };
-  }, [user, interviewer]);
+  }, [user, interviewer, dispatch]);
 
   useEffect(() => {
     if (chatLimit) {
       router.push("/result");
     }
-  }, [chatLimit]);
+  }, [router, chatLimit]);
 
   if (!user || !interviewer) return null;
 
@@ -132,7 +132,7 @@ export default function Page() {
       <ChatWrapper>
         {chatContents.map(({ speaker, content, status }) => {
           return (
-            <ChatArticle type={speaker}>
+            <ChatArticle key={speaker} type={speaker}>
               {speaker === "bot" ? (
                 <>
                   <ChatArticle.Avatar src={interviewer?.imgUrl} />

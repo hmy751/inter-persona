@@ -4,7 +4,7 @@ import { useAudioStore } from "@/store/useAudioStore";
 import { Box, Button } from "@chakra-ui/react";
 import { Canvas } from "@react-three/fiber";
 import React from "react";
-import Background from "./_components/Background";
+// import Background from "./_components/Background";
 import Camera from "./_components/Camera";
 import InterviewerCard from "./_components/InterviewerCard";
 import { nomalizeIndex } from "./_utils/convert";
@@ -46,11 +46,12 @@ interface Interviewer {
   name: string;
   imgUrl: string;
   mbti: string;
+  description: string;
 }
 
 const InterviewerChoicePage: React.FC = () => {
   const [selectedInterviewer, setSelectedInterviewer] =
-    React.useState<Interviewer | null>(interviewerList[0]);
+    React.useState<Interviewer | null>(interviewerList[0] as Interviewer);
 
   const router = useRouter();
 
@@ -78,7 +79,7 @@ const InterviewerChoicePage: React.FC = () => {
         }}
       >
         <Camera />
-        <Background imageUrl={selectedInterviewer?.imgUrl || ""} />
+        {/* <Background imageUrl={selectedInterviewer?.imgUrl || ""} /> */}
         <InterviewerInfo selectedInterviewer={selectedInterviewer} />
         {interviewerList.map((interviewer, index) => (
           <InterviewerCard
@@ -92,17 +93,17 @@ const InterviewerChoicePage: React.FC = () => {
           />
         ))}
         <Html position={[3, 1.5, 0]}>
-          <Button
-            color={"white"}
-            padding={"10px"}
-            bg={"rgba(0, 0, 0, 0.7)"}
-            borderRadius={"10px"}
+          <button
+            // color={"white"}
+            // padding={"10px"}
+            // bg={"rgba(0, 0, 0, 0.7)"}
+            // borderRadius={"10px"}
             onClick={() => {
               selectInterviewer(selectedInterviewer);
             }}
           >
             선택
-          </Button>
+          </button>
         </Html>
       </Canvas>
     </Box>
