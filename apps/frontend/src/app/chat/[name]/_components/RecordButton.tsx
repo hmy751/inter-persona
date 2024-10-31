@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { SEND_RECORD } from "@/store/redux/features/chat/slice";
 import { selectLastBotChatStatus } from "@/store/redux/features/chat/selector";
 
-import Avatar from "@/components/Avatar";
+import Avatar from "@repo/ui/Avatar";
 
 export default function RecordButton() {
   const recorderRef = useRef<Recorder | null>(null);

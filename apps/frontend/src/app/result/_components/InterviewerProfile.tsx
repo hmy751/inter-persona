@@ -1,5 +1,5 @@
 import { Box, Flex } from "@chakra-ui/react";
-import Avatar from "@/components/Avatar";
+import Avatar from "@repo/ui/Avatar";
 
 export default function InterviewerProfile() {
   return (
