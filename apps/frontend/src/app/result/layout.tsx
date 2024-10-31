@@ -1,4 +1,4 @@
-import Avatar from "@/components/Avatar";
+import Avatar from "@repo/ui/Avatar";
 import { Box, Flex } from "@chakra-ui/react";
 
 export default function Layout({ children }: { children: React.ReactNode }) {

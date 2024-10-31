@@ -1,5 +1,5 @@
 import { Box, Flex } from "@chakra-ui/react";
-import Avatar from "@/components/Avatar";
+import Avatar from "@repo/ui/Avatar";
 
 export default function InterviewerProfile({
   src,
@@ -8,6 +8,7 @@ export default function InterviewerProfile({
 }: {
   src: string;
   name: string;
+  description: string;
 }) {
   return (
     <Box display={"flex"} gap="20px" width="100%" height="160px">
