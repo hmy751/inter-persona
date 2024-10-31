@@ -29,7 +29,7 @@ export interface SpeechToTextData {
 
 export const fetchSpeechToText = async ({
   formData,
-}: SpeechToTextProps): Promise<SpeechToTextData> => {
+}: SpeechToTextProps): Promise<SpeechToTextData | undefined> => {
   try {
     const result = await fetch("/api/chat", {
       method: "POST",

@@ -28,11 +28,20 @@ const InterviewerProfileWrapper = ({
   );
 };
 
+interface Scores {
+  standard: string;
+  score: number;
+  summary: string;
+}
+
 export default function Page() {
   const chatId = useSelector(selectChatId) ?? 2;
   const { interviewer } = useInterviewerStore();
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading } = useQuery<{
+    scores: Scores[];
+    finalEvaluation: string;
+  }>({
     queryKey: ["result", chatId],
     queryFn: () => {
       return fetch(`http://localhost:3030/interview/${chatId}/result`, {
@@ -135,7 +144,7 @@ export default function Page() {
           </Box>
 
           <Flex justifyContent="center" flexWrap="wrap" gap={4}>
-            {data.scores?.map(({ standard, score, summary }, index) => (
+            {data?.scores?.map(({ standard, score, summary }, index) => (
               <Box
                 key={standard}
                 width="100%"
@@ -206,7 +215,7 @@ export default function Page() {
 
             <br />
 
-            {data.finalEvaluation}
+            {data?.finalEvaluation}
           </Box>
         </Flex>
       )}
