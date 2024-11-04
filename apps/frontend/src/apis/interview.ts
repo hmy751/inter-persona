@@ -60,7 +60,7 @@ export interface AIChatData {
 
 export const fetchAIChat = async ({ chatId, content }: AIChatProps) => {
   return post<AIChatData>({
-    path: `/interview/${chatId}/contents`,
+    path: `interview/${chatId}/contents`,
     body: {
       content,
     },
