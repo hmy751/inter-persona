@@ -13,6 +13,7 @@ export default function RecordButton() {
   const [isRecording, setIsRecording] = useState<
     "recording" | "finished" | null
   >(null);
+  const dispatch = useDispatch();
 
   const handleRecord = async () => {
     const { mediaDevices } = navigator;
@@ -71,23 +72,7 @@ export default function RecordButton() {
     formData.append("media", audioFile);
     formData.append("params", JSON.stringify(params));
 
-    try {
-      const response = await fetch(`/api/chat`, {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error("STT API request failed");
-      }
-
-      const data = await response.json();
-      console.log("STT Result:", data);
-    } catch (error) {
-      console.error("Error with STT API request:", error);
-    } finally {
-      setIsRecording(null);
-    }
+    dispatch({ type: SEND_RECORD, payload: { formData } });
   };
 
   const recordingState = () => {
