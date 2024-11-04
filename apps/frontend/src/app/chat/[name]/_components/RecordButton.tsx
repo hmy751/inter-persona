@@ -10,52 +10,44 @@ import Avatar from "@repo/ui/Avatar";
 
 export default function RecordButton() {
   const recorderRef = useRef<Recorder | null>(null);
-  const [isRecording, setIsRecording] = useState<"recording" | "idle">("idle");
-  const dispatch = useDispatch();
-  const lastBotChatStatus = useSelector(selectLastBotChatStatus);
+  const [isRecording, setIsRecording] = useState<
+    "recording" | "finished" | null
+  >(null);
 
   const handleRecord = async () => {
-    // if (isRecording === "recording" || isRecording === "finished") return;
+    const { mediaDevices } = navigator;
+    const stream = await mediaDevices.getUserMedia({ audio: true });
 
-    if (isRecording === "idle" && lastBotChatStatus !== "loading") {
-      const { mediaDevices } = navigator;
-      const stream = await mediaDevices.getUserMedia({ audio: true });
+    const audioContext = new window.AudioContext();
+    const analyserNode = audioContext.createAnalyser();
+    analyserNode.fftSize = 2048;
+    const dataArray = new Uint8Array(analyserNode.fftSize);
 
-      const audioContext = new window.AudioContext();
-      const analyserNode = audioContext.createAnalyser();
-      analyserNode.fftSize = 2048;
-      const dataArray = new Uint8Array(analyserNode.fftSize);
+    const recorder = new Recorder(audioContext);
+    recorderRef.current = recorder;
 
-      const recorder = new Recorder(audioContext);
-      recorderRef.current = recorder;
+    await recorderRef.current.init(stream);
 
-      await recorderRef.current.init(stream);
+    recorderRef.current.start().then(() => setIsRecording("recording"));
 
-      recorderRef.current.start().then(() => setIsRecording("recording"));
+    const source = audioContext.createMediaStreamSource(stream);
+    source.connect(analyserNode);
 
-      const source = audioContext.createMediaStreamSource(stream);
-      source.connect(analyserNode);
-      setIsRecording("recording");
-    } else {
-      finishRecord();
-      setIsRecording("idle");
-    }
-
-    // detectSilence(analyserNode, dataArray, setIsRecording);
+    detectSilence(analyserNode, dataArray, setIsRecording);
   };
 
-  // useEffect(() => {
-  //   if (recorderRef.current === null) return;
-  //   if (isRecording === null || isRecording === "recording") return;
+  useEffect(() => {
+    if (recorderRef.current === null) return;
+    if (isRecording === null || isRecording === "recording") return;
 
-  //   if (isRecording === "finished") {
-  //     finishRecord();
-  //   }
+    if (isRecording === "finished") {
+      finishRecord();
+    }
 
-  //   return () => {
-  //     setIsRecording(null);
-  //   };
-  // }, [isRecording]);
+    return () => {
+      setIsRecording(null);
+    };
+  }, [isRecording]);
 
   const finishRecord = async () => {
     if (recorderRef.current === null) return;
@@ -79,11 +71,27 @@ export default function RecordButton() {
     formData.append("media", audioFile);
     formData.append("params", JSON.stringify(params));
 
-    dispatch({ type: SEND_RECORD, payload: { formData } });
+    try {
+      const response = await fetch(`/api/chat`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("STT API request failed");
+      }
+
+      const data = await response.json();
+      console.log("STT Result:", data);
+    } catch (error) {
+      console.error("Error with STT API request:", error);
+    } finally {
+      setIsRecording(null);
+    }
   };
 
   const recordingState = () => {
-    if (isRecording === "idle") {
+    if (isRecording === null || isRecording === "finished") {
       return "/assets/images/record.png";
     }
 
