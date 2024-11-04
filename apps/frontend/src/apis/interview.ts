@@ -4,13 +4,15 @@ interface InterviewData {
   id: number;
 }
 
+export interface InterviewBody {
+  interviewerId: number;
+  reviewerId: number;
+}
+
 export const fetchInterview = async ({
   interviewerId,
   reviewerId,
-}: {
-  interviewerId: number;
-  reviewerId: number;
-}) => {
+}: InterviewBody) => {
   return post<InterviewData>({
     path: "interview",
     body: {
