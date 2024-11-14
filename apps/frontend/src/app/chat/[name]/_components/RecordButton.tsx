@@ -16,6 +16,8 @@ export default function RecordButton() {
   const dispatch = useDispatch();
 
   const handleRecord = async () => {
+    if (isRecording === "recording") return;
+
     const { mediaDevices } = navigator;
     const stream = await mediaDevices.getUserMedia({ audio: true });
 
