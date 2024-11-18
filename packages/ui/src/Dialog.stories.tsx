@@ -8,17 +8,26 @@ const meta = {
     layout: "centered",
   },
   tags: ["autodocs"],
-  argTypes: {
-    src: { control: "color" },
-  },
 } satisfies Meta<typeof Dialog>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Primary: Story = {
+export const PrimaryExample: Story = {
   args: {
-    size: "2xs",
-    name: "eee",
+    children: <div></div>,
+  },
+  render: () => {
+    return (
+      <Dialog>
+        <Dialog.Trigger>Trigger!</Dialog.Trigger>
+        <Dialog.Content>
+          <Dialog.Title>Title</Dialog.Title>
+          <Dialog.Description>
+            Make changes to your profile here. Click save when you're done.
+          </Dialog.Description>
+        </Dialog.Content>
+      </Dialog>
+    );
   },
 };
