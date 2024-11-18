@@ -1,13 +1,13 @@
 import { create } from "zustand";
 
-interface ErrorModalState {
+interface ErrorDialogState {
   isError: boolean;
   message: string;
   setError: (message: string) => void;
   clearError: () => void;
 }
 
-export const useErrorModalStore = create<ErrorModalState>((set) => ({
+export const useErrorDialogStore = create<ErrorDialogState>((set) => ({
   isError: false,
   message: "",
   setError: (message: string) => set({ isError: true, message }),
