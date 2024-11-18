@@ -1,4 +1,11 @@
-import { takeLatest, call, put, takeEvery, select } from "redux-saga/effects";
+import {
+  takeLatest,
+  call,
+  put,
+  takeEvery,
+  select,
+  debounce,
+} from "redux-saga/effects";
 import {
   SEND_RECORD,
   triggerChat,
@@ -40,8 +47,8 @@ function* requestInterviewSaga(action: RequestInterviewAction) {
     }
     const chatId: number = yield select(selectChatState);
 
+    yield call(delay, 300);
     yield put(triggerChat({ speaker: "bot" }));
-    yield call(delay, 500);
 
     const data: AIChatData = yield call(fetchAIChat, {
       chatId,
@@ -60,8 +67,8 @@ function* requestInterviewSaga(action: RequestInterviewAction) {
 
 function* speechToTextSaga(action: SendRecordAction) {
   try {
+    yield call(delay, 300);
     yield put(triggerChat({ speaker: "user" }));
-    yield call(delay, 500);
 
     const data: SpeechToTextData = yield call(fetchSpeechToText, {
       formData: action.payload.formData,
