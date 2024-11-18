@@ -1,10 +1,27 @@
-import React from "react";
+import { ReactNode, ReactElement } from "react";
 import styles from "./Dialog.module.css";
+import * as D from "@radix-ui/react-dialog";
 
-interface DialogProps {}
+interface DialogProps {
+  children: ReactNode;
+}
 
-const Dialog: React.FC<DialogProps> = ({}) => {
-  return <div className={styles.wrapper}></div>;
-};
+export default function Dialog({ children }: DialogProps): ReactElement {
+  return <D.Root>{children}</D.Root>;
+}
 
-export default Dialog;
+Dialog.Content = ({ children }: { children: ReactNode }) => (
+  <D.Portal>
+    <D.Overlay className={styles.overlay} />
+    <D.Content className={styles.content}>{children}</D.Content>
+  </D.Portal>
+);
+Dialog.Trigger = ({ children }: { children: ReactNode }) => (
+  <D.Trigger>{children}</D.Trigger>
+);
+Dialog.Title = ({ children }: { children: ReactNode }) => (
+  <D.Title className={styles.title}>{children}</D.Title>
+);
+Dialog.Description = ({ children }: { children: ReactNode }) => (
+  <D.Description className={styles.description}>{children}</D.Description>
+);
