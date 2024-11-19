@@ -1,11 +1,7 @@
 import { Noto_Sans_KR } from "next/font/google";
 import "./globals.css";
-import ChakraProvider from "./_providers/ChakraProvider";
-import ReduxStoreProvider from "./_providers/ReduxStoreProvider";
-import { theme } from "@/styles/theme";
-import AudioPlayer from "../components/AudioPlayer";
-import QueryProviders from "./_providers/QueryProvider";
 import MSWProvider from "@/app/_providers/MSWProvider";
+import WithProviders from "./_providers/WithProviders";
 
 const noto_sans_kr = Noto_Sans_KR({
   subsets: ["latin"],
@@ -22,24 +18,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={noto_sans_kr.className}>
-        {isUseMsw ? (
-          <MSWProvider>
-            <QueryProviders>
-              <ChakraProvider theme={theme} resetCSS={false}>
-                <ReduxStoreProvider>{children}</ReduxStoreProvider>
-              </ChakraProvider>
-              <AudioPlayer />
-            </QueryProviders>
-          </MSWProvider>
+        {!isUseMsw ? (
+          <WithProviders>{children}</WithProviders>
         ) : (
-          <>
-            <QueryProviders>
-              <ChakraProvider theme={theme} resetCSS={false}>
-                <ReduxStoreProvider>{children}</ReduxStoreProvider>
-              </ChakraProvider>
-              <AudioPlayer />
-            </QueryProviders>
-          </>
+          <MSWProvider>
+            <WithProviders>{children}</WithProviders>
+          </MSWProvider>
         )}
       </body>
     </html>
