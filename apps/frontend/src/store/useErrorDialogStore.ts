@@ -13,3 +13,5 @@ export const useErrorDialogStore = create<ErrorDialogState>((set) => ({
   setError: (message: string) => set({ isError: true, message }),
   clearError: () => set({ isError: false, message: "" }),
 }));
+
+export const errorDialogStore = useErrorDialogStore;

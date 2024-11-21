@@ -8,7 +8,7 @@ import {
 } from "redux-saga/effects";
 import {
   SEND_RECORD,
-  triggerChat,
+  triggerContent,
   updateContent,
   removeContent,
   START_CHAT,
@@ -22,6 +22,7 @@ import {
   AIChatData,
   SpeechToTextData,
 } from "@/apis/interview";
+import { errorDialogStore } from "@/store/useErrorDialogStore";
 
 interface SendRecordAction {
   type: string;
@@ -40,35 +41,16 @@ interface RequestInterviewAction {
 }
 const selectChatState = (state: RootState) => state.chat.id;
 
-function* requestInterviewSaga(action: RequestInterviewAction) {
-  try {
-    if (action.type === START_CHAT) {
-      yield put(startChat({ id: action.payload.chatId }));
-    }
-    const chatId: number = yield select(selectChatState);
-
-    yield call(delay, 300);
-    yield put(triggerChat({ speaker: "bot" }));
-
-    const data: AIChatData = yield call(fetchAIChat, {
-      chatId,
-      content: action.payload.content,
-    });
-
-    if (data.content) {
-      yield put(updateContent({ content: data.content as unknown as string }));
-    } else {
-      yield put(removeContent());
-    }
-  } catch (err) {
-    yield put(removeContent());
-  }
+export function* watchRecord() {
+  yield takeLatest(SEND_RECORD, speechToTextSaga);
 }
 
 function* speechToTextSaga(action: SendRecordAction) {
   try {
-    yield call(delay, 300);
-    yield put(triggerChat({ speaker: "user" }));
+    yield call(delay, 200);
+
+    yield put(triggerContent({ speaker: "user" }));
+    yield call(delay, 500);
 
     const data: SpeechToTextData = yield call(fetchSpeechToText, {
       formData: action.payload.formData,
@@ -82,17 +64,52 @@ function* speechToTextSaga(action: SendRecordAction) {
         payload: { content: data.text as unknown as string, chatId },
       });
     } else {
+      errorDialogStore
+        .getState()
+        .setError(
+          "음성이 제대로 입력되지 않았습니다. 답변을 다시 입력해주세요!"
+        );
       yield put(removeContent());
     }
   } catch (err) {
+    errorDialogStore
+      .getState()
+      .setError("요청에 실패했습니다. 인터뷰를 다시 시도해주세요!");
     yield put(removeContent());
   }
 }
 
-export function* watchRecord() {
-  yield takeLatest(SEND_RECORD, speechToTextSaga);
-}
-
 export function* watchStartChat() {
   yield takeLatest(START_CHAT, requestInterviewSaga);
+}
+
+function* requestInterviewSaga(action: RequestInterviewAction) {
+  try {
+    yield call(delay, 200);
+
+    if (action.type === START_CHAT) {
+      yield put(startChat({ id: action.payload.chatId }));
+    }
+    const chatId: number = yield select(selectChatState);
+
+    yield put(triggerContent({ speaker: "bot" }));
+    yield call(delay, 500);
+
+    const data: AIChatData = yield call(fetchAIChat, {
+      chatId,
+      content: action.payload.content,
+    });
+
+    if (data.content) {
+      yield put(updateContent({ content: data.content as unknown as string }));
+    } else {
+      errorDialogStore.getState().setError("다시 시도해주세요!");
+      yield put(removeContent());
+    }
+  } catch (err) {
+    errorDialogStore
+      .getState()
+      .setError("요청에 실패했습니다. 인터뷰를 다시 시도해주세요!");
+    yield put(removeContent());
+  }
 }
