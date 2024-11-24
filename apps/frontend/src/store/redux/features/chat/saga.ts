@@ -22,7 +22,7 @@ import {
   AIChatData,
   SpeechToTextData,
 } from "@/apis/interview";
-import { errorDialogStore } from "@/store/useErrorDialogStore";
+import { errorToastStore } from "@/store/useErrorToastStore";
 
 interface SendRecordAction {
   type: string;
@@ -64,7 +64,7 @@ function* speechToTextSaga(action: SendRecordAction) {
         payload: { content: data.text as unknown as string, chatId },
       });
     } else {
-      errorDialogStore
+      errorToastStore
         .getState()
         .setError(
           "음성이 제대로 입력되지 않았습니다. 답변을 다시 입력해주세요!"
@@ -72,7 +72,7 @@ function* speechToTextSaga(action: SendRecordAction) {
       yield put(removeContent());
     }
   } catch (err) {
-    errorDialogStore
+    errorToastStore
       .getState()
       .setError("요청에 실패했습니다. 인터뷰를 다시 시도해주세요!");
     yield put(removeContent());
@@ -103,11 +103,11 @@ function* requestInterviewSaga(action: RequestInterviewAction) {
     if (data.content) {
       yield put(updateContent({ content: data.content as unknown as string }));
     } else {
-      errorDialogStore.getState().setError("다시 시도해주세요!");
+      errorToastStore.getState().setError("다시 시도해주세요!");
       yield put(removeContent());
     }
   } catch (err) {
-    errorDialogStore
+    errorToastStore
       .getState()
       .setError("요청에 실패했습니다. 인터뷰를 다시 시도해주세요!");
     yield put(removeContent());
