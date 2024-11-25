@@ -38,7 +38,7 @@ const slice = createSlice({
     startChat: (state, action: PayloadAction<{ id: number }>) => {
       state.id = action.payload.id;
     },
-    triggerChat: (
+    triggerContent: (
       state,
       action: PayloadAction<{ speaker: "user" | "bot" }>
     ) => {
@@ -59,6 +59,14 @@ const slice = createSlice({
         lastContent.status = "success";
       }
     },
+    errorContent: (state) => {
+      if (state?.contents?.length > 0) {
+        const lastContent = state.contents[
+          state.contents.length - 1
+        ] as ChatContent;
+        lastContent.status = "fail";
+      }
+    },
     removeContent: (state) => {
       state.contents.pop();
     },
@@ -67,7 +75,7 @@ const slice = createSlice({
 
 export const {
   initializeChatState,
-  triggerChat,
+  triggerContent,
   updateContent,
   removeContent,
   startChat,
