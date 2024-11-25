@@ -4,6 +4,7 @@ import { detectSilence } from "../_utils";
 import Recorder from "recorder-js";
 import { useDispatch, useSelector } from "react-redux";
 import { SEND_RECORD } from "@/store/redux/features/chat/slice";
+import { ChatContentStatusType } from "@/store/redux/type";
 import { selectCurrentRecordingAnswer } from "@/store/redux/features/chat/selector";
 
 import Avatar from "@repo/ui/Avatar";
@@ -109,8 +110,8 @@ export default function RecordButton() {
     if (!currentRecordingAnswer) return;
 
     if (
-      currentRecordingAnswer?.status === "success" ||
-      currentRecordingAnswer?.status === "fail"
+      currentRecordingAnswer?.status === ChatContentStatusType.success ||
+      currentRecordingAnswer?.status === ChatContentStatusType.fail
     ) {
       setRecordingStatus(RecordingStatusType.idle);
     }

@@ -1,4 +1,5 @@
 import { RootState } from "@/store/redux/rootStore";
+import { ChatContentSpeakerType } from "@/store/redux/type";
 
 const CHAT_LIMIT = 21;
 
@@ -6,7 +7,7 @@ export const selectChatContents = (state: RootState) => state.chat.contents;
 export const selectLastBotChatStatus = (state: RootState) => {
   const lastChat = state.chat.contents[state.chat.contents.length - 1];
 
-  if (lastChat?.speaker === "bot") {
+  if (lastChat?.speaker === ChatContentSpeakerType.bot) {
     return lastChat.status;
   }
 
@@ -15,7 +16,7 @@ export const selectLastBotChatStatus = (state: RootState) => {
 export const selectCurrentRecordingAnswer = (state: RootState) => {
   const lastChat = state.chat.contents[state.chat.contents.length - 1];
 
-  if (lastChat?.speaker === "user") {
+  if (lastChat?.speaker === ChatContentSpeakerType.user) {
     return lastChat;
   }
 

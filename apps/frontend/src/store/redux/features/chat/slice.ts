@@ -1,10 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import type { StatusType } from "@/store/redux/type";
+import {
+  ChatContentStatusType,
+  ChatContentSpeakerType,
+} from "@/store/redux/type";
 
 export interface ChatContent {
-  status: StatusType;
-  speaker: "user" | "bot";
+  status: ChatContentStatusType;
+  speaker: ChatContentSpeakerType;
   content: string;
   timeStamp: Date;
 }
@@ -40,10 +43,10 @@ const slice = createSlice({
     },
     triggerContent: (
       state,
-      action: PayloadAction<{ speaker: "user" | "bot" }>
+      action: PayloadAction<{ speaker: ChatContentSpeakerType }>
     ) => {
       const current = {
-        status: "loading" as const,
+        status: ChatContentStatusType.loading,
         speaker: action.payload.speaker,
         content: "",
         timeStamp: new Date(),
@@ -56,7 +59,7 @@ const slice = createSlice({
           state.contents.length - 1
         ] as ChatContent;
         lastContent.content = action.payload.content;
-        lastContent.status = "success";
+        lastContent.status = ChatContentStatusType.success;
       }
     },
     errorContent: (state) => {
@@ -64,7 +67,7 @@ const slice = createSlice({
         const lastContent = state.contents[
           state.contents.length - 1
         ] as ChatContent;
-        lastContent.status = "fail";
+        lastContent.status = ChatContentStatusType.fail;
       }
     },
     removeContent: (state) => {
