@@ -8,15 +8,21 @@ import { selectLastBotChatStatus } from "@/store/redux/features/chat/selector";
 
 import Avatar from "@repo/ui/Avatar";
 
+export enum RecordingStatus {
+  loading = "loading",
+  success = "success",
+  idle = "idle",
+}
+
 export default function RecordButton() {
   const recorderRef = useRef<Recorder | null>(null);
-  const [isRecording, setIsRecording] = useState<
-    "recording" | "finished" | null
-  >(null);
+  const [recordingStatus, setRecordingStatus] = useState<RecordingStatus>(
+    RecordingStatus.idle
+  );
   const dispatch = useDispatch();
 
   const handleRecord = async () => {
-    if (isRecording === "recording") return;
+    if (recordingStatus === RecordingStatus.loading) return;
 
     const { mediaDevices } = navigator;
     const stream = await mediaDevices.getUserMedia({ audio: true });
@@ -31,26 +37,32 @@ export default function RecordButton() {
 
     await recorderRef.current.init(stream);
 
-    recorderRef.current.start().then(() => setIsRecording("recording"));
+    recorderRef.current
+      .start()
+      .then(() => setRecordingStatus(RecordingStatus.loading));
 
     const source = audioContext.createMediaStreamSource(stream);
     source.connect(analyserNode);
 
-    detectSilence(analyserNode, dataArray, setIsRecording);
+    detectSilence(analyserNode, dataArray, setRecordingStatus);
   };
 
   useEffect(() => {
     if (recorderRef.current === null) return;
-    if (isRecording === null || isRecording === "recording") return;
+    if (
+      recordingStatus === RecordingStatus.idle ||
+      recordingStatus === RecordingStatus.loading
+    )
+      return;
 
-    if (isRecording === "finished") {
+    if (recordingStatus === RecordingStatus.success) {
       finishRecord();
     }
 
     return () => {
-      setIsRecording(null);
+      setRecordingStatus(RecordingStatus.idle);
     };
-  }, [isRecording]);
+  }, [recordingStatus]);
 
   const finishRecord = async () => {
     if (recorderRef.current === null) return;
@@ -78,11 +90,14 @@ export default function RecordButton() {
   };
 
   const recordingState = () => {
-    if (isRecording === null || isRecording === "finished") {
+    if (
+      recordingStatus === RecordingStatus.idle ||
+      recordingStatus === RecordingStatus.success
+    ) {
       return "/assets/images/record.png";
     }
 
-    if (isRecording === "recording") {
+    if (recordingStatus === RecordingStatus.loading) {
       return "/assets/images/recording.png";
     }
 
