@@ -8,10 +8,11 @@ import {
 } from "redux-saga/effects";
 import {
   SEND_RECORD,
+  START_CHAT,
+  REQUEST_INTERVIEW,
   triggerContent,
   updateContent,
   removeContent,
-  START_CHAT,
   startChat,
 } from "./slice";
 import { delay } from "../../utils";
@@ -60,7 +61,7 @@ function* speechToTextSaga(action: SendRecordAction) {
     if (data.text) {
       yield put(updateContent({ content: data.text }));
       yield* requestInterviewSaga({
-        type: "REQUEST_INTERVIEW",
+        type: REQUEST_INTERVIEW,
         payload: { content: data.text as unknown as string, chatId },
       });
     } else {

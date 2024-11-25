@@ -83,5 +83,6 @@ export const {
 
 export const SEND_RECORD = "SEND_RECORD" as const;
 export const START_CHAT = "START_CHAT" as const;
+export const REQUEST_INTERVIEW = "REQUEST_INTERVIEW" as const;
 
 export default slice.reducer;
