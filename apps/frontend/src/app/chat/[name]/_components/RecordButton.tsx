@@ -4,11 +4,11 @@ import { detectSilence } from "../_utils";
 import Recorder from "recorder-js";
 import { useDispatch, useSelector } from "react-redux";
 import { SEND_RECORD } from "@/store/redux/features/chat/slice";
-import { selectLastBotChatStatus } from "@/store/redux/features/chat/selector";
+import { selectCurrentRecordingAnswer } from "@/store/redux/features/chat/selector";
 
 import Avatar from "@repo/ui/Avatar";
 
-export enum RecordingStatus {
+export enum RecordingStatusType {
   loading = "loading",
   success = "success",
   idle = "idle",
@@ -16,13 +16,14 @@ export enum RecordingStatus {
 
 export default function RecordButton() {
   const recorderRef = useRef<Recorder | null>(null);
-  const [recordingStatus, setRecordingStatus] = useState<RecordingStatus>(
-    RecordingStatus.idle
+  const [recordingStatus, setRecordingStatus] = useState<RecordingStatusType>(
+    RecordingStatusType.idle
   );
   const dispatch = useDispatch();
+  const currentRecordingAnswer = useSelector(selectCurrentRecordingAnswer);
 
   const handleRecord = async () => {
-    if (recordingStatus === RecordingStatus.loading) return;
+    if (recordingStatus === RecordingStatusType.loading) return;
 
     const { mediaDevices } = navigator;
     const stream = await mediaDevices.getUserMedia({ audio: true });
@@ -39,30 +40,13 @@ export default function RecordButton() {
 
     recorderRef.current
       .start()
-      .then(() => setRecordingStatus(RecordingStatus.loading));
+      .then(() => setRecordingStatus(RecordingStatusType.loading));
 
     const source = audioContext.createMediaStreamSource(stream);
     source.connect(analyserNode);
 
     detectSilence(analyserNode, dataArray, setRecordingStatus);
   };
-
-  useEffect(() => {
-    if (recorderRef.current === null) return;
-    if (
-      recordingStatus === RecordingStatus.idle ||
-      recordingStatus === RecordingStatus.loading
-    )
-      return;
-
-    if (recordingStatus === RecordingStatus.success) {
-      finishRecord();
-    }
-
-    return () => {
-      setRecordingStatus(RecordingStatus.idle);
-    };
-  }, [recordingStatus]);
 
   const finishRecord = async () => {
     if (recorderRef.current === null) return;
@@ -91,18 +75,50 @@ export default function RecordButton() {
 
   const recordingState = () => {
     if (
-      recordingStatus === RecordingStatus.idle ||
-      recordingStatus === RecordingStatus.success
+      recordingStatus === RecordingStatusType.idle ||
+      recordingStatus === RecordingStatusType.success
     ) {
       return "/assets/images/record.png";
     }
 
-    if (recordingStatus === RecordingStatus.loading) {
+    if (recordingStatus === RecordingStatusType.loading) {
       return "/assets/images/recording.png";
     }
 
     return "/assets/images/record.png";
   };
+
+  useEffect(() => {
+    if (recorderRef.current === null) return;
+    if (
+      recordingStatus === RecordingStatusType.idle ||
+      recordingStatus === RecordingStatusType.loading
+    )
+      return;
+
+    if (recordingStatus === RecordingStatusType.success) {
+      finishRecord();
+    }
+
+    return () => {
+      setRecordingStatus(RecordingStatusType.idle);
+    };
+  }, [recordingStatus]);
+
+  useEffect(() => {
+    if (!currentRecordingAnswer) return;
+
+    if (
+      currentRecordingAnswer?.status === "success" ||
+      currentRecordingAnswer?.status === "fail"
+    ) {
+      setRecordingStatus(RecordingStatusType.idle);
+    }
+
+    return () => {
+      setRecordingStatus(RecordingStatusType.idle);
+    };
+  }, [currentRecordingAnswer]);
 
   return (
     <>
