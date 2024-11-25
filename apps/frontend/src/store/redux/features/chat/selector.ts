@@ -12,6 +12,15 @@ export const selectLastBotChatStatus = (state: RootState) => {
 
   return null;
 };
+export const selectCurrentRecordingAnswer = (state: RootState) => {
+  const lastChat = state.chat.contents[state.chat.contents.length - 1];
+
+  if (lastChat?.speaker === "user") {
+    return lastChat;
+  }
+
+  return null;
+};
 export const selectChatId = (state: RootState) => {
   return state.chat.id;
 };
