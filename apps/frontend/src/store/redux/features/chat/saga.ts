@@ -8,10 +8,11 @@ import {
 } from "redux-saga/effects";
 import {
   SEND_RECORD,
+  START_CHAT,
+  REQUEST_INTERVIEW,
   triggerContent,
   updateContent,
   removeContent,
-  START_CHAT,
   startChat,
 } from "./slice";
 import { delay } from "../../utils";
@@ -23,6 +24,7 @@ import {
   SpeechToTextData,
 } from "@/apis/interview";
 import { errorToastStore } from "@/store/useErrorToastStore";
+import { ChatContentSpeakerType } from "@/store/redux/type";
 
 interface SendRecordAction {
   type: string;
@@ -49,7 +51,7 @@ function* speechToTextSaga(action: SendRecordAction) {
   try {
     yield call(delay, 200);
 
-    yield put(triggerContent({ speaker: "user" }));
+    yield put(triggerContent({ speaker: ChatContentSpeakerType.user }));
     yield call(delay, 500);
 
     const data: SpeechToTextData = yield call(fetchSpeechToText, {
@@ -60,7 +62,7 @@ function* speechToTextSaga(action: SendRecordAction) {
     if (data.text) {
       yield put(updateContent({ content: data.text }));
       yield* requestInterviewSaga({
-        type: "REQUEST_INTERVIEW",
+        type: REQUEST_INTERVIEW,
         payload: { content: data.text as unknown as string, chatId },
       });
     } else {
@@ -92,7 +94,7 @@ function* requestInterviewSaga(action: RequestInterviewAction) {
     }
     const chatId: number = yield select(selectChatState);
 
-    yield put(triggerContent({ speaker: "bot" }));
+    yield put(triggerContent({ speaker: ChatContentSpeakerType.bot }));
     yield call(delay, 500);
 
     const data: AIChatData = yield call(fetchAIChat, {
