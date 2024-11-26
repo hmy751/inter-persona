@@ -1,3 +1,5 @@
+import { RecordingStatusType } from "../_components/RecordButton";
+
 export const checkFileWave = (audioFile: File) => {
   const reader = new FileReader();
 
@@ -24,9 +26,7 @@ export const checkFileWave = (audioFile: File) => {
 export const detectSilence = (
   analyser: AnalyserNode,
   dataArray: Uint8Array,
-  setIsRecording: React.Dispatch<
-    React.SetStateAction<"finished" | "recording" | null>
-  >,
+  setIsRecording: React.Dispatch<React.SetStateAction<RecordingStatusType>>,
   silenceThreshold = 0.01,
   timeout = 1000
 ) => {
@@ -46,7 +46,7 @@ export const detectSilence = (
     if (rms < silenceThreshold) {
       // 음성 중지 감지 (특정 시간 동안 rms가 임계값 이하인 경우)
       if (performance.now() - silenceStart > timeout) {
-        setIsRecording("finished");
+        setIsRecording(RecordingStatusType.success);
         return;
       }
     } else {
