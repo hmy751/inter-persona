@@ -1,5 +1,5 @@
 import { Noto_Sans_KR } from "next/font/google";
-import "./globals.css";
+import "@repo/ui/styles/globals.css";
 import MSWProvider from "@/app/_providers/MSWProvider";
 import WithProviders from "./_providers/WithProviders";
 
