@@ -1,0 +1,95 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  all: unset;
+  cursor: pointer;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+input,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+input {
+  border: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+table {
+  border: 0;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+legend,
+caption {
+  display: none;
+}
+
+caption,
+th {
+  text-align: left;
+}
+
+input[type="text"],
+input[type="password"] {
+  -webkit-appearance: none;
+}
+
+input[type="checkbox"] {
+  -webkit-appearance: none;
+  -webkit-border-radius: 0;
+}
+
+input:checked[type="checkbox"] {
+  -webkit-appearance: checkbox;
+}
+
+input[type="radio"] {
+  border: none;
+  -webkit-appearance: none;
+}
+
+button,
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+input[type="file"] {
+  -webkit-appearance: button;
+  border-radius: 0;
+}
