@@ -1,66 +1,57 @@
-import { createContext, useMemo, useContext } from "react";
+import { createContext, useContext, useMemo } from "react";
+import styles from "./chat.module.css";
 import Avatar from "@repo/ui/Avatar";
-import { Box, Flex, Skeleton } from "@chakra-ui/react";
 
 export type ChatType = "user" | "bot" | "";
 
-interface ChatArticleProps extends React.PropsWithChildren {
+interface ChatArticleProps {
   type: ChatType;
+  children: React.ReactNode;
 }
 
 interface ChatSpeechProps {
-  status: string; // loading, error, success
+  status: string;
   text: string | null;
 }
 
-const ChatArticleContext = createContext<{ type: ChatType }>({
-  type: "",
-});
+const ChatArticleContext = createContext<{ type: ChatType }>({ type: "" });
 
 function ChatAvatar({ src }: { src: string }) {
   return (
-    <Flex justifyContent={"flex-start"} height={"100%"}>
+    <div className={styles.avatarContainer}>
       <Avatar src={src} />
-    </Flex>
+    </div>
   );
 }
 
 function ChatSpeech({ status, text }: ChatSpeechProps) {
   const { type } = useContext(ChatArticleContext);
-  const color = type === "bot" ? "mainGray" : "mainBlue";
+
+  if (status === "loading") {
+    return <div className={styles.skeletonLoader} />;
+  }
+
   return (
-    <>
-      {status === "loading" ? (
-        <Skeleton
-          width={"200px"}
-          height={"44px"}
-          borderRadius={"10px"}
-          color={color}
-          padding={"10px"}
-        />
-      ) : (
-        <Box borderRadius={"10px"} backgroundColor={color} padding={"10px"}>
-          {text}
-        </Box>
-      )}
-    </>
+    <div
+      className={type === "user" ? styles.chatSpeechUser : styles.chatSpeechBot}
+    >
+      {text}
+    </div>
   );
 }
 
 function ChatArticle({ type, children }: ChatArticleProps) {
-  const ContextValue = useMemo(() => {
-    return { type };
-  }, [type]);
+  const contextValue = useMemo(() => ({ type }), [type]);
 
   return (
-    <ChatArticleContext.Provider value={ContextValue}>
-      <Flex
-        alignItems={"center"}
-        gap="10px"
-        justifyContent={type !== "user" ? "flex-start" : "flex-end"}
+    <ChatArticleContext.Provider value={contextValue}>
+      <div
+        className={
+          type === "user" ? styles.chatArticleUser : styles.chatArticleBot
+        }
       >
         {children}
-      </Flex>
+      </div>
     </ChatArticleContext.Provider>
   );
 }
