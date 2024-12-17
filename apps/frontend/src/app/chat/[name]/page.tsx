@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { useRef, useEffect, useState } from "react";
-import { Box, Flex } from "@chakra-ui/react";
 import { useSelector, useDispatch } from "react-redux";
 
 import InterviewerProfile from "./_components/InterviewerProfile";
@@ -19,58 +18,7 @@ import {
 import useUserStore from "@/store/useUserStore";
 import { useInterviewerStore } from "@/store/useInterviewerStore";
 import { fetchInterview } from "@/apis/interview";
-
-const InterviewerProfileWrapper = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
-  return (
-    <>
-      <Flex
-        height={"max-content"}
-        paddingY={"40px"}
-        borderBottom={"1px solid"}
-        borderColor={"gray.100"}
-      >
-        {children}
-      </Flex>
-    </>
-  );
-};
-
-const ChatWrapper = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <>
-      <Flex
-        height={"100%"}
-        direction={"column"}
-        marginTop={"40px"}
-        gap={"20px"}
-      >
-        {children}
-      </Flex>
-    </>
-  );
-};
-
-const RecordButtonWrapper = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <>
-      <Flex
-        alignItems={"center"}
-        height={"80px"}
-        direction={"column"}
-        marginTop={"40px"}
-        gap={"20px"}
-        borderTop={"1px solid"}
-        borderColor={"gray.100"}
-      >
-        {children}
-      </Flex>
-    </>
-  );
-};
+import styles from "./page.module.css";
 
 export default function Page() {
   const chatContents = useSelector(selectChatContents);
@@ -115,42 +63,40 @@ export default function Page() {
   if (!user || !interviewer) return null;
 
   return (
-    <Box
-      width={"100%"}
-      maxWidth={726}
-      flex={1}
-      display="flex"
-      flexDirection={"column"}
-    >
-      <InterviewerProfileWrapper>
+    <div className={styles.container}>
+      <div className={styles.profileWrapper}>
         <InterviewerProfile
           src={interviewer?.imgUrl}
           name={interviewer?.name}
           description={interviewer?.description}
         />
-      </InterviewerProfileWrapper>
-      <ChatWrapper>
-        {chatContents.map(({ speaker, content, status }) => {
-          return (
-            <ChatArticle key={speaker} type={speaker}>
-              {speaker === "bot" ? (
-                <>
-                  <ChatArticle.Avatar src={interviewer?.imgUrl} />
-                  <ChatArticle.Speech status={status} text={content} />
-                </>
-              ) : (
-                <>
-                  <ChatArticle.Speech status={status} text={content} />
-                  <ChatArticle.Avatar src={user?.imageSrc} />
-                </>
-              )}
-            </ChatArticle>
-          );
-        })}
-      </ChatWrapper>
-      <RecordButtonWrapper>
-        <RecordButton />
-      </RecordButtonWrapper>
-    </Box>
+      </div>
+
+      <div className={styles.chatWrapper}>
+        <div className={styles.chatContainer}>
+          {chatContents.map(({ speaker, content, status }) => {
+            return (
+              <ChatArticle key={speaker} type={speaker}>
+                {speaker === "bot" ? (
+                  <>
+                    <ChatArticle.Avatar src={interviewer?.imgUrl} />
+                    <ChatArticle.Speech status={status} text={content} />
+                  </>
+                ) : (
+                  <>
+                    <ChatArticle.Speech status={status} text={content} />
+                    <ChatArticle.Avatar src={user?.imageSrc} />
+                  </>
+                )}
+              </ChatArticle>
+            );
+          })}
+        </div>
+
+        <div className={styles.buttonWrapper}>
+          <RecordButton />
+        </div>
+      </div>
+    </div>
   );
 }

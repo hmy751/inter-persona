@@ -1,4 +1,4 @@
-import { Box, Flex } from "@chakra-ui/react";
+import styles from "./InterviewerProfile.module.css";
 import Avatar from "@repo/ui/Avatar";
 
 export default function InterviewerProfile({
@@ -11,16 +11,16 @@ export default function InterviewerProfile({
   description?: string;
 }) {
   return (
-    <Box display={"flex"} gap="20px" width="100%" height="160px">
+    <div className={styles.container}>
       <Avatar
         src={src || "/assets/images/elon_musk.png"}
         width={"160px"}
         height={"160px"}
       />
-      <Flex flexDirection={"column"} gap={"12px"} justifyContent={"center"}>
-        <Box>{name}</Box>
-        <Box color="font.gray">{description}</Box>
-      </Flex>
-    </Box>
+      <div className={styles.infoContainer}>
+        <div className={styles.name}>{name}</div>
+        <div className={styles.description}>{description}</div>
+      </div>
+    </div>
   );
 }

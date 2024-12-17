@@ -1,0 +1,159 @@
+.container {
+  width: 100%;
+  max-width: var(--layout-container-max);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.profileWrapper {
+  height: max-content;
+  padding: var(--space-10) 0;
+  border-bottom: 1px solid var(--color-gray-100);
+}
+
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+  align-items: center;
+  margin-top: var(--space-8);
+  gap: var(--space-10);
+  width: 100%;
+  height: 100%;
+}
+
+.resultContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: var(--space-8);
+}
+
+.scoreWrapper {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  width: 100%;
+  gap: 10px;
+  margin-bottom: var(--space-6);
+}
+
+.reviewerName {
+  font-size: 2.5rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  text-shadow: 1px 2px 2px var(--color-text-primary);
+}
+
+.score {
+  font-size: 3rem;
+  font-weight: 500;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 2px 2px 4px rgba(107, 70, 193, 0.5);
+}
+
+.scoreUnit {
+  font-size: 2rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.scoreCardContainer {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.scoreCard {
+  width: 100%;
+  border: 1px solid var(--color-gray-100);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  cursor: pointer;
+  background-color: var(--color-base-white);
+  display: flex;
+  align-items: center;
+  transition: var(--transition-base);
+  box-shadow: 0 0 5px 0 rgba(66, 153, 225, 0.3);
+}
+
+.scoreCard:hover {
+  box-shadow: 0 0 10px 0 rgba(66, 153, 225, 0.5);
+}
+
+.scoreCard:active {
+  transform: scale(0.98);
+}
+
+.scoreCardContent {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.scoreCircle {
+  font-size: 3rem;
+  font-weight: bold;
+  border-radius: var(--radius-full);
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--gradient-primary);
+  color: var(--color-base-white);
+  margin-right: var(--space-4);
+  box-shadow: 0 4px 6px rgba(107, 70, 193, 0.3);
+}
+
+.scoreCardTextContainer {
+  flex: 1;
+}
+
+.scoreCardTitle {
+  font-size: var(--font-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.scoreCardSummary {
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+}
+
+.finalEvaluation {
+  padding: var(--space-10);
+}
+
+.finalEvaluationTitle {
+  font-size: var(--font-2xl);
+  font-weight: bold;
+  color: var(--color-secondary);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-bottom: 4px solid var(--color-secondary);
+  padding-bottom: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: var(--color-primary);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
