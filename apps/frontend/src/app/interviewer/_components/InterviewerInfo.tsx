@@ -1,4 +1,4 @@
-import { border } from "@chakra-ui/react";
+import styles from "./InterviewerInfo.module.css";
 import { Text } from "@react-three/drei";
 import { useMemo } from "react";
 import { Shape, ShapeGeometry } from "three";
@@ -66,15 +66,23 @@ const InterviewerInfo: React.FC<{
   return (
     <mesh position={[-3, 2.5, 0]}>
       <planeGeometry args={[2.5, 1.5]} />
-      <meshBasicMaterial color="white" transparent={true} opacity={0.5} />
+      <meshBasicMaterial
+        className={styles.container}
+        transparent={true}
+        opacity={0.5}
+      />
 
       <RoundedPlaneGeometry width={3} height={2} radius={0.5} />
-      <meshBasicMaterial color="lightblue" transparent={true} opacity={0.5} />
+      <meshBasicMaterial
+        className={styles.infoBox}
+        transparent={true}
+        opacity={0.5}
+      />
 
-      <Text position={[0, 0.2, 0]} fontSize={0.5} color="black">
+      <Text position={[0, 0.2, 0]} fontSize={0.5} className={styles.infoText}>
         {selectedInterviewer?.name}
       </Text>
-      <Text position={[0, -0.3, 0]} fontSize={0.3} color="black">
+      <Text position={[0, -0.3, 0]} fontSize={0.3} className={styles.infoText}>
         {selectedInterviewer?.mbti}
       </Text>
     </mesh>
