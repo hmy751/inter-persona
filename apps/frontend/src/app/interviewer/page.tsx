@@ -1,10 +1,8 @@
 "use client";
 
 import { useAudioStore } from "@/store/useAudioStore";
-import { Box, Button } from "@chakra-ui/react";
 import { Canvas } from "@react-three/fiber";
 import React from "react";
-// import Background from "./_components/Background";
 import Camera from "./_components/Camera";
 import InterviewerCard from "./_components/InterviewerCard";
 import { nomalizeIndex } from "./_utils/convert";
