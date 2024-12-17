@@ -1,39 +1,22 @@
 "use client";
 import Avatar from "@repo/ui/Avatar";
-import { Box, Flex } from "@chakra-ui/react";
 import useUserStore from "@/store/useUserStore";
+import styles from "./layout.module.css";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { user } = useUserStore();
 
   return (
-    <Flex flexDirection={"column"} minHeight={"100vh"}>
-      <Flex
-        as="header"
-        width="100%"
-        height="80px"
-        backgroundColor={"#F3F6F7"}
-        justifyContent={"center"}
-        alignItems={"center"}
-      >
+    <div className={styles.container}>
+      <header className={styles.header}>
         {user && (
-          <Flex width={"100%"} maxWidth={726} gap={"10px"}>
+          <div className={styles.userInfo}>
             <Avatar src={user?.imageSrc} />
-            <Flex alignItems={"center"} as={"p"}>
-              {user?.name}
-            </Flex>
-          </Flex>
+            <p className={styles.userName}>{user?.name}</p>
+          </div>
         )}
-      </Flex>
-      <Box
-        as="section"
-        width="100%"
-        display="flex"
-        flex={1}
-        justifyContent={"center"}
-      >
-        {children}
-      </Box>
-    </Flex>
+      </header>
+      <section className={styles.content}>{children}</section>
+    </div>
   );
 }
