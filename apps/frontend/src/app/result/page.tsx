@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Spinner } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
 import styles from "./page.module.css";
 
@@ -9,14 +8,6 @@ import InterviewerProfile from "./_components/InterviewerProfile";
 import { useQuery } from "@tanstack/react-query";
 import { selectChatId } from "@/store/redux/features/chat/selector";
 import { useInterviewerStore } from "@/store/useInterviewerStore";
-
-const InterviewerProfileWrapper = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
-  return <div className={styles.profileWrapper}>{children}</div>;
-};
 
 interface Scores {
   standard: string;
@@ -57,16 +48,16 @@ export default function Page() {
     <div className={styles.container}>
       {isLoading ? (
         <>
-          <InterviewerProfileWrapper>
+          <div className={styles.profileWrapper}>
             <InterviewerProfile
               src={interviewer?.imgUrl}
               name={interviewer?.name}
               description={interviewer?.description}
             />
-          </InterviewerProfileWrapper>
+          </div>
           <div className={styles.loadingContainer}>
             <div className={styles.reviewerName}>{reviewerName}는 평가 중</div>
-            <Spinner />
+            <div className={styles.spinner} />
           </div>
         </>
       ) : (
