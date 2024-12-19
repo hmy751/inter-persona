@@ -8,7 +8,8 @@
     "./Dialog": "./src/Dialog.tsx",
     "./Button": "./src/Button.tsx",
     "./Avatar": "./src/Avatar.tsx",
-    "./Toast": "./src/Toast.tsx"
+    "./Toast": "./src/Toast.tsx",
+    "./Spinner": "./src/Spinner.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
