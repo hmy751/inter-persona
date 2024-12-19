@@ -81,6 +81,8 @@
      .element:hover {
        // 밝게
        filter: brightness(var(--hover-brightness));
+       box-shadow: var(--hover-shadow);
+   
        // 어둡게
        filter: brightness(var(--hover-darken));
        box-shadow: var(--hover-shadow);
