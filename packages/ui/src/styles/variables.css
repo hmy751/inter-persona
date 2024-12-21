@@ -26,6 +26,8 @@
   /* Gray Scale */
   --color-gray-50: #f7fafc;
   --color-gray-100: #edf2f7;
+  --color-gray-200: #e2e8f0;
+  --color-gray-300: #cbd5e1;
   --color-gray-very-light: #fafafa;
 
   /* =================================
@@ -55,6 +57,12 @@
   --font-2xl: 2rem;
   --font-3xl: 2.5rem;
 
+  /* Font Weight */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+
   /* =================================
      4. Effects & Interactions
      ================================= */
@@ -81,6 +89,8 @@
      .element:hover {
        // 밝게
        filter: brightness(var(--hover-brightness));
+       box-shadow: var(--hover-shadow);
+   
        // 어둡게
        filter: brightness(var(--hover-darken));
        box-shadow: var(--hover-shadow);
@@ -101,9 +111,6 @@
   --radius-md: 0.5rem;
   --radius-lg: 1rem;
   --radius-full: 50%;
-
-  --border-width: 1px;
-  --border-color: var(--gray-100);
 
   /* =================================
      6. Z-index

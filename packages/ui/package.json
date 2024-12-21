@@ -8,7 +8,8 @@
     "./Dialog": "./src/Dialog.tsx",
     "./Button": "./src/Button.tsx",
     "./Avatar": "./src/Avatar.tsx",
-    "./Toast": "./src/Toast.tsx"
+    "./Toast": "./src/Toast.tsx",
+    "./Spinner": "./src/Spinner.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
@@ -24,6 +25,7 @@
     "@storybook/addon-interactions": "^8.4.3",
     "@storybook/addon-onboarding": "^8.4.3",
     "@storybook/blocks": "^8.4.3",
+    "@storybook/nextjs": "^8.4.7",
     "@storybook/react": "^8.3.6",
     "@storybook/react-vite": "^8.4.3",
     "@storybook/test": "^8.4.3",
@@ -42,6 +44,7 @@
     "@chakra-ui/react": "^2.8.2",
     "@radix-ui/react-dialog": "^1.1.2",
     "@radix-ui/react-toast": "^1.2.2",
+    "clsx": "^2.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   }
