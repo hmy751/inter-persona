@@ -45,29 +45,85 @@ export const Primary: Story = {
 
 export const Focused: Story = {
   args: {
-    isFocused: true,
-    isTouched: true,
     placeholder: "Enter Text...",
+  },
+  render() {
+    const [isTouched, setIsTouched] = useState(true);
+    const [isFocused, setIsFocused] = useState(true);
+    return (
+      <div>
+        <Input
+          placeholder="Enter Text..."
+          isFocused={isFocused}
+          isTouched={isTouched}
+          onFocusChange={setIsFocused}
+          onTouchChange={setIsTouched}
+        />
+      </div>
+    );
   },
 };
 
 export const Touched: Story = {
   args: {
-    isTouched: true,
     placeholder: "Enter Text...",
+  },
+  render() {
+    const [isTouched, setIsTouched] = useState(true);
+    const [isFocused, setIsFocused] = useState(false);
+    return (
+      <div>
+        <Input
+          placeholder="Enter Text..."
+          isTouched={isTouched}
+          isFocused={isFocused}
+          onTouchChange={setIsTouched}
+          onFocusChange={setIsFocused}
+        />
+      </div>
+    );
   },
 };
 
 export const Error: Story = {
   args: {
-    isError: "Error",
     placeholder: "Enter Text...",
+  },
+  render() {
+    const [isFocused, setIsFocused] = useState(false);
+    const [isTouched, setIsTouched] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("Error");
+    return (
+      <div>
+        <Input
+          placeholder="Enter Text..."
+          isFocused={isFocused}
+          isTouched={isTouched}
+          onFocusChange={setIsFocused}
+          onTouchChange={setIsTouched}
+          isError={errorMessage}
+        />
+      </div>
+    );
   },
 };
 
 export const Disabled: Story = {
   args: {
-    isDisabled: true,
     placeholder: "Enter Text...",
+  },
+  render() {
+    const [isTouched, setIsTouched] = useState(false);
+    const [isFocused, setIsFocused] = useState(false);
+    return (
+      <div>
+        <Input
+          placeholder="Enter Text..."
+          isDisabled={true}
+          isTouched={isTouched}
+          isFocused={isFocused}
+        />
+      </div>
+    );
   },
 };
