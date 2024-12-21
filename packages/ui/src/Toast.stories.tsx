@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import Toast from "@repo/ui/Toast";
-import Button from "@repo/ui/Button";
+import Button from "./Button";
 
 const meta = {
   title: "Common/Toast",
