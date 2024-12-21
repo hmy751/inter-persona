@@ -57,6 +57,12 @@
   --font-2xl: 2rem;
   --font-3xl: 2.5rem;
 
+  /* Font Weight */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+
   /* =================================
      4. Effects & Interactions
      ================================= */
