@@ -1,6 +1,5 @@
 "use client";
 
-import { useAudioStore } from "@/store/useAudioStore";
 import { Canvas } from "@react-three/fiber";
 import React from "react";
 import Camera from "./_components/Camera";
@@ -54,7 +53,6 @@ const InterviewerChoicePage: React.FC = () => {
 
   const router = useRouter();
 
-  const { play } = useAudioStore();
   const { setInterviewer } = useInterviewerStore();
   const { user } = useUserStore();
 
@@ -79,7 +77,6 @@ const InterviewerChoicePage: React.FC = () => {
             position={[nomalizeIndex(index, interviewerList.length), -2.5, 0]}
             onClick={() => {
               handleClick(interviewer);
-              play();
             }}
           />
         ))}

@@ -9,5 +9,5 @@
   display: flex;
   flex: 1;
   justify-content: center;
-  margin-bottom: 40px;
+  margin-bottom: var(--space-10);
 }

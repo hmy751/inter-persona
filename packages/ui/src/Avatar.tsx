@@ -1,16 +1,46 @@
-import {
-  Avatar as CAvatar,
-  AvatarProps as CAvatarProps,
-} from "@chakra-ui/react";
+import Image from "next/image";
+import styles from "./Avatar.module.css";
 
-interface AvatarProps extends CAvatarProps {
+type AvatarSize = "xs" | "sm" | "md" | "lg" | "xl";
+
+interface AvatarProps {
   src: string;
-  size?: string;
+  size?: AvatarSize;
+  alt?: string;
+  className?: string;
 }
 
-export default function Avatar({ src, size, ...restProps }: AvatarProps) {
-  // 해당 부분은 Expression produces a union type that is too complex to represent.에러
-  // 라이브러리 교체 가능성이 있음
-  // @ts-ignore
-  return <CAvatar src={src} size={size} {...restProps} />;
+const sizeMap = {
+  xs: 24,
+  sm: 32,
+  md: 40,
+  lg: 48,
+  xl: 160,
+};
+
+export default function Avatar({
+  src,
+  size = "md",
+  alt = "avatar",
+  className,
+  ...props
+}: AvatarProps) {
+  return (
+    <div
+      className={`
+        ${styles.container}
+        ${styles[`size-${size}`]}
+        ${className || ""}
+      `}
+      {...props}
+    >
+      <Image
+        src={src}
+        alt={alt}
+        width={sizeMap[size]}
+        height={sizeMap[size]}
+        className={styles.image}
+      />
+    </div>
+  );
 }

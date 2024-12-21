@@ -1,25 +1,24 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import Avatar from "@repo/ui/Avatar";
+import Spinner from "@repo/ui/Spinner";
 
 const meta = {
-  title: "Common/Avatar",
-  component: Avatar,
+  title: "Common/Spinner",
+  component: Spinner,
   parameters: {
     layout: "centered",
   },
   tags: ["autodocs"],
   argTypes: {
-    src: { control: "color" },
+    size: { control: "select", options: ["sm", "md", "lg"] },
+    color: { control: "color" },
   },
-} satisfies Meta<typeof Avatar>;
+} satisfies Meta<typeof Spinner>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {
   args: {
-    src: "/assets/images/elon_musk.png",
-    size: "2xs",
-    name: "eee",
+    size: "md",
   },
 };
