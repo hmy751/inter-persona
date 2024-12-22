@@ -1,43 +1,45 @@
 @keyframes contentShow {
-  0% {
+  from {
     opacity: 0;
     transform: translate(-50%, -48%) scale(0.96);
   }
-  100% {
+  to {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
   }
 }
 
+@keyframes overlayShow {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .content {
-  min-width: 300px;
-  border-radius: 16px;
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  min-width: 300px;
   max-height: 85vh;
-  box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.1);
-  background-color: #ffffff;
-  animation: contentShow 150ms;
+  padding: var(--space-4);
+  background-color: var(--color-base-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: var(--z-dialog);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
 }
 
 .overlay {
-  background-color: rgba(0, 0, 0, 0.5);
   position: fixed;
   inset: 0;
-}
-
-.title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 13px 8px 13px 16px;
-}
-
-.description {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 0 16px 16px;
+  background-color: var(--color-overlay);
+  animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: var(--z-overlay);
 }

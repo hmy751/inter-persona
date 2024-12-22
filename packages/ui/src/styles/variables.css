@@ -11,6 +11,7 @@
   --color-secondary: #7066b9;
   --color-neutral: #64748b;
   --color-muted: #94a3b8;
+  --color-overlay: rgba(0, 0, 0, 0.5);
 
   /* Status Colors */
   --color-success: #27ae60;
@@ -115,7 +116,8 @@
   /* =================================
      6. Z-index
      ================================= */
-  --z-modal: 1000;
+  --z-dialog: 1000;
+  --z-overlay: 900;
   --z-dropdown: 900;
   --z-header: 100;
 }

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import Dialog from "@repo/ui/Dialog";
+import Dialog from "./Dialog";
 import Button from "./Button";
 
 const meta = {
@@ -14,7 +14,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const PrimaryExample: Story = {
+export const Primary: Story = {
   args: {
     children: <div></div>,
   },
@@ -22,12 +22,12 @@ export const PrimaryExample: Story = {
     return (
       <Dialog>
         <Dialog.Trigger>
-          <Button>Trigger!</Button>
+          <Button>Open Dialog</Button>
         </Dialog.Trigger>
         <Dialog.Content>
-          <Dialog.Title>Title</Dialog.Title>
+          <Dialog.Title>Dialog Title</Dialog.Title>
           <Dialog.Description>
-            Make changes to your profile here. Click save when you're done.
+            This is a description of the dialog content.
           </Dialog.Description>
         </Dialog.Content>
       </Dialog>
