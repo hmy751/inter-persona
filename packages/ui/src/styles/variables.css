@@ -117,6 +117,7 @@
      6. Z-index
      ================================= */
   --z-dialog: 1000;
+  --z-toast: 9999;
   --z-overlay: 900;
   --z-dropdown: 900;
   --z-header: 100;
