@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import Dialog from "@repo/ui/Dialog";
+import Button from "./Button";
 
 const meta = {
   title: "Common/Dialog",
@@ -20,7 +21,9 @@ export const PrimaryExample: Story = {
   render: () => {
     return (
       <Dialog>
-        <Dialog.Trigger>Trigger!</Dialog.Trigger>
+        <Dialog.Trigger>
+          <Button>Trigger!</Button>
+        </Dialog.Trigger>
         <Dialog.Content>
           <Dialog.Title>Title</Dialog.Title>
           <Dialog.Description>
