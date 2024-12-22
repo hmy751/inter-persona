@@ -1,7 +1,6 @@
-import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
-import Toast from "@repo/ui/Toast";
-import Button from "@repo/ui/Button";
+import Toast, { useToast } from "./Toast";
+import Button from "./Button";
 
 const meta = {
   title: "Common/Toast",
@@ -15,24 +14,27 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const PrimaryExample: Story = {
-  args: {
-    children: <div></div>,
-  },
-  render: () => {
-    const [open, setOpen] = useState(false);
+const ToastDemo = () => {
+  const { addToast } = useToast();
 
-    return (
-      <>
-        <Button onClick={() => setOpen(true)}>click</Button>
-        <Toast.Provider duration={1000}>
-          <Toast.Root open={open} onOpenChange={setOpen}>
-            <Toast.Title>Title</Toast.Title>
-            <Toast.Description>Content</Toast.Description>
-          </Toast.Root>
-          <Toast.Viewport />
-        </Toast.Provider>
-      </>
-    );
+  const showToast = () => {
+    addToast({
+      title: "Toast Title",
+      description: "This is a toast message",
+      duration: 3000,
+    });
+  };
+
+  return <Button onClick={showToast}>Show Toast</Button>;
+};
+
+export const Primary: Story = {
+  args: {
+    children: <ToastDemo />,
   },
+  render: () => (
+    <Toast>
+      <ToastDemo />
+    </Toast>
+  ),
 };
