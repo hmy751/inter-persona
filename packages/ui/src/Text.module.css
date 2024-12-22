@@ -1,0 +1,116 @@
+.text {
+  font-size: var(--font-base);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-base);
+}
+
+/* Heading */
+.h1 {
+  font-size: var(--font-3xl);
+  font-weight: var(--font-weight-bold);
+}
+
+.h2 {
+  font-size: var(--font-2xl);
+  font-weight: var(--font-weight-bold);
+}
+
+.h3 {
+  font-size: var(--font-xl);
+  font-weight: var(--font-weight-bold);
+}
+
+.h4 {
+  font-size: var(--font-lg);
+}
+
+.h5 {
+  font-size: var(--font-base);
+}
+
+.h6 {
+  font-size: var(--font-sm);
+}
+
+/* Size */
+.sm {
+  font-size: var(--font-sm);
+}
+
+.md {
+  font-size: var(--font-base);
+}
+
+.lg {
+  font-size: var(--font-lg);
+}
+
+/* Weight */
+.bold {
+  font-weight: var(--font-weight-bold);
+}
+
+.light {
+  font-weight: var(--font-weight-light);
+}
+
+.medium {
+  font-weight: var(--font-weight-medium);
+}
+
+/* Align */
+.left {
+  text-align: left;
+}
+
+.center {
+  text-align: center;
+}
+
+.right {
+  text-align: right;
+}
+
+/* Width */
+.full {
+  width: 100%;
+}
+
+.fit {
+  width: fit-content;
+}
+
+/* Truncate */
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Multi Line Truncate */
+.multiLineTruncate {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Color */
+.primary {
+  color: var(--color-text-primary);
+}
+
+.secondary {
+  color: var(--color-text-secondary);
+}
+
+.disabled {
+  color: var(--color-text-disabled);
+}
+
+.error {
+  color: var(--color-error);
+}
+
+.success {
+  color: var(--color-success);
+}
