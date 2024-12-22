@@ -14,7 +14,7 @@ const ELEMENT_MAPPING = {
 
 type ComponentType = keyof typeof ELEMENT_MAPPING;
 
-interface TextProps {
+interface TextProps extends React.HTMLAttributes<HTMLElement> {
   size?: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";
   weight?: "light" | "normal" | "medium" | "bold";
   as?: ComponentType;
@@ -36,6 +36,7 @@ export default function Text({
   truncate = false,
   color = "primary",
   lines,
+  ...restProps
 }: TextProps): React.ReactElement {
   const Element = ELEMENT_MAPPING[as];
 
@@ -53,6 +54,7 @@ export default function Text({
         width && styles[width as "full" | "fit"]
       )}
       style={width && !styles[width as "full" | "fit"] ? { width } : undefined}
+      {...restProps}
     >
       {children}
     </Element>
