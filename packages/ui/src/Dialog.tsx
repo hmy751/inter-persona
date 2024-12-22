@@ -10,6 +10,7 @@ import {
 import { createPortal } from "react-dom";
 import styles from "./Dialog.module.css";
 import Text from "./Text";
+import Button from "./Button";
 interface DialogContextType {
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -68,4 +69,39 @@ Dialog.Title = ({ children }: { children: ReactNode }) => {
 
 Dialog.Description = ({ children }: { children: ReactNode }) => {
   return <Text as="p">{children}</Text>;
+};
+
+Dialog.Footer = ({ children }: { children: ReactNode }) => {
+  return <div className={styles.footer}>{children}</div>;
+};
+
+Dialog.Confirm = ({
+  callback,
+  children,
+}: {
+  callback: () => void;
+  children: ReactNode;
+}) => {
+  const { setOpen } = useContext(DialogContext);
+  const handleConfirm = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    callback();
+    setOpen(false);
+  };
+
+  return (
+    <Button variant="primary" fullWidth={true} onClick={handleConfirm}>
+      {children}
+    </Button>
+  );
+};
+
+Dialog.Cancel = ({ children }: { children: ReactNode }) => {
+  const { setOpen } = useContext(DialogContext);
+
+  return (
+    <Button variant="outline" fullWidth={true} onClick={() => setOpen(false)}>
+      {children}
+    </Button>
+  );
 };
