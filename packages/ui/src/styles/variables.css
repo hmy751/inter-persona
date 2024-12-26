@@ -29,7 +29,8 @@
   --color-gray-100: #edf2f7;
   --color-gray-200: #e2e8f0;
   --color-gray-300: #cbd5e1;
-  --color-gray-very-light: #fafafa;
+
+  --color-background-base: #fafafa;
 
   /* =================================
      2. Layout & Spacing

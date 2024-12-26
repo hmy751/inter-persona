@@ -3,9 +3,10 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 var(--space-4);
-  height: 50px;
+  height: var(--layout-header-height);
   border-bottom: 1px solid var(--color-gray-200);
-  position: sticky;
+  background-color: var(--color-background-base);
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
