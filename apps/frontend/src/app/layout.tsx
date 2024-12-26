@@ -1,7 +1,7 @@
 import { Noto_Sans_KR } from "next/font/google";
 import "@repo/ui/styles/globals.css";
 import MSWProvider from "@/app/_providers/MSWProvider";
-import WithProviders from "./_providers/WithProviders";
+import LayoutWithProviders from "./_providers/LayoutWithProviders";
 
 const noto_sans_kr = Noto_Sans_KR({
   subsets: ["latin"],
@@ -19,10 +19,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={noto_sans_kr.className}>
         {!isUseMsw ? (
-          <WithProviders>{children}</WithProviders>
+          <LayoutWithProviders>{children}</LayoutWithProviders>
         ) : (
           <MSWProvider>
-            <WithProviders>{children}</WithProviders>
+            <LayoutWithProviders>{children}</LayoutWithProviders>
           </MSWProvider>
         )}
       </body>
