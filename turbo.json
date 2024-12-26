@@ -8,7 +8,9 @@
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "ui-storybook": {},
-    "build:ui=storybook": {},
+    "build:ui-storybook": {},
+    "apps-storybook": {},
+    "build:apps-storybook": {},
     "lint": {
       "dependsOn": ["^lint"]
     },

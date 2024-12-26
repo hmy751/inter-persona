@@ -8,8 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "apps-storybook": "storybook dev -p 6006",
+    "build:apps-storybook": "storybook build"
   },
   "dependencies": {
     "@react-three/drei": "^9.112.0",
