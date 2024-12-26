@@ -9,7 +9,10 @@
     "./Button": "./src/Button.tsx",
     "./Avatar": "./src/Avatar.tsx",
     "./Toast": "./src/Toast.tsx",
-    "./Spinner": "./src/Spinner.tsx"
+    "./Spinner": "./src/Spinner.tsx",
+    "./Text": "./src/Text.tsx",
+    "./Input": "./src/Input.tsx",
+    "./InputField": "./src/InputField.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
