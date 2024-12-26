@@ -1,7 +1,7 @@
+import Layout from "../_layout";
+
 import ReduxStoreProvider from "./ReduxStoreProvider";
 import QueryProviders from "./QueryProvider";
-
-import ErrorToast from "../_components/ErrorToast";
 
 export default function LayoutWithProviders({
   children,
@@ -10,8 +10,9 @@ export default function LayoutWithProviders({
 }) {
   return (
     <QueryProviders>
-      <ReduxStoreProvider>{children}</ReduxStoreProvider>
-      <ErrorToast />
+      <ReduxStoreProvider>
+        <Layout>{children}</Layout>
+      </ReduxStoreProvider>
     </QueryProviders>
   );
 }
