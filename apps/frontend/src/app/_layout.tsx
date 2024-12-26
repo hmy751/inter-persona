@@ -1,5 +1,5 @@
 import ErrorToast from "./_components/ErrorToast";
-import styles from "./_layout.module.css";
+import Header from "./_components/Header/Header";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -8,7 +8,8 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps): React.ReactElement {
   return (
     <>
-      <div className={styles.wrapper}>{children}</div>
+      <Header />
+      {children}
       <ErrorToast />
     </>
   );
