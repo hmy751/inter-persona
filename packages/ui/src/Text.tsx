@@ -36,6 +36,7 @@ export default function Text({
   truncate = false,
   color = "primary",
   lines,
+  className,
   ...restProps
 }: TextProps): React.ReactElement {
   const Element = ELEMENT_MAPPING[as];
@@ -51,7 +52,8 @@ export default function Text({
         lines && styles.multiLineTruncate,
         styles[color],
         styles[align],
-        width && styles[width as "full" | "fit"]
+        width && styles[width as "full" | "fit"],
+        className
       )}
       style={width && !styles[width as "full" | "fit"] ? { width } : undefined}
       {...restProps}

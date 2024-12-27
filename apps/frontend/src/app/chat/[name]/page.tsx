@@ -6,7 +6,6 @@ import { useSelector, useDispatch } from "react-redux";
 
 import InterviewerProfile from "./_components/InterviewerProfile";
 import ChatArticle from "./_components/ChatArticle";
-import RecordButton from "./_components/RecordButton";
 import {
   selectChatContents,
   selectChatLimit,
@@ -19,6 +18,7 @@ import useUserStore from "@/store/useUserStore";
 import { useInterviewerStore } from "@/store/useInterviewerStore";
 import { fetchInterview } from "@/apis/interview";
 import styles from "./page.module.css";
+import Text from "@repo/ui/Text";
 
 export default function Page() {
   const chatContents = useSelector(selectChatContents);
@@ -64,39 +64,31 @@ export default function Page() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.profileWrapper}>
-        <InterviewerProfile
-          src={interviewer?.imgUrl}
-          name={interviewer?.name}
-          description={interviewer?.description}
-        />
-      </div>
-
-      <div className={styles.chatWrapper}>
-        <div className={styles.chatContainer}>
-          {chatContents.map(({ speaker, content, status }) => {
-            return (
-              <ChatArticle key={speaker} type={speaker}>
-                {speaker === "bot" ? (
-                  <>
-                    <ChatArticle.Avatar src={interviewer?.imgUrl} />
-                    <ChatArticle.Speech status={status} text={content} />
-                  </>
-                ) : (
-                  <>
-                    <ChatArticle.Speech status={status} text={content} />
-                    <ChatArticle.Avatar src={user?.imageSrc} />
-                  </>
-                )}
-              </ChatArticle>
-            );
-          })}
-        </div>
-
-        <div className={styles.buttonWrapper}>
-          <RecordButton />
-        </div>
-      </div>
+      <Text as="h2" size="lg">
+        Interview
+      </Text>
+      <InterviewerProfile
+        src={interviewer?.imgUrl}
+        name={interviewer?.name}
+        description={interviewer?.description}
+      />
+      {chatContents.map(({ speaker, content, status }) => {
+        return (
+          <ChatArticle key={speaker} type={speaker}>
+            {speaker === "bot" ? (
+              <>
+                <ChatArticle.Avatar src={interviewer?.imgUrl} />
+                <ChatArticle.Speech status={status} text={content} />
+              </>
+            ) : (
+              <>
+                <ChatArticle.Speech status={status} text={content} />
+                <ChatArticle.Avatar src={user?.imageSrc} />
+              </>
+            )}
+          </ChatArticle>
+        );
+      })}
     </div>
   );
 }

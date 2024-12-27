@@ -1,39 +1,8 @@
 .container {
   width: 100%;
-  max-width: var(--layout-container-max);
   display: flex;
   flex-direction: column;
-  flex: 1;
-}
-
-.profileWrapper {
-  height: max-content;
-  padding: var(--space-10) 0;
-  border-bottom: 1px solid var(--color-gray-100);
-}
-
-.chatWrapper {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  margin-top: var(--space-10);
-  gap: var(--space-5);
-}
-
-.chatContainer {
-  flex: 1;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-.buttonWrapper {
-  display: flex;
-  align-items: center;
-  height: var(--layout-header-height);
-  flex-direction: column;
-  margin-top: var(--space-10);
-  gap: var(--space-5);
-  border-top: 1px solid var(--color-gray-100);
+  padding-top: var(--layout-page-top-padding);
+  padding-bottom: var(--layout-page-bottom-padding);
+  gap: var(--space-10);
 }
