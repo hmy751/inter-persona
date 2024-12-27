@@ -40,6 +40,6 @@ interface InterviewerState {
 }
 
 export const useInterviewerStore = create<InterviewerState>((set) => ({
-  interviewer: null,
+  interviewer: interviewerList[0] as Interviewer,
   setInterviewerId: (id: number) => set({ interviewer: interviewerList[id - 1] }),
 }));
