@@ -11,12 +11,11 @@ body {
   color: var(--color-text-primary);
 }
 
-.page-container {
+.page-layout-container {
   width: 100%;
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   max-width: var(--layout-container-max);
 }
