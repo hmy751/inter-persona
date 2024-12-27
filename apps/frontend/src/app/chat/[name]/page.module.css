@@ -5,13 +5,3 @@
   padding-top: var(--layout-page-top-padding);
   gap: var(--space-10);
 }
-
-.buttonWrapper {
-  display: flex;
-  align-items: center;
-  height: var(--layout-header-height);
-  flex-direction: column;
-  margin-top: var(--space-10);
-  gap: var(--space-5);
-  border-top: 1px solid var(--color-gray-100);
-}

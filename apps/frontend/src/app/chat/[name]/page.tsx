@@ -6,7 +6,6 @@ import { useSelector, useDispatch } from "react-redux";
 
 import InterviewerProfile from "./_components/InterviewerProfile";
 import ChatArticle from "./_components/ChatArticle";
-import RecordButton from "./_components/RecordButton";
 import {
   selectChatContents,
   selectChatLimit,
@@ -73,28 +72,23 @@ export default function Page() {
         name={interviewer?.name}
         description={interviewer?.description}
       />
-      <div className={styles.chatContainer}>
-        {chatContents.map(({ speaker, content, status }) => {
-          return (
-            <ChatArticle key={speaker} type={speaker}>
-              {speaker === "bot" ? (
-                <>
-                  <ChatArticle.Avatar src={interviewer?.imgUrl} />
-                  <ChatArticle.Speech status={status} text={content} />
-                </>
-              ) : (
-                <>
-                  <ChatArticle.Speech status={status} text={content} />
-                  <ChatArticle.Avatar src={user?.imageSrc} />
-                </>
-              )}
-            </ChatArticle>
-          );
-        })}
-      </div>
-      <div className={styles.buttonWrapper}>
-        <RecordButton />
-      </div>
+      {chatContents.map(({ speaker, content, status }) => {
+        return (
+          <ChatArticle key={speaker} type={speaker}>
+            {speaker === "bot" ? (
+              <>
+                <ChatArticle.Avatar src={interviewer?.imgUrl} />
+                <ChatArticle.Speech status={status} text={content} />
+              </>
+            ) : (
+              <>
+                <ChatArticle.Speech status={status} text={content} />
+                <ChatArticle.Avatar src={user?.imageSrc} />
+              </>
+            )}
+          </ChatArticle>
+        );
+      })}
     </div>
   );
 }
