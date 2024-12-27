@@ -1,6 +1,6 @@
 import styles from "./chat.module.css";
 import Avatar from "@repo/ui/Avatar";
-
+import Text from "@repo/ui/Text";
 interface InterviewerProfileProps {
   src: string;
   name: string;
@@ -14,10 +14,14 @@ export default function InterviewerProfile({
 }: InterviewerProfileProps) {
   return (
     <div className={styles.profileContainer}>
-      <Avatar src={src} width="160px" height="160px" />
+      <Avatar src={src} size="md" />
       <div className={styles.profileInfo}>
-        <div className={styles.profileName}>{name}</div>
-        <div className={styles.profileDescription}>{description}</div>
+        <Text as="p" size="md">
+          {name}
+        </Text>
+        <Text as="p" size="sm">
+          {description}
+        </Text>
       </div>
     </div>
   );
