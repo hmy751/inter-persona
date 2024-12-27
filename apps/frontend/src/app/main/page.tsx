@@ -36,12 +36,13 @@ export default function MainPage() {
   };
 
   return (
-    <form className={styles.form} onSubmit={handleSubmit}>
-      <Text as="h2" size="2xl" align="center">
-        면접 시작하기
-      </Text>
+    <div className={styles.container}>
+      <form className={styles.form} onSubmit={handleSubmit}>
+        <Text as="h2" size="2xl" align="center">
+          면접 시작하기
+        </Text>
 
-      {/* <div className={styles.inputGroup}>
+        {/* <div className={styles.inputGroup}>
         <label className={styles.label}>이름</label>
         <input
           type="text"
@@ -51,17 +52,17 @@ export default function MainPage() {
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
         />
       </div> */}
-      <InputField label="이름">
-        <Input
-          placeholder="Enter Text..."
-          // isFocused={isFocused}
-          // isTouched={isTouched}
-          // onFocusChange={setIsFocused}
-          // onTouchChange={setIsTouched}
-        />
-      </InputField>
+        <InputField label="이름">
+          <Input
+            placeholder="Enter Text..."
+            // isFocused={isFocused}
+            // isTouched={isTouched}
+            // onFocusChange={setIsFocused}
+            // onTouchChange={setIsTouched}
+          />
+        </InputField>
 
-      {/* <div className={styles.inputGroup}>
+        {/* <div className={styles.inputGroup}>
         <label className={styles.label}>이메일</label>
         <input
           type="email"
@@ -71,19 +72,20 @@ export default function MainPage() {
           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
         />
       </div> */}
-      <InputField label="이메일">
-        <Input
-          placeholder="Enter Text..."
-          // isFocused={isFocused}
-          // isTouched={isTouched}
-          // onFocusChange={setIsFocused}
-          // onTouchChange={setIsTouched}
-        />
-      </InputField>
+        <InputField label="이메일">
+          <Input
+            placeholder="Enter Text..."
+            // isFocused={isFocused}
+            // isTouched={isTouched}
+            // onFocusChange={setIsFocused}
+            // onTouchChange={setIsTouched}
+          />
+        </InputField>
 
-      <Button variant="primary" fullWidth type="submit">
-        시작하기
-      </Button>
-    </form>
+        <Button variant="primary" fullWidth type="submit">
+          시작하기
+        </Button>
+      </form>
+    </div>
   );
 }
