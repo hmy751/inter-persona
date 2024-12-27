@@ -1,0 +1,33 @@
+.container {
+  width: 100%;
+  padding: 0 var(--space-2);
+}
+
+.labelWrapper {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.label {
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+
+.progressBarBg {
+  position: relative;
+  height: 0.5rem;
+  background-color: var(--color-gray-200);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.progressBarFill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background-color: var(--color-primary);
+  border-radius: 9999px;
+  transition: all 100ms ease-out;
+}
