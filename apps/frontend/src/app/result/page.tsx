@@ -52,7 +52,7 @@ export default function Page() {
   return (
     <div className={styles.container}>
       <Text as="h2" size="lg">
-        Result
+        Interview Result
       </Text>
       <ScoreSection />
       <TotalEvaluationSection />
