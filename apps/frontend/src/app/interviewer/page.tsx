@@ -1,7 +1,4 @@
 import InterviewerCard from "./_components/InterviewerCard";
-import { useInterviewerStore } from "@/store/useInterviewerStore";
-// import useUserStore from "@/store/useUserStore";
-// import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 import Text from "@repo/ui/Text";
 
@@ -32,32 +29,7 @@ const interviewerList = [
   },
 ];
 
-interface Interviewer {
-  id: number;
-  name: string;
-  imgUrl: string;
-  mbti: string;
-  description: string;
-}
-
 const InterviewerChoicePage: React.FC = () => {
-  // const [selectedInterviewer, setSelectedInterviewer] =
-  //   React.useState<Interviewer | null>(interviewerList[0] as Interviewer);
-
-  // const router = useRouter();
-
-  const { setInterviewer } = useInterviewerStore();
-  // const { user } = useUserStore();
-
-  // const handleClick = (interviewer: Interviewer) => {
-  //   setSelectedInterviewer(interviewer);
-  // };
-
-  // const selectInterviewer = (interviewer: Interviewer | null) => {
-  //   setInterviewer(interviewer);
-  //   router.push(`/chat/31`);
-  // };
-
   return (
     <div className={styles.container}>
       <Text as="h2" size="2xl" align="center">
@@ -65,6 +37,7 @@ const InterviewerChoicePage: React.FC = () => {
       </Text>
       {interviewerList.map((interviewer, index) => (
         <InterviewerCard
+          id={interviewer.id}
           key={interviewer.id}
           imgUrl={interviewer.imgUrl}
           name={interviewer.name}
