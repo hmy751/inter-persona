@@ -38,7 +38,8 @@
   /* Layout */
   --layout-container-max: 726px;
   --layout-header-height: 64px;
-  --layout-page-top-padding: 64px;
+  --layout-page-top-padding: 32px;
+  --layout-page-bottom-padding: 32px;
 
   /* Spacing */
   --space-1: 0.25rem; /* 4px */
