@@ -32,8 +32,8 @@ const interviewerList = [
 const InterviewerChoicePage: React.FC = () => {
   return (
     <div className={styles.container}>
-      <Text as="h2" size="2xl" align="center">
-        면접관 선택
+      <Text as="h2" size="lg" align="center">
+        Select Interviewer
       </Text>
       {interviewerList.map((interviewer, index) => (
         <InterviewerCard

@@ -38,8 +38,8 @@ export default function MainPage() {
   return (
     <div className={styles.container}>
       <form className={styles.form} onSubmit={handleSubmit}>
-        <Text as="h2" size="2xl" align="center">
-          면접 시작하기
+        <Text as="h2" size="lg" align="center">
+          Start Interview
         </Text>
 
         {/* <div className={styles.inputGroup}>
