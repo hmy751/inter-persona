@@ -21,6 +21,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {
   args: {
+    id: 1,
     imgUrl: "/images/ENFP.webp",
     name: "민지",
     mbti: "ENFP",
