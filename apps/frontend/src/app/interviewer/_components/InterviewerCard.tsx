@@ -1,18 +1,39 @@
-import { useTexture } from "@react-three/drei";
-
-const InterviewerCard: React.FC<{
+import Image from "next/image";
+import styles from "./InterviewerCard.module.css";
+import Text from "@repo/ui/Text";
+import Button from "@repo/ui/Button";
+interface InterviewerCardProps {
   imgUrl: string;
-  position: [number, number, number];
-  onClick: () => void;
-}> = ({ imgUrl, onClick, position }) => {
-  const [texture] = useTexture([imgUrl]);
+  name: string;
+  mbti: string;
+  description: string;
+}
 
+export default function InterviewerCard({
+  imgUrl,
+  name,
+  mbti,
+  description,
+}: InterviewerCardProps): React.ReactElement {
   return (
-    <mesh onClick={onClick} position={position}>
-      <planeGeometry args={[3, 3]} />
-      <meshBasicMaterial map={texture} />
-    </mesh>
+    <div className={styles.wrapper}>
+      <Image src={imgUrl} alt={name} height={150} width={150} />
+      <div className={styles.content}>
+        <Text as="p" size="sm">
+          {description}
+        </Text>
+        <Text as="h3" size="lg" weight="bold">
+          {name}
+        </Text>
+        <Text as="p" size="sm">
+          {mbti}
+        </Text>
+        <div className={styles.buttonWrapper}>
+          <Button variant="outline" size="md">
+            Start interview
+          </Button>
+        </div>
+      </div>
+    </div>
   );
-};
-
-export default InterviewerCard;
+}
