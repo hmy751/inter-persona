@@ -2,6 +2,7 @@
   width: 100%;
   max-width: 400px;
   padding-top: var(--layout-page-top-padding);
+  padding-bottom: var(--layout-page-bottom-padding);
 }
 
 .form {

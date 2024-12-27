@@ -3,5 +3,6 @@
   display: flex;
   flex-direction: column;
   padding-top: var(--layout-page-top-padding);
+  padding-bottom: var(--layout-page-bottom-padding);
   gap: var(--space-10);
 }
