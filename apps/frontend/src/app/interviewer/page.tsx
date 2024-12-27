@@ -1,16 +1,6 @@
-"use client";
-
-import { Canvas } from "@react-three/fiber";
-import React from "react";
-import Camera from "./_components/Camera";
 import InterviewerCard from "./_components/InterviewerCard";
-import { nomalizeIndex } from "./_utils/convert";
-import InterviewerInfo from "./_components/InterviewerInfo";
-import { Html } from "@react-three/drei";
-import { useInterviewerStore } from "@/store/useInterviewerStore";
-import useUserStore from "@/store/useUserStore";
-import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
+import Text from "@repo/ui/Text";
 
 const interviewerList = [
   {
@@ -39,58 +29,22 @@ const interviewerList = [
   },
 ];
 
-interface Interviewer {
-  id: number;
-  name: string;
-  imgUrl: string;
-  mbti: string;
-  description: string;
-}
-
 const InterviewerChoicePage: React.FC = () => {
-  const [selectedInterviewer, setSelectedInterviewer] =
-    React.useState<Interviewer | null>(interviewerList[0] as Interviewer);
-
-  const router = useRouter();
-
-  const { setInterviewer } = useInterviewerStore();
-  const { user } = useUserStore();
-
-  const handleClick = (interviewer: Interviewer) => {
-    setSelectedInterviewer(interviewer);
-  };
-
-  const selectInterviewer = (interviewer: Interviewer | null) => {
-    setInterviewer(interviewer);
-    router.push(`/chat/31`);
-  };
-
   return (
     <div className={styles.container}>
-      <Canvas className={styles.canvas}>
-        <Camera />
-        <InterviewerInfo selectedInterviewer={selectedInterviewer} />
-        {interviewerList.map((interviewer, index) => (
-          <InterviewerCard
-            key={interviewer.id}
-            imgUrl={interviewer.imgUrl}
-            position={[nomalizeIndex(index, interviewerList.length), -2.5, 0]}
-            onClick={() => {
-              handleClick(interviewer);
-            }}
-          />
-        ))}
-        <Html position={[3, 1.5, 0]}>
-          <button
-            className={styles.selectButton}
-            onClick={() => {
-              selectInterviewer(selectedInterviewer);
-            }}
-          >
-            선택
-          </button>
-        </Html>
-      </Canvas>
+      <Text as="h2" size="lg" align="center">
+        Select Interviewer
+      </Text>
+      {interviewerList.map((interviewer, index) => (
+        <InterviewerCard
+          id={interviewer.id}
+          key={interviewer.id}
+          imgUrl={interviewer.imgUrl}
+          name={interviewer.name}
+          mbti={interviewer.mbti}
+          description={interviewer.description}
+        />
+      ))}
     </div>
   );
 };
