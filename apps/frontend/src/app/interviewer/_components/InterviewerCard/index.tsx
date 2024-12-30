@@ -20,7 +20,17 @@ export default function InterviewerCard({
 }: InterviewerCardProps): React.ReactElement {
   return (
     <div className={styles.wrapper}>
-      <Image src={imgUrl} alt={name} height={150} width={150} />
+      <div className={styles.imageWrapper}>
+        <Image
+          src={imgUrl}
+          alt={name}
+          height={0}
+          width={0}
+          fill
+          sizes="(max-width: 767px) 100vw, 150px"
+          className={styles.image}
+        />
+      </div>
       <div className={styles.content}>
         <Text as="p" size="sm">
           {description}

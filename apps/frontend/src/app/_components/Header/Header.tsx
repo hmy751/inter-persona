@@ -1,14 +1,16 @@
 import styles from "./Header.module.css";
-import Text from "@repo/ui/Text";
 import HeaderUserInfo from "./HeaderUserInfo";
+import BackButton from "./BackButton";
+import HeaderTitle from "./HeaderTitle";
 
 interface HeaderProps {}
 
 export default function Header({}: HeaderProps): React.ReactElement {
   return (
     <header className={styles.header}>
-      <Text as="h1">Inter Persona</Text>
-      <HeaderUserInfo />
+      <BackButton className={styles.first} />
+      <HeaderTitle className={styles.second} />
+      <HeaderUserInfo className={styles.third} />
     </header>
   );
 }

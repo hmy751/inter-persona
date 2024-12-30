@@ -1,6 +1,5 @@
 .wrapper {
   width: 100%;
-  padding: var(--space-4);
   box-shadow: var(--shadow-sm);
   border-radius: var(--radius-md);
   display: flex;
@@ -9,6 +8,30 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--space-4);
+
+  @media (max-width: 767px) {
+    flex-direction: column;
+  }
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+  }
+}
+
+.imageWrapper {
+  width: 150px;
+  height: 150px;
+  position: relative;
+}
+
+@media (max-width: 767px) {
+  .imageWrapper {
+    width: 100%;
+    aspect-ratio: 1;
+  }
+  .image {
+    object-fit: cover;
+  }
 }
 
 .content {
