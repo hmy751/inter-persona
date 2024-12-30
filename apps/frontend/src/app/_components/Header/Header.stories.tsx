@@ -58,3 +58,18 @@ export const Mobile: Story = {
   },
   decorators: [withMockStore],
 };
+
+export const InterviewerPageInMobile: Story = {
+  args: {},
+  parameters: {
+    nextjs: {
+      navigation: {
+        pathname: "/interviewer",
+      },
+    },
+    viewport: {
+      defaultViewport: "mobile",
+    },
+  },
+  decorators: [withMockStore],
+};
