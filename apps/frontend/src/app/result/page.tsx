@@ -51,7 +51,7 @@ export default function Page() {
 
   return (
     <div className={styles.container}>
-      <Text as="h2" size="lg">
+      <Text as="h2" size="lg" className={styles.title}>
         Interview Result
       </Text>
       <ScoreSection />

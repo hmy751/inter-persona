@@ -38,7 +38,7 @@ export default function MainPage() {
   return (
     <div className={styles.container}>
       <form className={styles.form} onSubmit={handleSubmit}>
-        <Text as="h2" size="lg" align="center">
+        <Text as="h2" size="lg" align="center" className={styles.title}>
           Start Interview
         </Text>
 

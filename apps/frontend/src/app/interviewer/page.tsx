@@ -32,7 +32,7 @@ const interviewerList = [
 const InterviewerChoicePage: React.FC = () => {
   return (
     <div className={styles.container}>
-      <Text as="h2" size="lg" align="center">
+      <Text as="h2" size="lg" align="center" className={styles.title}>
         Select Interviewer
       </Text>
       {interviewerList.map((interviewer, index) => (
