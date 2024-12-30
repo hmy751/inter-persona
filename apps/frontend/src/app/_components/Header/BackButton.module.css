@@ -1,0 +1,15 @@
+.wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+
+@media (min-width: 768px) {
+  .wrapper {
+    display: none;
+  }
+}

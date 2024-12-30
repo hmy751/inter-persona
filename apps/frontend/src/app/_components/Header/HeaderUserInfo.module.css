@@ -3,3 +3,9 @@
   align-items: center;
   gap: var(--space-2);
 }
+
+.text {
+  @media (max-width: 767px) {
+    display: none;
+  }
+}

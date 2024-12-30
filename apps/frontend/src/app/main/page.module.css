@@ -1,8 +1,22 @@
 .container {
   width: 100%;
   max-width: 400px;
-  padding-top: var(--layout-page-top-padding);
-  padding-bottom: var(--layout-page-bottom-padding);
+
+  @media (min-width: 768px) {
+    padding-top: var(--layout-page-top-padding);
+    padding-bottom: var(--layout-page-bottom-padding);
+  }
+
+  @media (max-width: 767px) {
+    padding-top: var(--layout-page-top-padding-mobile);
+    padding-bottom: var(--layout-page-bottom-padding-mobile);
+  }
+}
+
+.title {
+  @media (max-width: 767px) {
+    font-size: var(--font-base) !important;
+  }
 }
 
 .form {

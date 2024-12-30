@@ -35,7 +35,7 @@ export default function Avatar({
       {...props}
     >
       <Image
-        src={src}
+        src={src || "/assets/images/default-avatar.svg"}
         alt={alt}
         width={sizeMap[size]}
         height={sizeMap[size]}

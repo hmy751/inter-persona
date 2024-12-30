@@ -41,6 +41,10 @@
   --layout-page-top-padding: 32px;
   --layout-page-bottom-padding: 32px;
 
+  --layout-header-height-mobile: 48px;
+  --layout-page-top-padding-mobile: 16px;
+  --layout-page-bottom-padding-mobile: 16px;
+
   /* Spacing */
   --space-1: 0.25rem; /* 4px */
   --space-2: 0.5rem; /* 8px */
