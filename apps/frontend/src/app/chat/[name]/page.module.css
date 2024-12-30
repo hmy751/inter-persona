@@ -2,7 +2,15 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  padding-top: var(--layout-page-top-padding);
-  padding-bottom: var(--layout-page-bottom-padding);
   gap: var(--space-10);
+
+  @media (min-width: 768px) {
+    padding-top: var(--layout-page-top-padding);
+    padding-bottom: var(--layout-page-bottom-padding);
+  }
+
+  @media (max-width: 767px) {
+    padding-top: var(--layout-page-top-padding-mobile);
+    padding-bottom: var(--layout-page-bottom-padding-mobile);
+  }
 }
