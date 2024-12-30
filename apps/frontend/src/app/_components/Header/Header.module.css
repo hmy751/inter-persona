@@ -1,7 +1,6 @@
 .header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: 0 var(--space-4);
   height: var(--layout-header-height);
   border-bottom: 1px solid var(--color-gray-200);
@@ -11,10 +10,33 @@
   left: 0;
   right: 0;
   z-index: var(--z-header);
+
+  justify-content: space-between;
 }
 
-.userInfo {
+.first {
+  flex: 1;
+}
+
+.second {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.third {
+  flex: 1;
   display: flex;
-  align-items: center;
-  gap: var(--space-2);
+  justify-content: flex-end;
+}
+
+@media (min-width: 768px) {
+  .header {
+    justify-content: space-between;
+  }
+
+  .second {
+    position: static;
+    transform: none;
+  }
 }

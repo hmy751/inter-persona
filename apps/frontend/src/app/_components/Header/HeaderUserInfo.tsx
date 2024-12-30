@@ -5,7 +5,9 @@ import Text from "@repo/ui/Text";
 import styles from "./HeaderUserInfo.module.css";
 import useUserStore from "@/store/useUserStore";
 
-export default function HeaderUserInfo(): React.ReactElement | null {
+interface HeaderUserInfoProps extends React.HTMLAttributes<HTMLDivElement> {}
+
+export default function HeaderUserInfo({}: HeaderUserInfoProps): React.ReactElement | null {
   const { user } = useUserStore();
 
   if (!user) return null;
