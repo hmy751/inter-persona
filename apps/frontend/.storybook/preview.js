@@ -29,6 +29,7 @@ const preview = {
       },
     },
     viewport: {
+      defaultViewport: "responsive",
       viewports: {
         ...MINIMAL_VIEWPORTS,
         ...customViewports,
