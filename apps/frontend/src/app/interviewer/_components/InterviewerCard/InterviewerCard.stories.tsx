@@ -6,6 +6,13 @@ const meta = {
   component: InterviewerCard,
   parameters: {
     layout: "centered",
+    nextjs: {
+      appDirectory: true,
+      navigation: {
+        back: () => console.log("Back button clicked"),
+        push: () => console.log("Router push called"),
+      },
+    },
   },
   tags: ["autodocs"],
   argTypes: {
@@ -40,4 +47,15 @@ export const Primary: Story = {
       <InterviewerCard {...args} />
     </div>
   ),
+};
+
+export const InMobile: Story = {
+  args: {
+    ...Primary.args,
+  },
+  parameters: {
+    viewport: {
+      defaultViewport: "mobile",
+    },
+  },
 };
