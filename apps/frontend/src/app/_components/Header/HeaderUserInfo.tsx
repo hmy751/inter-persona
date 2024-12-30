@@ -13,7 +13,7 @@ export default function HeaderUserInfo(): React.ReactElement | null {
   return (
     <div className={styles.userInfo}>
       <Avatar size="sm" src={user?.imageSrc} />
-      <Text width="60px" truncate>
+      <Text maxWidth="70px" align="right" truncate>
         {user?.name}
       </Text>
     </div>

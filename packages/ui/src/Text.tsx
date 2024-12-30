@@ -20,7 +20,7 @@ interface TextProps extends React.HTMLAttributes<HTMLElement> {
   as?: ComponentType;
   children: React.ReactNode;
   align?: "left" | "center" | "right";
-  width?: "full" | "fit" | (string & {});
+  maxWidth?: "full" | "fit" | (string & {});
   truncate?: boolean;
   lines?: number;
   color?: "primary" | "secondary" | "disabled" | "error" | "success";
@@ -32,7 +32,7 @@ export default function Text({
   as = "p",
   children,
   align = "left",
-  width = "fit",
+  maxWidth = "fit",
   truncate = false,
   color = "primary",
   lines,
@@ -52,10 +52,14 @@ export default function Text({
         lines && styles.multiLineTruncate,
         styles[color],
         styles[align],
-        width && styles[width as "full" | "fit"],
+        maxWidth && styles[maxWidth as "full" | "fit"],
         className
       )}
-      style={width && !styles[width as "full" | "fit"] ? { width } : undefined}
+      style={
+        maxWidth && !styles[maxWidth as "full" | "fit"]
+          ? { maxWidth }
+          : undefined
+      }
       {...restProps}
     >
       {children}
