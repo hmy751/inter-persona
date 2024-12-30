@@ -13,14 +13,16 @@ export default function HeaderTitle({
   const isMobile = useMediaQuery("(max-width: 767px)");
 
   const mapPathnameToTitle = {
-    "/main": "Inter Persona",
-    "/interviewer": "Select Interviewer",
-    "/chat": "Interview",
-    "/result": "Result",
+    main: "Inter Persona",
+    interviewer: "Select Interviewer",
+    chat: "Interview",
+    result: "Result",
   };
 
   const title = isMobile
-    ? mapPathnameToTitle[pathname as keyof typeof mapPathnameToTitle]
+    ? mapPathnameToTitle[
+        pathname.split("/")[1] as keyof typeof mapPathnameToTitle
+      ]
     : "Inter Persona";
 
   return (
