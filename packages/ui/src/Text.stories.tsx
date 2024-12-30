@@ -86,7 +86,7 @@ export const ErrorText: Story = {
 export const TruncatedText: Story = {
   args: {
     truncate: true,
-    width: "130px",
+    maxWidth: "130px",
     children: "This is a very long text ",
   },
 };
@@ -94,7 +94,7 @@ export const TruncatedText: Story = {
 export const MultiLineTruncatedText: Story = {
   args: {
     lines: 2,
-    width: "100px",
+    maxWidth: "100px",
     children: "This is a very long text ",
   },
 };
