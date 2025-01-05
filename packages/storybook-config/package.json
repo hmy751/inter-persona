@@ -1,0 +1,11 @@
+{
+  "name": "@repo/storybook-config",
+  "main": "./dist/main.js",
+  "types": "./dist/main.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build:storybook-config": "tsup"
+  }
+}

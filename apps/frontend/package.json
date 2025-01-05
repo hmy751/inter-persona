@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "next lint",
     "apps-storybook": "storybook dev -p 6006",
-    "build:apps-storybook": "storybook build"
+    "build:apps-storybook": "storybook build",
+    "test": "jest"
   },
   "dependencies": {
     "@react-three/drei": "^9.112.0",
@@ -31,6 +32,8 @@
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.3",
+    "@repo/testing-config": "*",
+    "@repo/storybook-config": "*",
     "@storybook/addon-essentials": "^8.4.3",
     "@storybook/addon-interactions": "^8.4.3",
     "@storybook/addon-onboarding": "^8.4.3",
@@ -39,6 +42,7 @@
     "@storybook/nextjs": "^8.4.3",
     "@storybook/react": "^8.4.3",
     "@storybook/test": "^8.4.3",
+    "@types/jest": "^29.5.14",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

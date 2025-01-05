@@ -20,7 +20,7 @@ const customViewports = {
   },
 };
 
-const preview = {
+const basicPreview = {
   parameters: {
     controls: {
       matchers: {
@@ -38,4 +38,4 @@ const preview = {
   },
 };
 
-export default preview;
+export default basicPreview;
