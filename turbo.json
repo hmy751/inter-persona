@@ -7,9 +7,17 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*", "!**/*.stories.{tsx,jsx,mdx}"],
       "outputs": [".next/**", "!.next/cache/**"]
     },
-    "ui-storybook": {},
+    "build:storybook-config": {
+      "dependsOn": ["^build:storybook-config"],
+      "cache": false
+    },
+    "ui-storybook": {
+      "dependsOn": ["^build:storybook-config"]
+    },
+    "apps-storybook": {
+      "dependsOn": ["^build:storybook-config"]
+    },
     "build:ui-storybook": {},
-    "apps-storybook": {},
     "build:apps-storybook": {},
     "lint": {
       "dependsOn": ["^lint"]
@@ -19,6 +27,10 @@
       "persistent": true
     },
     "dev:msw": {
+      "cache": false,
+      "persistent": true
+    },
+    "test": {
       "cache": false,
       "persistent": true
     }
