@@ -33,6 +33,7 @@
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.3",
     "@repo/testing-config": "*",
+    "@repo/storybook-config": "*",
     "@storybook/addon-essentials": "^8.4.3",
     "@storybook/addon-interactions": "^8.4.3",
     "@storybook/addon-onboarding": "^8.4.3",
