@@ -1,4 +1,4 @@
-import { post } from "./index";
+import fetcher from "./fetcher";
 
 interface UserData {
   id: number;
@@ -12,11 +12,8 @@ export interface LoginBody {
 }
 
 export const fetchLogin = async ({ name, developmentCategory }: LoginBody) => {
-  return post<UserData>({
-    path: "login",
-    body: {
-      name,
-      developmentCategory,
-    },
+  return fetcher.post<UserData>("login", {
+    name,
+    developmentCategory,
   });
 };
