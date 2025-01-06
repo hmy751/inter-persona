@@ -1,4 +1,4 @@
-import { post } from "./index";
+import { post } from "./fetcher";
 
 interface InterviewData {
   id: number;
