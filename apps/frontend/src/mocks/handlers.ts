@@ -1,6 +1,5 @@
 import { http, HttpResponse, RequestHandler } from "msw";
-
-import { baseURL } from "@/apis";
+import { baseURL } from "@/apis/fetcher";
 import { LoginBody } from "@/apis/user";
 
 import { InterviewBody, AIChatBody } from "@/apis/interview";
