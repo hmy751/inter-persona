@@ -1,4 +1,4 @@
-import { post } from "./fetcher";
+import fetcher from "./fetcher";
 
 interface InterviewData {
   id: number;
@@ -13,13 +13,12 @@ export const fetchInterview = async ({
   interviewerId,
   reviewerId,
 }: InterviewBody) => {
-  return post<InterviewData>({
-    path: "interview",
-    body: {
+  return fetcher.post<InterviewData>("interview",
+    {
       interviewerId,
       reviewerId,
-    },
-  });
+    }
+  );
 };
 
 interface SpeechToTextProps {
@@ -59,10 +58,7 @@ export interface AIChatData {
 }
 
 export const fetchAIChat = async ({ chatId, content }: AIChatBody) => {
-  return post<AIChatData>({
-    path: `interview/${chatId}/contents`,
-    body: {
-      content,
-    },
+  return fetcher.post<AIChatData>(`interview/${chatId}/contents`, {
+    content,
   });
 };

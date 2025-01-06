@@ -1,4 +1,4 @@
-
+export const baseURL = process.env.NEXT_PUBLIC_API_HOST;
 interface FetcherConfig {
   baseURL?: string;
   headers?: HeadersInit;
@@ -109,7 +109,7 @@ const createHttpClient = (defaultConfig: FetcherConfig) => {
 };
 
 const fetcher = createHttpClient({
-  baseURL: process.env.NEXT_PUBLIC_API_HOST,
+  baseURL: baseURL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
