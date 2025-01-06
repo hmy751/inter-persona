@@ -1,4 +1,4 @@
-export const baseURL = process.env.NEXT_PUBLIC_API_HOST;
+const baseURL = process.env.NEXT_PUBLIC_API_HOST;
 
 export const get = async <Result>({
   path,
