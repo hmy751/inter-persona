@@ -1,4 +1,4 @@
-import ErrorToast from "./_components/ErrorToast";
+import AppToast from "./_components/AppToast";
 import Header from "./_components/Header/Header";
 import styles from "./_layout.module.css";
 
@@ -11,7 +11,7 @@ export default function Layout({ children }: LayoutProps): React.ReactElement {
     <>
       <Header />
       <div className={styles.container}>{children}</div>
-      <ErrorToast />
+      <AppToast />
     </>
   );
 }
