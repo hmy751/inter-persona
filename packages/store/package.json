@@ -1,0 +1,15 @@
+{
+  "name": "@repo/store",
+  "version": "0.1.0",
+  "private": true,
+  "exports": {
+    ".": "./index.ts",
+    "./useToastStore": "./useToastStore.ts"
+  },
+  "dependencies": {
+    "zustand": "^4.5.0"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "*"
+  }
+}
