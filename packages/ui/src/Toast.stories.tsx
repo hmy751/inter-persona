@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import Toast, { useToast } from "./Toast";
+import Toast from "./Toast";
+import useToastStore from "@repo/store/useToastStore";
 import Button from "./Button";
 
 const meta = {
@@ -15,7 +16,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const ToastDemo = () => {
-  const { addToast } = useToast();
+  const addToast = useToastStore((state) => state.addToast);
 
   const showToast = () => {
     addToast({
@@ -25,16 +26,14 @@ const ToastDemo = () => {
     });
   };
 
-  return <Button onClick={showToast}>Show Toast</Button>;
+  return (
+    <>
+      <Button onClick={showToast}>Show Toast</Button>
+      <Toast />
+    </>
+  );
 };
 
 export const Primary: Story = {
-  args: {
-    children: <ToastDemo />,
-  },
-  render: () => (
-    <Toast>
-      <ToastDemo />
-    </Toast>
-  ),
+  render: () => <ToastDemo />,
 };
