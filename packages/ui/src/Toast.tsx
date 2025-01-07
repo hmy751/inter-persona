@@ -1,84 +1,40 @@
-import {
-  ReactNode,
-  useState,
-  useEffect,
-  createContext,
-  useContext,
-  useMemo,
-} from "react";
+"use client";
+
+import { ReactNode, useEffect } from "react";
 import { createPortal } from "react-dom";
 import styles from "./Toast.module.css";
 import Text from "./Text";
+import useToastStore, { ToastData } from "@repo/store/useToastStore";
+
 interface ToastProps {
-  children: ReactNode;
+  children?: ReactNode;
 }
-
-interface ToastContextType {
-  addToast: (toast: Omit<ToastData, "id">) => void;
-  removeToast: (id: string) => void;
-}
-
-interface ToastData {
-  id: string;
-  title?: string;
-  description?: string;
-  duration?: number;
-}
-
-const ToastContext = createContext<ToastContextType>({
-  addToast: () => {},
-  removeToast: () => {},
-});
 
 export default function Toast({ children }: ToastProps) {
-  const [toasts, setToasts] = useState<ToastData[]>([]);
-
-  const addToast = (toast: Omit<ToastData, "id">) => {
-    const id = Math.random().toString(36).substr(2, 9);
-    setToasts((prev) => [...prev, { ...toast, id }]);
-  };
-
-  const removeToast = (id: string) => {
-    setToasts((prev) => prev.filter((toast) => toast.id !== id));
-  };
-
-  const value = useMemo(
-    () => ({
-      addToast,
-      removeToast,
-    }),
-    [addToast, removeToast]
-  );
+  const toasts = useToastStore((state) => state.toasts);
 
   return (
-    <ToastContext.Provider value={value}>
+    <>
       {children}
       {createPortal(
         <div className={styles.viewport}>
           {toasts.map((toast) => (
-            <ToastItem
-              key={toast.id}
-              {...toast}
-              onRemove={() => removeToast(toast.id)}
-            />
+            <ToastItem key={toast.id} {...toast} />
           ))}
         </div>,
         document.body
       )}
-    </ToastContext.Provider>
+    </>
   );
 }
 
-function ToastItem({
-  title,
-  description,
-  duration = 5000,
-  onRemove,
-}: ToastData & { onRemove: () => void }) {
+function ToastItem({ id, title, description, duration = 5000 }: ToastData) {
+  const removeToast = useToastStore((state) => state.removeToast);
+
   useEffect(() => {
-    const timer = setTimeout(onRemove, duration);
+    const timer = setTimeout(() => removeToast(id), duration);
     return () => clearTimeout(timer);
-  }, [duration, onRemove]);
+  }, [duration, removeToast, id]);
 
   return (
     <div className={styles.root}>
@@ -95,11 +51,3 @@ function ToastItem({
     </div>
   );
 }
-
-export const useToast = () => {
-  const context = useContext(ToastContext);
-  if (!context) {
-    throw new Error("useToast must be used within a ToastProvider");
-  }
-  return context;
-};
