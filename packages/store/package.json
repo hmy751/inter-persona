@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "exports": {
-    ".": "./index.ts"
+    ".": "./index.ts",
+    "./useToastStore": "./useToastStore.ts"
   },
   "dependencies": {
     "zustand": "^4.5.0"
