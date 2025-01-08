@@ -13,7 +13,7 @@ afterEach(() => {
 });
 
 describe('사용자 답변 녹음 에러 처리', () => {
-  it('STT API 에러시 상태 변화 확인', async () => {
+  it('STT API 에러시 녹음 재요청 에러 토스트 메시지 표시', async () => {
     const setAddToastSpy = jest.spyOn(useToastStore.getState(), 'addToast');
 
     server.use(
@@ -44,7 +44,7 @@ describe('사용자 답변 녹음 에러 처리', () => {
     expect(setAddToastSpy).toHaveBeenCalledWith(STT_ERROR_TOAST);
   });
 
-  it('STT API 에러시 3회 시도까지는 녹음을 요청하고, 그 이상은 네트워크 에러처리 ', async () => {
+  it('STT API 에러 3회 까지는 녹음을 요청하고, 그 이후에는 네트워크 에러처리 하여 새로고침 유도', async () => {
     const setAddToastSpy = jest.spyOn(useToastStore.getState(), 'addToast');
     let attemptCount = 3;
 
