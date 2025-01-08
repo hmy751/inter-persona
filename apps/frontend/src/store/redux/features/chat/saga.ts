@@ -23,8 +23,8 @@ import {
   AIChatData,
   SpeechToTextData,
 } from "@/apis/interview";
-import { errorToastStore } from "@/store/useErrorToastStore";
 import { ChatContentSpeakerType } from "@/store/redux/type";
+import { useToastStore } from "@repo/store/useToastStore";
 
 interface SendRecordAction {
   type: string;
@@ -47,7 +47,7 @@ export function* watchRecord() {
   yield takeLatest(SEND_RECORD, speechToTextSaga);
 }
 
-function* speechToTextSaga(action: SendRecordAction) {
+export function* speechToTextSaga(action: SendRecordAction): Generator<any, void, any> {
   try {
     yield call(delay, 200);
 
@@ -66,17 +66,23 @@ function* speechToTextSaga(action: SendRecordAction) {
         payload: { content: data.text as unknown as string, chatId },
       });
     } else {
-      errorToastStore
+      useToastStore
         .getState()
-        .setError(
-          "음성이 제대로 입력되지 않았습니다. 답변을 다시 입력해주세요!"
-        );
+        .addToast({
+          title: 'STT API 에러',
+          description: "음성이 제대로 입력되지 않았습니다. 답변을 다시 입력해주세요!",
+          duration: 3000
+        });
       yield put(removeContent());
     }
   } catch (err) {
-    errorToastStore
+    useToastStore
       .getState()
-      .setError("요청에 실패했습니다. 인터뷰를 다시 시도해주세요!");
+      .addToast({
+        title: 'STT API 에러',
+        description: "요청에 실패했습니다. 인터뷰를 다시 시도해주세요!",
+        duration: 3000
+      });
     yield put(removeContent());
   }
 }
@@ -85,7 +91,7 @@ export function* watchStartChat() {
   yield takeLatest(START_CHAT, requestInterviewSaga);
 }
 
-function* requestInterviewSaga(action: RequestInterviewAction) {
+export function* requestInterviewSaga(action: RequestInterviewAction) {
   try {
     yield call(delay, 200);
 
@@ -105,13 +111,23 @@ function* requestInterviewSaga(action: RequestInterviewAction) {
     if (data.content) {
       yield put(updateContent({ content: data.content as unknown as string }));
     } else {
-      errorToastStore.getState().setError("다시 시도해주세요!");
+      useToastStore
+        .getState()
+        .addToast({
+          title: 'AI 응답 에러',
+          description: "다시 시도해주세요!",
+          duration: 3000
+        });
       yield put(removeContent());
     }
   } catch (err) {
-    errorToastStore
+    useToastStore
       .getState()
-      .setError("요청에 실패했습니다. 인터뷰를 다시 시도해주세요!");
+      .addToast({
+        title: 'AI 응답 에러',
+        description: "요청에 실패했습니다. 인터뷰를 다시 시도해주세요!",
+        duration: 3000
+      });
     yield put(removeContent());
   }
 }
