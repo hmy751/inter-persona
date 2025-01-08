@@ -14,6 +14,8 @@ import {
   updateContent,
   removeContent,
   startChat,
+  resetTrySpeechCount,
+  increaseTrySpeechCount,
 } from "./slice";
 import { delay } from "../../utils";
 import { RootState } from "@/store/redux/rootStore";
@@ -42,6 +44,7 @@ interface RequestInterviewAction {
   };
 }
 const selectChatState = (state: RootState) => state.chat.id;
+const selectTrySpeechCount = (state: RootState) => state.chat.trySpeechCount;
 
 export function* watchRecord() {
   yield takeLatest(SEND_RECORD, speechToTextSaga);
@@ -58,14 +61,19 @@ export function* speechToTextSaga(action: SendRecordAction): Generator<any, void
       formData: action.payload.formData,
     });
     const chatId: number = yield select(selectChatState);
+    const trySpeechCount: number = yield select(selectTrySpeechCount);
 
-    if (data.text) {
+    if (data?.text) {
       yield put(updateContent({ content: data.text }));
       yield* requestInterviewSaga({
         type: REQUEST_INTERVIEW,
         payload: { content: data.text as unknown as string, chatId },
       });
-    } else {
+      yield put(resetTrySpeechCount());
+      return;
+    }
+
+    if (data.text === '' && trySpeechCount < 3) {
       useToastStore
         .getState()
         .addToast({
@@ -74,7 +82,11 @@ export function* speechToTextSaga(action: SendRecordAction): Generator<any, void
           duration: 3000
         });
       yield put(removeContent());
+      yield put(increaseTrySpeechCount());
+      return;
     }
+
+    throw new Error('STT API 에러');
   } catch (err) {
     useToastStore
       .getState()
@@ -84,6 +96,7 @@ export function* speechToTextSaga(action: SendRecordAction): Generator<any, void
         duration: 3000
       });
     yield put(removeContent());
+    yield put(resetTrySpeechCount());
   }
 }
 

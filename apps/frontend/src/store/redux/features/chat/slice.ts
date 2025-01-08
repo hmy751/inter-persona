@@ -15,11 +15,13 @@ export interface ChatContent {
 export interface ChatState {
   id: number | null;
   contents: ChatContent[];
+  trySpeechCount: number;
 }
 
 const initialState: ChatState = {
   id: null,
   contents: [],
+  trySpeechCount: 0
 };
 
 const slice = createSlice({
@@ -73,6 +75,12 @@ const slice = createSlice({
     removeContent: (state) => {
       state.contents.pop();
     },
+    increaseTrySpeechCount: (state) => {
+      state.trySpeechCount++;
+    },
+    resetTrySpeechCount: (state) => {
+      state.trySpeechCount = 0;
+    },
   },
 });
 
@@ -82,6 +90,8 @@ export const {
   updateContent,
   removeContent,
   startChat,
+  increaseTrySpeechCount,
+  resetTrySpeechCount,
 } = slice.actions;
 
 export const SEND_RECORD = "SEND_RECORD" as const;
