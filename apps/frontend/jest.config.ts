@@ -18,6 +18,7 @@ const customConfig: Config = {
     /* 라이브러리 제거 예시 */
     "node_modules/(?!swiper)",
   ],
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
 };
 
 export default createJestConfig(customConfig);

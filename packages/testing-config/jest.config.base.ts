@@ -21,7 +21,7 @@ const baseConfig = {
     "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$":
       getTestingConfigPath("jest.transform.base.ts"),
   },
-  testEnvironment: "jest-environment-jsdom",
+  testEnvironment: "jest-fixed-jsdom",
   testEnvironmentOptions: {
     customExportConditions: [''],
   },
