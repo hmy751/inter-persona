@@ -97,6 +97,7 @@ export const {
   triggerContent,
   updateContent,
   removeContent,
+  errorContent,
   startChat,
   increaseTrySpeechCount,
   resetTrySpeechCount,

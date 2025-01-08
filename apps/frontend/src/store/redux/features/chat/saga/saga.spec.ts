@@ -6,7 +6,7 @@ import useToastStore from '@repo/store/useToastStore';
 
 import { speechToTextSaga } from './speechToTextSaga';
 import { requestInterviewSaga } from './requestInterviewSaga';
-import { removeContent, triggerContent, SEND_RECORD, increaseTrySpeechCount, START_CHAT, failAIResponse, startChat, REQUEST_INTERVIEW } from '../slice';
+import { removeContent, triggerContent, SEND_RECORD, increaseTrySpeechCount, REQUEST_INTERVIEW, errorContent } from '../slice';
 import { ChatContentSpeakerType } from '../../../type';
 import { STT_ERROR_TOAST, STT_NETWORK_ERROR_TOAST, } from '../constants';
 
@@ -96,7 +96,7 @@ describe('사용자 답변 녹음 에러 처리', () => {
 });
 
 describe('AI 응답 에러 처리', () => {
-  it('녹음된 답변을 전달 후 AI 응답 에러시, 메시지를 삭제하고 chat slice의 isAIResponseError 상태를 업데이트 한다.', async () => {
+  it('녹음된 답변을 전달 후 AI 응답 에러시, 현재 AI 응답 메시지를 삭제하고 이전 사용자 메시지의 에러상태를 업데이트 한다.', async () => {
     server.use(
       http.post(`${baseURL}/interview/1/contents`, async ({ request }) => {
         return Response.json({ content: null });
@@ -119,8 +119,8 @@ describe('AI 응답 에러 처리', () => {
 
     expect(dispatched).toEqual([
       triggerContent({ speaker: ChatContentSpeakerType.bot }),
-      failAIResponse(),
       removeContent(),
+      errorContent(),
     ]);
   });
 });
