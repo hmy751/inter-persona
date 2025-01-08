@@ -96,7 +96,6 @@ export function* speechToTextSaga(action: SendRecordAction): Generator<any, void
         duration: 3000
       });
     yield put(removeContent());
-    yield put(resetTrySpeechCount());
   }
 }
 
