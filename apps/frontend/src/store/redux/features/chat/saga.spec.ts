@@ -6,6 +6,7 @@ import useToastStore from '@repo/store/useToastStore';
 import { speechToTextSaga } from './saga';
 import { removeContent, triggerContent, SEND_RECORD, increaseTrySpeechCount } from './slice';
 import { ChatContentSpeakerType } from '../../type';
+import { STT_ERROR_TOAST, STT_NETWORK_ERROR_TOAST, } from './constants';
 
 afterEach(() => {
   jest.clearAllMocks();
@@ -40,11 +41,7 @@ describe('사용자 답변 녹음 에러 처리', () => {
       removeContent(),
       increaseTrySpeechCount(),
     ]);
-    expect(setAddToastSpy).toHaveBeenCalledWith({
-      title: 'STT API 에러',
-      description: "음성이 제대로 입력되지 않았습니다. 답변을 다시 입력해주세요!",
-      duration: 3000
-    });
+    expect(setAddToastSpy).toHaveBeenCalledWith(STT_ERROR_TOAST);
   });
 
   it('STT API 에러시 3회 시도까지는 녹음을 요청하고, 그 이상은 네트워크 에러처리 ', async () => {
@@ -82,11 +79,7 @@ describe('사용자 답변 녹음 에러 처리', () => {
         increaseTrySpeechCount()
       );
 
-      expect(setAddToastSpy).toHaveBeenCalledWith({
-        title: 'STT API 에러',
-        description: "음성이 제대로 입력되지 않았습니다. 답변을 다시 입력해주세요!",
-        duration: 3000
-      });
+      expect(setAddToastSpy).toHaveBeenCalledWith(STT_ERROR_TOAST);
 
       attemptCount++;
     }
@@ -96,10 +89,6 @@ describe('사용자 답변 녹음 에러 처리', () => {
       getState: () => ({ chat: { id: 1, trySpeechCount: attemptCount } })
     }, speechToTextSaga, action).toPromise();
 
-    expect(setAddToastSpy).toHaveBeenCalledWith({
-      title: 'STT API 에러',
-      description: "요청에 실패했습니다. 인터뷰를 다시 시도해주세요!",
-      duration: 3000
-    });
+    expect(setAddToastSpy).toHaveBeenCalledWith(STT_NETWORK_ERROR_TOAST);
   });
 });
