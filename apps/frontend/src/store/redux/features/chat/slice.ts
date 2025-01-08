@@ -16,12 +16,14 @@ export interface ChatState {
   id: number | null;
   contents: ChatContent[];
   trySpeechCount: number;
+  isAIResponseError: boolean;
 }
 
 const initialState: ChatState = {
   id: null,
   contents: [],
-  trySpeechCount: 0
+  trySpeechCount: 0,
+  isAIResponseError: false,
 };
 
 const slice = createSlice({
@@ -81,6 +83,12 @@ const slice = createSlice({
     resetTrySpeechCount: (state) => {
       state.trySpeechCount = 0;
     },
+    failAIResponse: (state) => {
+      state.isAIResponseError = true;
+    },
+    resetAIResponseError: (state) => {
+      state.isAIResponseError = false;
+    },
   },
 });
 
@@ -92,6 +100,8 @@ export const {
   startChat,
   increaseTrySpeechCount,
   resetTrySpeechCount,
+  failAIResponse,
+  resetAIResponseError,
 } = slice.actions;
 
 export const SEND_RECORD = "SEND_RECORD" as const;

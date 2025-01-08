@@ -10,6 +10,7 @@ import {
   updateContent,
   removeContent,
   startChat,
+  failAIResponse,
 } from "../slice";
 import { delay } from "../../../utils";
 import { RootState } from "@/store/redux/rootStore";
@@ -30,7 +31,7 @@ interface RequestInterviewAction {
 }
 const selectChatState = (state: RootState) => state.chat.id;
 
-export function* requestInterviewSaga(action: RequestInterviewAction) {
+export function* requestInterviewSaga(action: RequestInterviewAction): Generator<any, void, any> {
   try {
     yield call(delay, 200);
 
@@ -50,9 +51,7 @@ export function* requestInterviewSaga(action: RequestInterviewAction) {
     if (data.content) {
       yield put(updateContent({ content: data.content as unknown as string }));
     } else {
-      useToastStore
-        .getState()
-        .addToast(AI_ERROR_TOAST);
+      yield put(failAIResponse());
       yield put(removeContent());
     }
   } catch (err) {
