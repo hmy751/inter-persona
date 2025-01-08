@@ -1,51 +1,38 @@
+
 import {
-  takeLatest,
   call,
   put,
   select,
 } from "redux-saga/effects";
 import {
-  SEND_RECORD,
-  START_CHAT,
   REQUEST_INTERVIEW,
   triggerContent,
   updateContent,
   removeContent,
-  startChat,
   resetTrySpeechCount,
   increaseTrySpeechCount,
-} from "./slice";
-import { delay } from "../../utils";
+} from "../slice";
+import { delay } from "../../../utils";
 import { RootState } from "@/store/redux/rootStore";
 import {
-  fetchAIChat,
   fetchSpeechToText,
-  AIChatData,
   SpeechToTextData,
 } from "@/apis/interview";
 import { ChatContentSpeakerType } from "@/store/redux/type";
 import { useToastStore } from "@repo/store/useToastStore";
-import { STT_ERROR_TOAST, STT_NETWORK_ERROR_TOAST, AI_ERROR_TOAST, AI_NETWORK_ERROR_TOAST } from "./constants";
+import { STT_ERROR_TOAST, STT_NETWORK_ERROR_TOAST } from "../constants";
+
+const selectChatState = (state: RootState) => state.chat.id;
+const selectTrySpeechCount = (state: RootState) => state.chat.trySpeechCount;
+
+import { requestInterviewSaga } from "./requestInterviewSaga";
+
 interface SendRecordAction {
   type: string;
   payload: {
     id: bigint;
     formData: FormData;
   };
-}
-
-interface RequestInterviewAction {
-  type: string;
-  payload: {
-    chatId: number;
-    content: string;
-  };
-}
-const selectChatState = (state: RootState) => state.chat.id;
-const selectTrySpeechCount = (state: RootState) => state.chat.trySpeechCount;
-
-export function* watchRecord() {
-  yield takeLatest(SEND_RECORD, speechToTextSaga);
 }
 
 export function* speechToTextSaga(action: SendRecordAction): Generator<any, void, any> {
@@ -85,43 +72,6 @@ export function* speechToTextSaga(action: SendRecordAction): Generator<any, void
     useToastStore
       .getState()
       .addToast(STT_NETWORK_ERROR_TOAST);
-    yield put(removeContent());
-  }
-}
-
-export function* watchStartChat() {
-  yield takeLatest(START_CHAT, requestInterviewSaga);
-}
-
-export function* requestInterviewSaga(action: RequestInterviewAction) {
-  try {
-    yield call(delay, 200);
-
-    if (action.type === START_CHAT) {
-      yield put(startChat({ id: action.payload.chatId }));
-    }
-    const chatId: number = yield select(selectChatState);
-
-    yield put(triggerContent({ speaker: ChatContentSpeakerType.bot }));
-    yield call(delay, 500);
-
-    const data: AIChatData = yield call(fetchAIChat, {
-      chatId,
-      content: action.payload.content,
-    });
-
-    if (data.content) {
-      yield put(updateContent({ content: data.content as unknown as string }));
-    } else {
-      useToastStore
-        .getState()
-        .addToast(AI_ERROR_TOAST);
-      yield put(removeContent());
-    }
-  } catch (err) {
-    useToastStore
-      .getState()
-      .addToast(AI_NETWORK_ERROR_TOAST);
     yield put(removeContent());
   }
 }

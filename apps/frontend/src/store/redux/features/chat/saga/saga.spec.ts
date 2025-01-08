@@ -3,10 +3,10 @@ import { server } from '@/mocks/server';
 import { runSaga } from 'redux-saga';
 import useToastStore from '@repo/store/useToastStore';
 
-import { speechToTextSaga } from './saga';
-import { removeContent, triggerContent, SEND_RECORD, increaseTrySpeechCount } from './slice';
-import { ChatContentSpeakerType } from '../../type';
-import { STT_ERROR_TOAST, STT_NETWORK_ERROR_TOAST, } from './constants';
+import { speechToTextSaga } from './speechToTextSaga';
+import { removeContent, triggerContent, SEND_RECORD, increaseTrySpeechCount } from '../slice';
+import { ChatContentSpeakerType } from '../../../type';
+import { STT_ERROR_TOAST, STT_NETWORK_ERROR_TOAST, } from '../constants';
 
 afterEach(() => {
   jest.clearAllMocks();
