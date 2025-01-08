@@ -7,14 +7,6 @@ import "@testing-library/jest-dom";
 import "jest-canvas-mock";
 import "jest-css-modules";
 
-// jest.mock("swiper/css", jest.fn());
-
-// import { server } from "./mocks/server";
-
-// beforeAll(() => server.listen());
-// afterEach(() => server.resetHandlers());
-// afterAll(() => server.close());
-
 // // window 객체가 없을 경우를 대비한 전역 설정
 if (typeof window === 'undefined') {
   global.window = {} as Window & typeof globalThis;
