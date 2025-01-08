@@ -10,7 +10,8 @@
     "lint": "next lint",
     "apps-storybook": "storybook dev -p 6006",
     "build:apps-storybook": "storybook build",
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "@react-three/drei": "^9.112.0",
