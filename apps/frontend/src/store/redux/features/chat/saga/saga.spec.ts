@@ -1,10 +1,12 @@
 import { http } from 'msw';
+import { baseURL } from '@/apis/fetcher';
 import { server } from '@/mocks/server';
 import { runSaga } from 'redux-saga';
 import useToastStore from '@repo/store/useToastStore';
 
 import { speechToTextSaga } from './speechToTextSaga';
-import { removeContent, triggerContent, SEND_RECORD, increaseTrySpeechCount } from '../slice';
+import { requestInterviewSaga } from './requestInterviewSaga';
+import { removeContent, triggerContent, SEND_RECORD, increaseTrySpeechCount, START_CHAT, failAIResponse, startChat, REQUEST_INTERVIEW } from '../slice';
 import { ChatContentSpeakerType } from '../../../type';
 import { STT_ERROR_TOAST, STT_NETWORK_ERROR_TOAST, } from '../constants';
 
@@ -90,5 +92,35 @@ describe('사용자 답변 녹음 에러 처리', () => {
     }, speechToTextSaga, action).toPromise();
 
     expect(setAddToastSpy).toHaveBeenCalledWith(STT_NETWORK_ERROR_TOAST);
+  });
+});
+
+describe('AI 응답 에러 처리', () => {
+  it('녹음된 답변을 전달 후 AI 응답 에러시, 메시지를 삭제하고 chat slice의 isAIResponseError 상태를 업데이트 한다.', async () => {
+    server.use(
+      http.post(`${baseURL}/interview/1/contents`, async ({ request }) => {
+        return Response.json({ content: null });
+      })
+    );
+
+    const dispatched: any[] = [];
+    const action = {
+      type: REQUEST_INTERVIEW,
+      payload: {
+        chatId: 1,
+        content: 'test'
+      }
+    };
+
+    await runSaga({
+      dispatch: (action) => dispatched.push(action),
+      getState: () => ({ chat: { id: 1, trySpeechCount: 0 } })
+    }, requestInterviewSaga, action).toPromise();
+
+    expect(dispatched).toEqual([
+      triggerContent({ speaker: ChatContentSpeakerType.bot }),
+      failAIResponse(),
+      removeContent(),
+    ]);
   });
 });
