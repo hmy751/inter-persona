@@ -2,9 +2,7 @@ import {
   takeLatest,
   call,
   put,
-  takeEvery,
   select,
-  debounce,
 } from "redux-saga/effects";
 import {
   SEND_RECORD,
@@ -27,7 +25,7 @@ import {
 } from "@/apis/interview";
 import { ChatContentSpeakerType } from "@/store/redux/type";
 import { useToastStore } from "@repo/store/useToastStore";
-
+import { STT_ERROR_TOAST, STT_NETWORK_ERROR_TOAST, AI_ERROR_TOAST, AI_NETWORK_ERROR_TOAST } from "./constants";
 interface SendRecordAction {
   type: string;
   payload: {
@@ -76,25 +74,17 @@ export function* speechToTextSaga(action: SendRecordAction): Generator<any, void
     if (data.text === '' && trySpeechCount < 3) {
       useToastStore
         .getState()
-        .addToast({
-          title: 'STT API 에러',
-          description: "음성이 제대로 입력되지 않았습니다. 답변을 다시 입력해주세요!",
-          duration: 3000
-        });
+        .addToast(STT_ERROR_TOAST);
       yield put(removeContent());
       yield put(increaseTrySpeechCount());
       return;
     }
 
-    throw new Error('STT API 에러');
+    throw new Error('녹음 변환 에러');
   } catch (err) {
     useToastStore
       .getState()
-      .addToast({
-        title: 'STT API 에러',
-        description: "요청에 실패했습니다. 인터뷰를 다시 시도해주세요!",
-        duration: 3000
-      });
+      .addToast(STT_NETWORK_ERROR_TOAST);
     yield put(removeContent());
   }
 }
@@ -125,21 +115,13 @@ export function* requestInterviewSaga(action: RequestInterviewAction) {
     } else {
       useToastStore
         .getState()
-        .addToast({
-          title: 'AI 응답 에러',
-          description: "다시 시도해주세요!",
-          duration: 3000
-        });
+        .addToast(AI_ERROR_TOAST);
       yield put(removeContent());
     }
   } catch (err) {
     useToastStore
       .getState()
-      .addToast({
-        title: 'AI 응답 에러',
-        description: "요청에 실패했습니다. 인터뷰를 다시 시도해주세요!",
-        duration: 3000
-      });
+      .addToast(AI_NETWORK_ERROR_TOAST);
     yield put(removeContent());
   }
 }
