@@ -21,7 +21,7 @@ import {
 import { ChatContentSpeakerType } from "@/store/redux/type";
 import { useToastStore } from "@repo/store/useToastStore";
 import { AI_ERROR_TOAST, AI_NETWORK_ERROR_TOAST } from "../constants";
-
+import { errorContent } from "../slice";
 interface RequestInterviewAction {
   type: string;
   payload: {
@@ -51,8 +51,8 @@ export function* requestInterviewSaga(action: RequestInterviewAction): Generator
     if (data.content) {
       yield put(updateContent({ content: data.content as unknown as string }));
     } else {
-      yield put(failAIResponse());
       yield put(removeContent());
+      yield put(errorContent());
     }
   } catch (err) {
     useToastStore
