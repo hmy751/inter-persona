@@ -10,12 +10,14 @@
     "lint": "next lint",
     "apps-storybook": "storybook dev -p 6006",
     "build:apps-storybook": "storybook build",
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "@react-three/drei": "^9.112.0",
     "@react-three/fiber": "^8.17.7",
     "@reduxjs/toolkit": "^2.2.7",
+    "@repo/store": "*",
     "@tanstack/react-query": "^5.56.2",
     "framer-motion": "^11.5.4",
     "glslify": "^7.1.1",
@@ -28,13 +30,12 @@
     "recorder-js": "^1.0.7",
     "redux-saga": "^1.3.0",
     "three": "^0.168.0",
-    "zustand": "^4.5.5",
-    "@repo/store": "*"
+    "zustand": "^4.5.5"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.3",
-    "@repo/testing-config": "*",
     "@repo/storybook-config": "*",
+    "@repo/testing-config": "*",
     "@storybook/addon-essentials": "^8.4.3",
     "@storybook/addon-interactions": "^8.4.3",
     "@storybook/addon-onboarding": "^8.4.3",
