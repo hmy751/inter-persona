@@ -13,10 +13,12 @@ interface ToastState {
   removeToast: (id: string) => void;
 }
 
+const randomId = () => Math.random().toString(36).substring(2);
+
 export const useToastStore = create<ToastState>((set) => ({
   toasts: [],
   addToast: (toast: Omit<ToastData, "id">) => set((state) => ({
-    toasts: [...state.toasts, { ...toast, id: crypto.randomUUID() }]
+    toasts: [...state.toasts, { ...toast, id: randomId() }]
   })),
   removeToast: (id: string) =>
     set((state) => ({
