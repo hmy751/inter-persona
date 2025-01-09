@@ -6,7 +6,7 @@ import useToastStore from '@repo/store/useToastStore';
 
 import { speechToTextSaga } from './speechToTextSaga';
 import { requestInterviewSaga } from './requestInterviewSaga';
-import { removeContent, triggerContent, SEND_RECORD, increaseTrySpeechCount, REQUEST_INTERVIEW, errorContent } from '../slice';
+import { removeContent, triggerContent, SEND_RECORD, increaseTrySpeechCount, REQUEST_INTERVIEW, errorContent, updateContent } from '../slice';
 import { ChatContentSpeakerType } from '../../../type';
 import { STT_ERROR_TOAST, STT_NETWORK_ERROR_TOAST, } from '../constants';
 
@@ -121,6 +121,61 @@ describe('AI 응답 에러 처리', () => {
       triggerContent({ speaker: ChatContentSpeakerType.bot }),
       removeContent(),
       errorContent(),
+    ]);
+  });
+
+  it('AI 응답 에러 후, 다시 시도하기 클릭하여 dispatch할 경우, 이전의 사용자 메시지를 이용하여 다시 녹음을 요청한다.', async () => {
+    server.use(
+      http.post(`${baseURL}/interview/1/contents`, async ({ request }) => {
+        return Response.json({ content: null });
+      })
+    );
+
+    const dispatched: any[] = [];
+    const action = {
+      type: REQUEST_INTERVIEW,
+      payload: {
+        chatId: 1,
+        content: 'test'
+      }
+    };
+
+    await runSaga({
+      dispatch: (action) => dispatched.push(action),
+      getState: () => ({ chat: { id: 1, trySpeechCount: 0 } })
+    }, requestInterviewSaga, action).toPromise();
+
+    const prevErrorDispatched = [
+      triggerContent({ speaker: ChatContentSpeakerType.bot }),
+      removeContent(),
+      errorContent(),
+    ]
+
+    expect(dispatched).toEqual(prevErrorDispatched);
+
+    server.use(
+      http.post(`${baseURL}/interview/1/contents`, async ({ request }) => {
+        return Response.json({ content: 'response success' });
+      })
+    );
+
+    const retryAction = {
+      type: REQUEST_INTERVIEW,
+      payload: {
+        content: 'test1',
+        chatId: 1
+      }
+    };
+
+    await runSaga({
+      dispatch: (action) => dispatched.push(action),
+      getState: () => ({ chat: { id: 1, trySpeechCount: 0 } })
+    }, requestInterviewSaga, retryAction).toPromise();
+
+    expect(dispatched).toEqual([
+      ...prevErrorDispatched,
+      triggerContent({ speaker: ChatContentSpeakerType.bot }),
+      updateContent({ content: 'response success' }),
     ]);
   });
 });
