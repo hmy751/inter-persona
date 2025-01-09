@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useRef, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
-import InterviewerProfile from "./_components/InterviewerProfile";
+import InterviewerProfileSection from "./_components/InterviewerProfileSection";
 import ChatArticle from "./_components/ChatArticle";
 import {
   selectChatContents,
@@ -67,7 +67,7 @@ export default function Page() {
       <Text as="h2" size="lg" className={styles.title}>
         Interview
       </Text>
-      <InterviewerProfile
+      <InterviewerProfileSection
         src={interviewer?.imgUrl}
         name={interviewer?.name}
         description={interviewer?.description}

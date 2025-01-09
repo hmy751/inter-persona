@@ -1,17 +1,17 @@
 import styles from "./chat.module.css";
 import Avatar from "@repo/ui/Avatar";
 import Text from "@repo/ui/Text";
-interface InterviewerProfileProps {
+interface InterviewerProfileSectionProps {
   src: string;
   name: string;
   description: string;
 }
 
-export default function InterviewerProfile({
+export default function InterviewerProfileSection({
   src,
   name,
   description,
-}: InterviewerProfileProps) {
+}: InterviewerProfileSectionProps) {
   return (
     <div className={styles.profileContainer}>
       <Avatar src={src} size="md" />
