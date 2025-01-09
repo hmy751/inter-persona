@@ -62,16 +62,28 @@
   }
 }
 
-.skeletonLoader {
-  width: 200px;
-  height: 44px;
-  border-radius: var(--radius-lg);
+.skeletonGrayBackground {
   background: linear-gradient(
     90deg,
     var(--color-gray-100) 25%,
     var(--color-gray-50) 50%,
     var(--color-gray-100) 75%
   );
+}
+
+.skeletonBlueBackground {
+  background: linear-gradient(
+    90deg,
+    var(--color-primary) 25%,
+    var(--color-secondary) 50%,
+    var(--color-primary) 75%
+  );
+}
+
+.skeletonLoader {
+  width: 200px;
+  height: 44px;
+  border-radius: var(--radius-lg);
   background-size: 200% 100%;
   animation: loading 1.5s infinite;
 }

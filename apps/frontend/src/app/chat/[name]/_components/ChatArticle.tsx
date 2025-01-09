@@ -1,6 +1,7 @@
 import { createContext, useContext, useMemo } from "react";
 import styles from "./chat.module.css";
 import Avatar from "@repo/ui/Avatar";
+import clsx from "clsx";
 
 export type ChatType = "user" | "bot" | "";
 
@@ -28,7 +29,19 @@ function ChatSpeech({ status, text }: ChatSpeechProps) {
   const { type } = useContext(ChatArticleContext);
 
   if (status === "loading") {
-    return <div className={styles.skeletonLoader} />;
+    if (type === "user") {
+      return (
+        <div
+          className={clsx(styles.skeletonLoader, styles.skeletonBlueBackground)}
+        />
+      );
+    } else {
+      return (
+        <div
+          className={clsx(styles.skeletonLoader, styles.skeletonGrayBackground)}
+        />
+      );
+    }
   }
 
   return (
