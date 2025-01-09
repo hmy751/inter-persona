@@ -11,6 +11,8 @@ import {
   removeContent,
   startChat,
   failAIResponse,
+  resetTrySpeechCount,
+  CANCEL_CURRENT_REQUEST_INTERVIEW,
 } from "../slice";
 import { delay } from "../../../utils";
 import { RootState } from "@/store/redux/rootStore";
@@ -60,4 +62,9 @@ export function* requestInterviewSaga(action: RequestInterviewAction): Generator
       .addToast(AI_NETWORK_ERROR_TOAST);
     yield put(removeContent());
   }
+}
+
+export function* cancelCurrentRequestInterviewSaga(): Generator<any, void, any> {
+  yield put(removeContent());
+  yield put(resetTrySpeechCount());
 }
