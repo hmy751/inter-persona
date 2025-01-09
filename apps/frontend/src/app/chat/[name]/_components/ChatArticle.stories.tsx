@@ -110,13 +110,31 @@ export const UserChatWithLoading = {
   },
 };
 
-// export const UserChatWithInterviewerError = {
-//   render: () => {
-//     return (
-//       <ChatArticle type={ChatContentSpeakerType.user}>
-//         <ChatArticle.Speech status={ChatContentStatusType.fail} text={""} />
-//         <ChatArticle.Avatar src={user?.imageSrc} />
-//       </ChatArticle>
-//     );
-//   },
-// };
+const mockUserChatContentWithInterviewerError = {
+  status: ChatContentStatusType.fail,
+  speaker: ChatContentSpeakerType.user,
+  content: "안녕하세요 개발자 입니다.",
+  timeStamp: new Date(),
+};
+
+export const UserChatWithInterviewerError = {
+  decorators: [
+    (Story: any) => (
+      <div style={{ height: "200px" }}>
+        <Story />
+      </div>
+    ),
+  ],
+  render: () => {
+    const { status, speaker, content } =
+      mockUserChatContentWithInterviewerError;
+
+    return (
+      <ChatArticle type={speaker} status={status}>
+        <ChatArticle.Speech text={content} />
+        <ChatArticle.Avatar src={user?.imageSrc} />
+        <ChatArticle.RetryCancelSelector />
+      </ChatArticle>
+    );
+  },
+};
