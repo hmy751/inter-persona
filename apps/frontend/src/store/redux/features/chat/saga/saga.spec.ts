@@ -5,8 +5,8 @@ import { runSaga } from 'redux-saga';
 import useToastStore from '@repo/store/useToastStore';
 
 import { speechToTextSaga } from './speechToTextSaga';
-import { requestInterviewSaga } from './requestInterviewSaga';
-import { removeContent, triggerContent, SEND_RECORD, increaseTrySpeechCount, REQUEST_INTERVIEW, errorContent, updateContent } from '../slice';
+import { cancelCurrentRequestInterviewSaga, requestInterviewSaga } from './requestInterviewSaga';
+import { removeContent, triggerContent, SEND_RECORD, increaseTrySpeechCount, REQUEST_INTERVIEW, errorContent, updateContent, CANCEL_CURRENT_REQUEST_INTERVIEW, resetTrySpeechCount } from '../slice';
 import { ChatContentSpeakerType } from '../../../type';
 import { STT_ERROR_TOAST, STT_NETWORK_ERROR_TOAST, } from '../constants';
 
@@ -176,6 +176,48 @@ describe('AI 응답 에러 처리', () => {
       ...prevErrorDispatched,
       triggerContent({ speaker: ChatContentSpeakerType.bot }),
       updateContent({ content: 'response success' }),
+    ]);
+  });
+
+  it('AI 응답 에러 후, 취소하기 클릭하여 취소에 대한 액션을 dispatch할 경우, 이전 메시지의 상태를 초기화 한다.', async () => {
+    server.use(
+      http.post(`${baseURL}/interview/1/contents`, async ({ request }) => {
+        return Response.json({ content: null });
+      })
+    );
+
+    const dispatched: any[] = [];
+
+    const action = {
+      type: REQUEST_INTERVIEW,
+      payload: {
+        chatId: 1,
+        content: 'test'
+      }
+    };
+
+    await runSaga({
+      dispatch: (action) => dispatched.push(action),
+      getState: () => ({ chat: { id: 1, trySpeechCount: 0 } })
+    }, requestInterviewSaga, action).toPromise();
+
+    const prevErrorDispatched = [
+      triggerContent({ speaker: ChatContentSpeakerType.bot }),
+      removeContent(),
+      errorContent(),
+    ]
+
+    expect(dispatched).toEqual(prevErrorDispatched);
+
+    await runSaga({
+      dispatch: (action) => dispatched.push(action),
+      getState: () => ({ chat: { id: 1, trySpeechCount: 0 } })
+    }, cancelCurrentRequestInterviewSaga).toPromise();
+
+    expect(dispatched).toEqual([
+      ...prevErrorDispatched,
+      removeContent(),
+      resetTrySpeechCount(),
     ]);
   });
 });
