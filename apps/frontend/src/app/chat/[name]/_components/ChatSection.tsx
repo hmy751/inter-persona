@@ -1,0 +1,87 @@
+"use client";
+
+import { useSelector, useDispatch } from "react-redux";
+import {
+  selectChatContents,
+  selectChatLimit,
+} from "@/store/redux/features/chat/selector";
+import ChatArticle from "./ChatArticle";
+import { useInterviewerStore } from "@/store/useInterviewerStore";
+import useUserStore from "@/store/useUserStore";
+import { fetchInterview } from "@/apis/interview";
+import {
+  START_CHAT,
+  initializeChatState,
+} from "@/store/redux/features/chat/slice";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+
+export default function ChatSection({
+  interviewerImg,
+  userImg,
+}: {
+  interviewerImg: string;
+  userImg: string;
+}) {
+  const chatContents = useSelector(selectChatContents);
+  const dispatch = useDispatch();
+  const { interviewer } = useInterviewerStore();
+  const { user } = useUserStore();
+  const chatLimit = useSelector(selectChatLimit);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (chatLimit) {
+      router.push("/result");
+    }
+  }, [router, chatLimit]);
+
+  useEffect(() => {
+    if (!user || !interviewer) return;
+
+    try {
+      (async function init() {
+        const data = await fetchInterview({
+          interviewerId: interviewer?.id,
+          reviewerId: user.id,
+        });
+
+        if (!data?.id) return;
+
+        dispatch({
+          type: START_CHAT,
+          payload: {
+            chatId: data?.id,
+            content: "안녕하세요. 간단히 자기소개 부탁드립니다.",
+          },
+        });
+      })();
+    } catch (err) {}
+    return () => {
+      dispatch(initializeChatState(null));
+    };
+  }, [user, interviewer, dispatch]);
+
+  return (
+    <>
+      {chatContents.map(({ speaker, content, status }) => {
+        return (
+          <ChatArticle key={speaker} type={speaker} status={status}>
+            {speaker === "bot" ? (
+              <>
+                <ChatArticle.Avatar src={interviewerImg} />
+                <ChatArticle.Speech text={content} />
+              </>
+            ) : (
+              <>
+                <ChatArticle.Speech text={content} />
+                <ChatArticle.Avatar src={userImg} />
+                <ChatArticle.RetryCancelSelector />
+              </>
+            )}
+          </ChatArticle>
+        );
+      })}
+    </>
+  );
+}
