@@ -5,8 +5,8 @@ import { runSaga } from 'redux-saga';
 import useToastStore from '@repo/store/useToastStore';
 
 import { speechToTextSaga } from './speechToTextSaga';
-import { cancelCurrentRequestInterviewSaga, requestInterviewSaga } from './requestInterviewSaga';
-import { removeContent, triggerContent, SEND_RECORD, increaseTrySpeechCount, REQUEST_INTERVIEW, errorContent, updateContent, CANCEL_CURRENT_REQUEST_INTERVIEW, resetTrySpeechCount } from '../slice';
+import { cancelCurrentRequestInterviewSaga, requestInterviewSaga, retryInterviewSaga } from './requestInterviewSaga';
+import { removeContent, triggerContent, SEND_RECORD, increaseTrySpeechCount, REQUEST_INTERVIEW, errorContent, updateContent, CANCEL_CURRENT_REQUEST_INTERVIEW, resetTrySpeechCount, RETRY_INTERVIEW, resetContentStatus } from '../slice';
 import { ChatContentSpeakerType } from '../../../type';
 import { STT_ERROR_TOAST, STT_NETWORK_ERROR_TOAST, } from '../constants';
 
@@ -160,20 +160,21 @@ describe('AI 응답 에러 처리', () => {
     );
 
     const retryAction = {
-      type: REQUEST_INTERVIEW,
+      type: RETRY_INTERVIEW,
       payload: {
-        content: 'test1',
-        chatId: 1
+        chatId: 1,
+        content: 'test',
       }
     };
 
     await runSaga({
       dispatch: (action) => dispatched.push(action),
       getState: () => ({ chat: { id: 1, trySpeechCount: 0 } })
-    }, requestInterviewSaga, retryAction).toPromise();
+    }, retryInterviewSaga, retryAction).toPromise();
 
     expect(dispatched).toEqual([
       ...prevErrorDispatched,
+      resetContentStatus(),
       triggerContent({ speaker: ChatContentSpeakerType.bot }),
       updateContent({ content: 'response success' }),
     ]);
