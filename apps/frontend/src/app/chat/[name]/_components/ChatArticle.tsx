@@ -4,43 +4,69 @@ import Avatar from "@repo/ui/Avatar";
 import clsx from "clsx";
 import Button from "@repo/ui/Button";
 import { ChatContentStatusType } from "@/store/redux/type";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  REQUEST_INTERVIEW,
+  CANCEL_CURRENT_REQUEST_INTERVIEW,
+} from "@/store/redux/features/chat/slice";
+import { selectChatId } from "@/store/redux/features/chat/selector";
 
 export type ChatType = "user" | "bot" | "";
 
 interface ChatArticleProps {
   type: ChatType;
   status: ChatContentStatusType;
+  content: string | null;
   children: React.ReactNode;
-}
-
-interface ChatSpeechProps {
-  text: string | null;
 }
 
 const ChatArticleContext = createContext<{
   type: ChatType;
   status: ChatContentStatusType;
-}>({ type: "", status: ChatContentStatusType.loading });
+  content: string | null;
+}>({ type: "", status: ChatContentStatusType.loading, content: null });
 
 function ChatRetryCancelSelector() {
-  const { status } = useContext(ChatArticleContext);
+  const { status, content } = useContext(ChatArticleContext);
+  const dispatch = useDispatch();
+  const chatId = useSelector(selectChatId);
 
   if (status !== ChatContentStatusType.fail) return null;
 
+  const handleRetry = () => {
+    console.log("retry");
+    dispatch({
+      type: REQUEST_INTERVIEW,
+      payload: {
+        id: chatId,
+        content: content as unknown as string,
+      },
+    });
+    console.log("retry end");
+  };
+
+  const handleCancel = () => {
+    console.log("cancel");
+    dispatch({
+      type: CANCEL_CURRENT_REQUEST_INTERVIEW,
+    });
+    console.log("cancel end");
+  };
+
   return (
     <div className={styles.retryCancelSelector}>
-      <Button size="sm" variant="secondary">
+      <Button size="sm" variant="secondary" onClick={handleRetry}>
         다시 시도하기
       </Button>
-      <Button size="sm" variant="outline">
+      <Button size="sm" variant="outline" onClick={handleCancel}>
         취소하기
       </Button>
     </div>
   );
 }
 
-function ChatSpeech({ text }: ChatSpeechProps) {
-  const { type, status } = useContext(ChatArticleContext);
+function ChatSpeech() {
+  const { type, status, content } = useContext(ChatArticleContext);
 
   if (status === "loading") {
     if (type === "user") {
@@ -62,7 +88,7 @@ function ChatSpeech({ text }: ChatSpeechProps) {
     <div
       className={type === "user" ? styles.chatSpeechUser : styles.chatSpeechBot}
     >
-      {text}
+      {content}
     </div>
   );
 }
@@ -79,8 +105,12 @@ export default function ChatArticle({
   type,
   children,
   status,
+  content,
 }: ChatArticleProps) {
-  const contextValue = useMemo(() => ({ type, status }), [type, status]);
+  const contextValue = useMemo(
+    () => ({ type, status, content }),
+    [type, status, content]
+  );
 
   return (
     <ChatArticleContext.Provider value={contextValue}>

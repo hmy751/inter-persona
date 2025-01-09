@@ -66,15 +66,20 @@ export default function ChatSection({
     <div className={styles.chatSectionContainer}>
       {chatContents.map(({ speaker, content, status }) => {
         return (
-          <ChatArticle key={speaker} type={speaker} status={status}>
+          <ChatArticle
+            key={speaker}
+            type={speaker}
+            status={status}
+            content={content}
+          >
             {speaker === "bot" ? (
               <>
                 <ChatArticle.Avatar src={interviewerImg} />
-                <ChatArticle.Speech text={content} />
+                <ChatArticle.Speech />
               </>
             ) : (
               <>
-                <ChatArticle.Speech text={content} />
+                <ChatArticle.Speech />
                 <ChatArticle.Avatar src={userImg} />
                 <ChatArticle.RetryCancelSelector />
               </>
