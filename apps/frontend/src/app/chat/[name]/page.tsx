@@ -74,16 +74,17 @@ export default function Page() {
       />
       {chatContents.map(({ speaker, content, status }) => {
         return (
-          <ChatArticle key={speaker} type={speaker}>
+          <ChatArticle key={speaker} type={speaker} status={status}>
             {speaker === "bot" ? (
               <>
                 <ChatArticle.Avatar src={interviewer?.imgUrl} />
-                <ChatArticle.Speech status={status} text={content} />
+                <ChatArticle.Speech text={content} />
               </>
             ) : (
               <>
-                <ChatArticle.Speech status={status} text={content} />
+                <ChatArticle.Speech text={content} />
                 <ChatArticle.Avatar src={user?.imageSrc} />
+                {/* <ChatArticle.RetryCancelSelector /> */}
               </>
             )}
           </ChatArticle>

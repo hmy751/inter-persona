@@ -42,9 +42,9 @@ export const InterviewerChat = {
     const { status, speaker, content } = mockInterviewerChatContent;
 
     return (
-      <ChatArticle type={speaker}>
+      <ChatArticle type={speaker} status={status}>
         <ChatArticle.Avatar src={interviewer?.imgUrl} />
-        <ChatArticle.Speech status={status} text={content} />
+        <ChatArticle.Speech text={content} />
       </ChatArticle>
     );
   },
@@ -62,9 +62,9 @@ export const InterviewerChatWithLoading = {
     const { status, speaker, content } = mockLoadingInterviewerChatContent;
 
     return (
-      <ChatArticle type={speaker}>
+      <ChatArticle type={speaker} status={status}>
         <ChatArticle.Avatar src={interviewer?.imgUrl} />
-        <ChatArticle.Speech status={status} text={content} />
+        <ChatArticle.Speech text={content} />
       </ChatArticle>
     );
   },
@@ -82,8 +82,8 @@ export const UserChat = {
     const { status, speaker, content } = mockUserChatContent;
 
     return (
-      <ChatArticle type={speaker}>
-        <ChatArticle.Speech status={status} text={content} />
+      <ChatArticle type={speaker} status={status}>
+        <ChatArticle.Speech text={content} />
         <ChatArticle.Avatar src={user?.imageSrc} />
       </ChatArticle>
     );
@@ -102,10 +102,21 @@ export const UserChatWithLoading = {
     const { status, speaker, content } = mockLoadingUserChatContent;
 
     return (
-      <ChatArticle type={speaker}>
-        <ChatArticle.Speech status={status} text={content} />
+      <ChatArticle type={speaker} status={status}>
+        <ChatArticle.Speech text={content} />
         <ChatArticle.Avatar src={user?.imageSrc} />
       </ChatArticle>
     );
   },
 };
+
+// export const UserChatWithInterviewerError = {
+//   render: () => {
+//     return (
+//       <ChatArticle type={ChatContentSpeakerType.user}>
+//         <ChatArticle.Speech status={ChatContentStatusType.fail} text={""} />
+//         <ChatArticle.Avatar src={user?.imageSrc} />
+//       </ChatArticle>
+//     );
+//   },
+// };

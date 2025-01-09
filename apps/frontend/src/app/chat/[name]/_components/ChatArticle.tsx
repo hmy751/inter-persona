@@ -2,31 +2,44 @@ import { createContext, useContext, useMemo } from "react";
 import styles from "./chat.module.css";
 import Avatar from "@repo/ui/Avatar";
 import clsx from "clsx";
+import Button from "@repo/ui/Button";
+import { ChatContentStatusType } from "@/store/redux/type";
 
 export type ChatType = "user" | "bot" | "";
 
 interface ChatArticleProps {
   type: ChatType;
+  status: ChatContentStatusType;
   children: React.ReactNode;
 }
 
 interface ChatSpeechProps {
-  status: string;
   text: string | null;
 }
 
-const ChatArticleContext = createContext<{ type: ChatType }>({ type: "" });
+const ChatArticleContext = createContext<{
+  type: ChatType;
+  status: ChatContentStatusType;
+}>({ type: "", status: ChatContentStatusType.loading });
 
-function ChatAvatar({ src }: { src: string }) {
-  return (
-    <div className={styles.avatarContainer}>
-      <Avatar src={src} />
-    </div>
-  );
-}
+// function ChatRetryCancelSelector() {
+//   const { status } = useContext(ChatArticleContext);
 
-function ChatSpeech({ status, text }: ChatSpeechProps) {
-  const { type } = useContext(ChatArticleContext);
+//   if (status === ChatContentStatusType.fail) {
+//     return (
+//       <div className={styles.retryCancelSelector}>
+//       <Button size="sm" variant="secondary">
+//         다시 시도하기
+//       </Button>
+//       <Button size="sm" variant="outline">
+//         취소하기
+//       </Button>
+//     </div>
+//   );
+// }
+
+function ChatSpeech({ text }: ChatSpeechProps) {
+  const { type, status } = useContext(ChatArticleContext);
 
   if (status === "loading") {
     if (type === "user") {
@@ -53,8 +66,20 @@ function ChatSpeech({ status, text }: ChatSpeechProps) {
   );
 }
 
-function ChatArticle({ type, children }: ChatArticleProps) {
-  const contextValue = useMemo(() => ({ type }), [type]);
+function ChatAvatar({ src }: { src: string }) {
+  return (
+    <div className={styles.avatarContainer}>
+      <Avatar src={src} />
+    </div>
+  );
+}
+
+export default function ChatArticle({
+  type,
+  children,
+  status,
+}: ChatArticleProps) {
+  const contextValue = useMemo(() => ({ type, status }), [type, status]);
 
   return (
     <ChatArticleContext.Provider value={contextValue}>
@@ -71,5 +96,4 @@ function ChatArticle({ type, children }: ChatArticleProps) {
 
 ChatArticle.Avatar = ChatAvatar;
 ChatArticle.Speech = ChatSpeech;
-
-export default ChatArticle;
+// ChatArticle.RetryCancelSelector = ChatRetryCancelSelector;
