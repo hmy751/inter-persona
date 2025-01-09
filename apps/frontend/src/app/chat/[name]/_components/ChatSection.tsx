@@ -15,7 +15,7 @@ import {
 } from "@/store/redux/features/chat/slice";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-
+import styles from "./chat.module.css";
 export default function ChatSection({
   interviewerImg,
   userImg,
@@ -63,7 +63,7 @@ export default function ChatSection({
   }, [user, interviewer, dispatch]);
 
   return (
-    <>
+    <div className={styles.chatSectionContainer}>
       {chatContents.map(({ speaker, content, status }) => {
         return (
           <ChatArticle key={speaker} type={speaker} status={status}>
@@ -82,6 +82,6 @@ export default function ChatSection({
           </ChatArticle>
         );
       })}
-    </>
+    </div>
   );
 }
