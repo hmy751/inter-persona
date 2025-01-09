@@ -7,6 +7,7 @@ import { ChatContentStatusType } from "@/store/redux/type";
 import { useDispatch, useSelector } from "react-redux";
 import {
   REQUEST_INTERVIEW,
+  RETRY_INTERVIEW,
   CANCEL_CURRENT_REQUEST_INTERVIEW,
 } from "@/store/redux/features/chat/slice";
 import { selectChatId } from "@/store/redux/features/chat/selector";
@@ -34,23 +35,19 @@ function ChatRetryCancelSelector() {
   if (status !== ChatContentStatusType.fail) return null;
 
   const handleRetry = () => {
-    console.log("retry");
     dispatch({
-      type: REQUEST_INTERVIEW,
+      type: RETRY_INTERVIEW,
       payload: {
         id: chatId,
         content: content as unknown as string,
       },
     });
-    console.log("retry end");
   };
 
   const handleCancel = () => {
-    console.log("cancel");
     dispatch({
       type: CANCEL_CURRENT_REQUEST_INTERVIEW,
     });
-    console.log("cancel end");
   };
 
   return (

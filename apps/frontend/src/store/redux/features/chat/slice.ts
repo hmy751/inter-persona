@@ -74,6 +74,14 @@ const slice = createSlice({
         lastContent.status = ChatContentStatusType.fail;
       }
     },
+    resetContentStatus: (state) => {
+      if (state?.contents?.length > 0) {
+        const lastContent = state.contents[
+          state.contents.length - 1
+        ] as ChatContent;
+        lastContent.status = ChatContentStatusType.idle;
+      }
+    },
     removeContent: (state) => {
       state.contents.pop();
     },
@@ -103,11 +111,13 @@ export const {
   resetTrySpeechCount,
   failAIResponse,
   resetAIResponseError,
+  resetContentStatus,
 } = slice.actions;
 
 export const SEND_RECORD = "SEND_RECORD" as const;
 export const START_CHAT = "START_CHAT" as const;
 export const REQUEST_INTERVIEW = "REQUEST_INTERVIEW" as const;
+export const RETRY_INTERVIEW = "RETRY_INTERVIEW" as const;
 export const CANCEL_CURRENT_REQUEST_INTERVIEW = "CANCEL_CURRENT_REQUEST_INTERVIEW" as const;
 
 export default slice.reducer;
