@@ -84,7 +84,7 @@ export default function Page() {
               <>
                 <ChatArticle.Speech text={content} />
                 <ChatArticle.Avatar src={user?.imageSrc} />
-                {/* <ChatArticle.RetryCancelSelector /> */}
+                <ChatArticle.RetryCancelSelector />
               </>
             )}
           </ChatArticle>

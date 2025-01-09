@@ -22,21 +22,22 @@ const ChatArticleContext = createContext<{
   status: ChatContentStatusType;
 }>({ type: "", status: ChatContentStatusType.loading });
 
-// function ChatRetryCancelSelector() {
-//   const { status } = useContext(ChatArticleContext);
+function ChatRetryCancelSelector() {
+  const { status } = useContext(ChatArticleContext);
 
-//   if (status === ChatContentStatusType.fail) {
-//     return (
-//       <div className={styles.retryCancelSelector}>
-//       <Button size="sm" variant="secondary">
-//         다시 시도하기
-//       </Button>
-//       <Button size="sm" variant="outline">
-//         취소하기
-//       </Button>
-//     </div>
-//   );
-// }
+  if (status !== ChatContentStatusType.fail) return null;
+
+  return (
+    <div className={styles.retryCancelSelector}>
+      <Button size="sm" variant="secondary">
+        다시 시도하기
+      </Button>
+      <Button size="sm" variant="outline">
+        취소하기
+      </Button>
+    </div>
+  );
+}
 
 function ChatSpeech({ text }: ChatSpeechProps) {
   const { type, status } = useContext(ChatArticleContext);
@@ -96,4 +97,4 @@ export default function ChatArticle({
 
 ChatArticle.Avatar = ChatAvatar;
 ChatArticle.Speech = ChatSpeech;
-// ChatArticle.RetryCancelSelector = ChatRetryCancelSelector;
+ChatArticle.RetryCancelSelector = ChatRetryCancelSelector;
