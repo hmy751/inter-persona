@@ -12,6 +12,7 @@ export const makeStore = () => {
     reducer: {
       chat: chatReducer,
     },
+    devTools: process.env.NODE_ENV !== "production",
   });
 
   sagaMiddleware.run(rootSaga);
