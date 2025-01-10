@@ -36,6 +36,41 @@ const interviewHandler = [
   ),
 ];
 
+const interviewHandlerforInterviewerError = [
+  http.post<never, AIChatBody>(
+    `${baseURL}/interview/:chatId/contents`,
+    async ({ request }) => {
+      const { chatId, content } = await request.json();
+      console.log('pass')
+
+      const random = Math.random();
+
+      if (random > 0.5) {
+        return HttpResponse.json({
+          content: "자바스크립트의 클로저에 대해 설명해주세요",
+        });
+      }
+
+      return HttpResponse.json({
+        content: null,
+      });
+    }
+  ),
+  http.post('/api/chat', async ({ request }) => {
+    try {
+      const formData = await request.formData();
+      return HttpResponse.json({
+        text: "잘 모르겠습니다.",
+      });
+    } catch (error) {
+      return HttpResponse.json(
+        { error: "Failed to process audio" },
+        { status: 400 }
+      );
+    }
+  }),
+];
+
 const handlers: RequestHandler[] = [...userHandler, ...interviewHandler];
 
 export default handlers;
