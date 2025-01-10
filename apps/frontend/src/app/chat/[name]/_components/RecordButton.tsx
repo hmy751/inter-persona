@@ -2,20 +2,28 @@
 
 import { useRef, useState, useEffect } from "react";
 import { detectSilence } from "../_utils";
-
+import Image from "next/image";
+import styles from "./RecordButton.module.css";
 import Recorder from "recorder-js";
 import { useDispatch, useSelector } from "react-redux";
 import { SEND_RECORD } from "@/store/redux/features/chat/slice";
 import { ChatContentStatusType } from "@/store/redux/type";
 import { selectCurrentRecordingAnswer } from "@/store/redux/features/chat/selector";
-
-import Avatar from "@repo/ui/Avatar";
+import clsx from "clsx";
 
 export enum RecordingStatusType {
   loading = "loading",
   success = "success",
   idle = "idle",
+  fail = "fail",
 }
+
+const RECORD_BUTTON_ICON_SRC = {
+  [RecordingStatusType.idle]: "/assets/images/record-button.svg",
+  [RecordingStatusType.success]: "/assets/images/record-button.svg",
+  [RecordingStatusType.loading]: "/assets/images/recording-animation.svg",
+  [RecordingStatusType.fail]: "/assets/images/record-button-disabled.svg",
+};
 
 export default function RecordButton() {
   const recorderRef = useRef<Recorder | null>(null);
@@ -26,7 +34,11 @@ export default function RecordButton() {
   const currentRecordingAnswer = useSelector(selectCurrentRecordingAnswer);
 
   const handleRecord = async () => {
-    if (recordingStatus === RecordingStatusType.loading) return;
+    if (
+      recordingStatus === RecordingStatusType.loading ||
+      recordingStatus === RecordingStatusType.fail
+    )
+      return;
 
     const { mediaDevices } = navigator;
     const stream = await mediaDevices.getUserMedia({ audio: true });
@@ -76,21 +88,6 @@ export default function RecordButton() {
     dispatch({ type: SEND_RECORD, payload: { formData } });
   };
 
-  const recordingState = () => {
-    if (
-      recordingStatus === RecordingStatusType.idle ||
-      recordingStatus === RecordingStatusType.success
-    ) {
-      return "/assets/images/record.png";
-    }
-
-    if (recordingStatus === RecordingStatusType.loading) {
-      return "/assets/images/recording.png";
-    }
-
-    return "/assets/images/record.png";
-  };
-
   useEffect(() => {
     if (recorderRef.current === null) return;
     if (
@@ -113,9 +110,13 @@ export default function RecordButton() {
 
     if (
       currentRecordingAnswer?.status === ChatContentStatusType.success ||
-      currentRecordingAnswer?.status === ChatContentStatusType.fail
+      currentRecordingAnswer?.status === ChatContentStatusType.idle
     ) {
       setRecordingStatus(RecordingStatusType.idle);
+    }
+
+    if (currentRecordingAnswer?.status === ChatContentStatusType.fail) {
+      setRecordingStatus(RecordingStatusType.fail);
     }
 
     return () => {
@@ -124,16 +125,18 @@ export default function RecordButton() {
   }, [currentRecordingAnswer]);
 
   return (
-    <>
-      <Avatar
-        width={"40px"}
-        height={"40px"}
-        src={recordingState()}
-        onClick={handleRecord}
-        style={{
-          cursor: "pointer",
-        }}
-      />
-    </>
+    <Image
+      width={60}
+      height={60}
+      src={RECORD_BUTTON_ICON_SRC[recordingStatus]}
+      alt="record-button"
+      sizes="60px"
+      onClick={handleRecord}
+      className={clsx([
+        styles.button,
+        recordingStatus === RecordingStatusType.fail && styles.fail,
+        recordingStatus === RecordingStatusType.loading && styles.loading,
+      ])}
+    />
   );
 }
