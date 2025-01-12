@@ -6,10 +6,10 @@
   transform: scale(1.1);
 }
 
-.loading {
+.recording {
   cursor: not-allowed;
 }
 
-.fail {
+.disabled {
   cursor: not-allowed;
 }

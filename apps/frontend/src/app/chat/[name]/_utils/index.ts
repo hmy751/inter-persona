@@ -46,7 +46,7 @@ export const detectSilence = (
     if (rms < silenceThreshold) {
       // 음성 중지 감지 (특정 시간 동안 rms가 임계값 이하인 경우)
       if (performance.now() - silenceStart > timeout) {
-        setIsRecording(RecordingStatusType.success);
+        setIsRecording(RecordingStatusType.finished);
         return;
       }
     } else {
