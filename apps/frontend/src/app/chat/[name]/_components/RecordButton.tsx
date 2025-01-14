@@ -17,6 +17,10 @@ export enum RecordingStatusType {
   finished = "finished",
 }
 
+export const IDLE_ICON_SRC = "/assets/images/record-button.svg";
+export const RECORDING_ICON_SRC = "/assets/images/recording-animation.svg";
+export const DISABLED_ICON_SRC = "/assets/images/record-button-disabled.svg";
+
 export default function RecordButton() {
   const recorderRef = useRef<Recorder | null>(null);
   const [recordingStatus, setRecordingStatus] = useState<RecordingStatusType>(
@@ -118,10 +122,6 @@ export default function RecordButton() {
   }, [currentRecordingAnswer]);
 
   useEffect(() => {
-    const IDLE_ICON_SRC = "/assets/images/record-button.svg";
-    const RECORDING_ICON_SRC = "/assets/images/recording-animation.svg";
-    const DISABLED_ICON_SRC = "/assets/images/record-button-disabled.svg";
-
     const isRecording = recordingStatus === RecordingStatusType.recording;
 
     if (isDisabledRecord) {
