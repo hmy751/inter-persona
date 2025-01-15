@@ -41,22 +41,28 @@ export default function RecordButton() {
 
     if (isRecordingOrDisabled) return;
 
+    // 1. 오디오 스트림 가져오기
     const { mediaDevices } = navigator;
     const stream = await mediaDevices.getUserMedia({ audio: true });
 
+    // 2. 음량 감지를 위한 analyser 생성
     const audioContext = new window.AudioContext();
     const analyserNode = audioContext.createAnalyser();
     analyserNode.fftSize = 2048;
     const dataArray = new Uint8Array(analyserNode.fftSize);
 
+    // 3. stream을 source로 변환하고 analyser에 연결
     const source = audioContext.createMediaStreamSource(stream);
     source.connect(analyserNode);
 
+    // 4. recorder 초기화
     const recorder = new Recorder(audioContext);
     recorderRef.current = recorder;
 
+    // 5. recorder 초기화
     await recorderRef.current.init(stream);
 
+    // 6. 녹음 시작
     recorderRef.current.start().then(() => {
       setRecordingStatus(RecordingStatusType.recording);
     });
