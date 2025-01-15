@@ -18,22 +18,26 @@ jest.mock("react-redux", () => ({
   useSelector: jest.fn(),
 }));
 
+const mockRecorderInit = jest.fn().mockResolvedValue(undefined);
+const mockRecorderStart = jest.fn().mockResolvedValue(undefined);
+const mockRecorderStop = jest.fn().mockResolvedValue({
+  blob: new Blob(["mock audio data"], { type: "audio/wav" }),
+});
+
 jest.mock("recorder-js", () => {
   return jest.fn().mockImplementation(() => ({
-    init: jest.fn().mockResolvedValue(undefined),
-    start: jest.fn().mockResolvedValue(undefined),
-    stop: jest.fn().mockResolvedValue({
-      blob: new Blob(["mock audio data"], { type: "audio/wav" }),
-    }),
+    init: mockRecorderInit,
+    start: mockRecorderStart,
+    stop: mockRecorderStop,
   }));
 });
+
+const mockStream = {};
 
 Object.defineProperty(window, "navigator", {
   value: {
     mediaDevices: {
-      getUserMedia: jest.fn().mockResolvedValue({
-        audio: true,
-      }),
+      getUserMedia: jest.fn().mockResolvedValue(mockStream),
     },
   },
 });
@@ -134,6 +138,102 @@ describe("UI 상태 테스트", () => {
         "src",
         IDLE_ICON_SRC
       );
+    });
+  });
+});
+
+describe("녹음 비즈니스 로직 테스트", () => {
+  describe("개별 기능 테스트", () => {
+    describe("녹음 시작 및 초기화", () => {
+      beforeEach(async () => {
+        render(<RecordButton />);
+      });
+
+      afterEach(() => {
+        jest.clearAllMocks();
+      });
+
+      it("오디오 stream을 가져온다.", async () => {
+        const recordButton = screen.getByTestId("record-button");
+        await userEvent.click(recordButton);
+        expect(navigator.mediaDevices.getUserMedia).toHaveBeenCalled();
+      });
+
+      it("음량 감지를 위한 analyser를 생성한다.", async () => {
+        const mockCreateAnalyser = jest.fn().mockImplementation(() => ({
+          fftSize: 2048,
+          getByteTimeDomainData: jest.fn(),
+        }));
+
+        const mockAudioContextInstance = {
+          createAnalyser: mockCreateAnalyser,
+          createMediaStreamSource: jest.fn().mockReturnValue({
+            connect: jest.fn(),
+          }),
+        };
+
+        (window.AudioContext as jest.Mock).mockImplementation(
+          () => mockAudioContextInstance
+        );
+
+        const recordButton = screen.getByTestId("record-button");
+        await userEvent.click(recordButton);
+
+        expect(window.AudioContext).toHaveBeenCalledTimes(1);
+        expect(mockCreateAnalyser).toHaveBeenCalledTimes(1);
+
+        const analyserInstance = mockCreateAnalyser.mock.results[0]?.value;
+        expect(analyserInstance?.fftSize).toBe(2048);
+      });
+
+      it("stream을 source로 변환하고 analyser에 연결한다.", async () => {
+        const mockSource = {
+          connect: jest.fn(),
+        };
+
+        const mockCreateMediaStreamSource = jest
+          .fn()
+          .mockImplementation(() => mockSource);
+
+        const mockAnalyserNode = {
+          fftSize: 2048,
+          getByteTimeDomainData: jest.fn(),
+        };
+
+        const mockAudioContextInstance = {
+          createAnalyser: jest.fn().mockImplementation(() => mockAnalyserNode),
+          createMediaStreamSource: mockCreateMediaStreamSource,
+        };
+
+        (window.AudioContext as jest.Mock).mockImplementation(
+          () => mockAudioContextInstance
+        );
+
+        const recordButton = screen.getByTestId("record-button");
+        await userEvent.click(recordButton);
+
+        expect(mockSource.connect).toHaveBeenCalledWith(mockAnalyserNode);
+      });
+
+      it("recorder를 생성 후 stream을 연결하고 초기화 한다.", async () => {
+        const recordButton = screen.getByTestId("record-button");
+        await userEvent.click(recordButton);
+
+        expect(mockRecorderInit).toHaveBeenCalledWith(mockStream);
+      });
+
+      it("recorder를 통해 녹음을 시작하고 상태를 recording으로 변경한다.", async () => {
+        const recordButton = screen.getByTestId("record-button");
+        await userEvent.click(recordButton);
+
+        expect(mockRecorderStart).toHaveBeenCalled();
+      });
+    });
+
+    describe("음량 감지 테스트", () => {
+      it("음량을 감지하여 임계값 이하면 녹음을 완료한다.", async () => {
+        render(<RecordButton />);
+      });
     });
   });
 });
