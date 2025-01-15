@@ -1,0 +1,15 @@
+.button {
+  cursor: pointer;
+}
+
+.button:hover {
+  transform: scale(1.1);
+}
+
+.recording {
+  cursor: not-allowed;
+}
+
+.disabled {
+  cursor: not-allowed;
+}
