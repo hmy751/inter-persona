@@ -52,90 +52,88 @@ Object.defineProperty(window, "AudioContext", {
   value: mockAudioContext,
 });
 
-afterEach(() => {
-  jest.clearAllMocks();
-});
+describe("UI 상태 테스트", () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
 
-describe.only("녹음 버튼 테스트", () => {
-  describe("UI 상태 테스트", () => {
-    it("초기에는 일반 버튼 상태로 시작한다.", () => {
-      render(<RecordButton />);
+  it("초기에는 일반 버튼 상태로 시작한다.", () => {
+    render(<RecordButton />);
 
-      const recordButton = screen.getByTestId("record-button");
+    const recordButton = screen.getByTestId("record-button");
 
-      expect(recordButton.getAttribute("src")).toBe(IDLE_ICON_SRC);
+    expect(recordButton.getAttribute("src")).toBe(IDLE_ICON_SRC);
+  });
+
+  it("녹음 버튼을 누르면, 녹음 상태로 변경된다.", async () => {
+    render(<RecordButton />);
+
+    const recordButton = screen.getByTestId("record-button");
+    await userEvent.click(recordButton);
+
+    expect(screen.getByTestId("record-button")).toHaveAttribute(
+      "src",
+      RECORDING_ICON_SRC
+    );
+  });
+
+  it("응답에 실패하면, 비활성 상태로 변경된다.", async () => {
+    (useSelector as unknown as jest.Mock).mockImplementation((selector) => {
+      if (selector === selectCurrentRecordingAnswer) {
+        return {
+          status: ChatContentStatusType.fail,
+        };
+      }
+      return null;
     });
 
-    it("녹음 버튼을 누르면, 녹음 상태로 변경된다.", async () => {
-      render(<RecordButton />);
+    const store = configureStore({
+      reducer: {
+        chat: chatReducer,
+      },
+    });
 
-      const recordButton = screen.getByTestId("record-button");
-      await userEvent.click(recordButton);
+    render(
+      <Provider store={store}>
+        <RecordButton />
+      </Provider>
+    );
 
+    expect(await screen.findByTestId("record-button")).toHaveAttribute(
+      "src",
+      DISABLED_ICON_SRC
+    );
+  });
+
+  it("녹음이 완료되면 초기 일반 상태로 돌아간다.", async () => {
+    render(<RecordButton />);
+
+    const recordButton = screen.getByTestId("record-button");
+
+    await userEvent.click(recordButton);
+
+    waitFor(() => {
       expect(screen.getByTestId("record-button")).toHaveAttribute(
         "src",
         RECORDING_ICON_SRC
       );
     });
 
-    it("응답에 실패하면, 비활성 상태로 변경된다.", async () => {
-      (useSelector as unknown as jest.Mock).mockImplementation((selector) => {
-        if (selector === selectCurrentRecordingAnswer) {
-          return {
-            status: ChatContentStatusType.fail,
-          };
-        }
-        return null;
-      });
+    jest.mock("../_utils", () => ({
+      detectSilence: jest
+        .fn()
+        .mockImplementation((analyser, dataArray, setRecordingStatus) => {
+          setTimeout(() => {
+            setRecordingStatus(RecordingStatusType.finished);
+          }, 100);
+        }),
+    }));
 
-      const store = configureStore({
-        reducer: {
-          chat: chatReducer,
-        },
-      });
-
-      render(
-        <Provider store={store}>
-          <RecordButton />
-        </Provider>
-      );
-
-      expect(await screen.findByTestId("record-button")).toHaveAttribute(
+    waitFor(() => {
+      expect(screen.getByTestId("record-button")).toHaveAttribute(
         "src",
-        DISABLED_ICON_SRC
+        IDLE_ICON_SRC
       );
-    });
-
-    it("녹음이 완료되면 초기 일반 상태로 돌아간다.", async () => {
-      render(<RecordButton />);
-
-      const recordButton = screen.getByTestId("record-button");
-
-      await userEvent.click(recordButton);
-
-      waitFor(() => {
-        expect(screen.getByTestId("record-button")).toHaveAttribute(
-          "src",
-          RECORDING_ICON_SRC
-        );
-      });
-
-      jest.mock("../_utils", () => ({
-        detectSilence: jest
-          .fn()
-          .mockImplementation((analyser, dataArray, setRecordingStatus) => {
-            setTimeout(() => {
-              setRecordingStatus(RecordingStatusType.finished);
-            }, 100);
-          }),
-      }));
-
-      waitFor(() => {
-        expect(screen.getByTestId("record-button")).toHaveAttribute(
-          "src",
-          IDLE_ICON_SRC
-        );
-      });
     });
   });
 });
