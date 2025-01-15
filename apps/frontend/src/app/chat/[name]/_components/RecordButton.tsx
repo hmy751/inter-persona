@@ -49,6 +49,9 @@ export default function RecordButton() {
     analyserNode.fftSize = 2048;
     const dataArray = new Uint8Array(analyserNode.fftSize);
 
+    const source = audioContext.createMediaStreamSource(stream);
+    source.connect(analyserNode);
+
     const recorder = new Recorder(audioContext);
     recorderRef.current = recorder;
 
@@ -57,9 +60,6 @@ export default function RecordButton() {
     recorderRef.current.start().then(() => {
       setRecordingStatus(RecordingStatusType.recording);
     });
-
-    const source = audioContext.createMediaStreamSource(stream);
-    source.connect(analyserNode);
 
     detectSilence(analyserNode, dataArray, setRecordingStatus);
   };
