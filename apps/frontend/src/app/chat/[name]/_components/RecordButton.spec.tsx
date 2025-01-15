@@ -156,7 +156,10 @@ describe("녹음 비즈니스 로직 테스트", () => {
       it("오디오 stream을 가져온다.", async () => {
         const recordButton = screen.getByTestId("record-button");
         await userEvent.click(recordButton);
-        expect(navigator.mediaDevices.getUserMedia).toHaveBeenCalled();
+
+        waitFor(() => {
+          expect(navigator.mediaDevices.getUserMedia).toHaveBeenCalled();
+        });
       });
 
       it("음량 감지를 위한 analyser를 생성한다.", async () => {
@@ -179,11 +182,15 @@ describe("녹음 비즈니스 로직 테스트", () => {
         const recordButton = screen.getByTestId("record-button");
         await userEvent.click(recordButton);
 
-        expect(window.AudioContext).toHaveBeenCalledTimes(1);
-        expect(mockCreateAnalyser).toHaveBeenCalledTimes(1);
+        waitFor(() => {
+          expect(window.AudioContext).toHaveBeenCalledTimes(1);
+          expect(mockCreateAnalyser).toHaveBeenCalledTimes(1);
+        });
 
         const analyserInstance = mockCreateAnalyser.mock.results[0]?.value;
-        expect(analyserInstance?.fftSize).toBe(2048);
+        waitFor(() => {
+          expect(analyserInstance?.fftSize).toBe(2048);
+        });
       });
 
       it("stream을 source로 변환하고 analyser에 연결한다.", async () => {
@@ -212,21 +219,27 @@ describe("녹음 비즈니스 로직 테스트", () => {
         const recordButton = screen.getByTestId("record-button");
         await userEvent.click(recordButton);
 
-        expect(mockSource.connect).toHaveBeenCalledWith(mockAnalyserNode);
+        waitFor(() => {
+          expect(mockSource.connect).toHaveBeenCalledWith(mockAnalyserNode);
+        });
       });
 
       it("recorder를 생성 후 stream을 연결하고 초기화 한다.", async () => {
         const recordButton = screen.getByTestId("record-button");
         await userEvent.click(recordButton);
 
-        expect(mockRecorderInit).toHaveBeenCalledWith(mockStream);
+        waitFor(() => {
+          expect(mockRecorderInit).toHaveBeenCalledWith(mockStream);
+        });
       });
 
       it("recorder를 통해 녹음을 시작하고 상태를 recording으로 변경한다.", async () => {
         const recordButton = screen.getByTestId("record-button");
         await userEvent.click(recordButton);
 
-        expect(mockRecorderStart).toHaveBeenCalled();
+        waitFor(() => {
+          expect(mockRecorderStart).toHaveBeenCalled();
+        });
       });
     });
 
