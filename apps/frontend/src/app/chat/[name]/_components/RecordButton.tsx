@@ -34,8 +34,11 @@ export default function RecordButton() {
   const currentRecordingAnswer = useSelector(selectCurrentRecordingAnswer);
   const isDisabledRecord =
     currentRecordingAnswer?.status === ChatContentStatusType.fail;
+  const cleanupRef = useRef<() => void>(() => {});
 
   const handleRecord = async () => {
+    cleanupRef.current?.();
+
     const isRecordingOrDisabled =
       recordingStatus === RecordingStatusType.recording || isDisabledRecord;
 
@@ -67,7 +70,11 @@ export default function RecordButton() {
       setRecordingStatus(RecordingStatusType.recording);
     });
 
-    detectSilence(analyserNode, dataArray, setRecordingStatus);
+    cleanupRef.current = detectSilence(
+      analyserNode,
+      dataArray,
+      setRecordingStatus
+    );
   };
 
   const finishRecord = async () => {
@@ -94,6 +101,18 @@ export default function RecordButton() {
 
     dispatch({ type: SEND_RECORD, payload: { formData } });
   };
+
+  useEffect(() => {
+    if (recordingStatus === RecordingStatusType.finished) {
+      cleanupRef.current();
+    }
+  }, [recordingStatus]);
+
+  useEffect(() => {
+    return () => {
+      cleanupRef.current?.();
+    };
+  }, []);
 
   useEffect(() => {
     (function checkFinishedRecording() {
