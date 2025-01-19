@@ -58,11 +58,12 @@ Object.defineProperty(window, "AudioContext", {
   value: mockAudioContext,
 });
 
-describe("UI 상태 테스트", () => {
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
+afterEach(() => {
+  jest.clearAllMocks();
+  cleanup();
+});
 
+describe("UI 상태 테스트", () => {
   it("초기에는 일반 버튼 상태로 시작한다.", () => {
     render(<RecordButton />);
 
@@ -136,11 +137,6 @@ describe("UI 상태 테스트", () => {
 
 describe("녹음 비즈니스 로직 테스트", () => {
   describe("개별 기능 테스트", () => {
-    afterEach(() => {
-      jest.clearAllMocks();
-      cleanup();
-    });
-
     describe("녹음 시작 및 초기화", () => {
       beforeEach(() => {
         render(<RecordButton />);
