@@ -5,17 +5,12 @@ import RecordButton, {
   DISABLED_ICON_SRC,
   RecordingStatusType,
 } from "./RecordButton";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Provider, useSelector } from "react-redux";
+import { Provider, useSelector, useDispatch } from "react-redux";
 import chatReducer from "@/store/redux/features/chat/slice";
 import { ChatContentStatusType } from "@/store/redux/type";
 import { selectCurrentRecordingAnswer } from "@/store/redux/features/chat/selector";
-
-const mockDetectSilence = jest.fn();
-jest.mock("@/app/chat/[name]/_utils", () => ({
-  detectSilence: () => mockDetectSilence(), // 함수로 한번 감싸기, 호이스팅 에러
-}));
 
 jest.mock("react-redux", () => ({
   ...jest.requireActual("react-redux"),
@@ -47,10 +42,12 @@ Object.defineProperty(window, "navigator", {
   },
 });
 
+const mockGetByteTimeDomainData = jest.fn();
+
 const mockAudioContext = jest.fn().mockImplementation(() => ({
   createAnalyser: jest.fn().mockImplementation(() => ({
     fftSize: 2048,
-    getByteTimeDomainData: jest.fn(),
+    getByteTimeDomainData: mockGetByteTimeDomainData,
   })),
   createMediaStreamSource: jest.fn().mockImplementation(() => ({
     connect: jest.fn(),
@@ -115,14 +112,6 @@ describe("UI 상태 테스트", () => {
   });
 
   it("녹음이 완료되면 초기 일반 상태로 돌아간다.", async () => {
-    mockDetectSilence.mockImplementation(
-      (analyser, dataArray, setRecordingStatus) => {
-        setTimeout(() => {
-          setRecordingStatus(RecordingStatusType.finished);
-        }, 100);
-      }
-    );
-
     render(<RecordButton />);
 
     const recordButton = screen.getByTestId("record-button");
@@ -147,13 +136,14 @@ describe("UI 상태 테스트", () => {
 
 describe("녹음 비즈니스 로직 테스트", () => {
   describe("개별 기능 테스트", () => {
-    describe("녹음 시작 및 초기화", () => {
-      beforeEach(async () => {
-        render(<RecordButton />);
-      });
+    afterEach(() => {
+      jest.clearAllMocks();
+      cleanup();
+    });
 
-      afterEach(() => {
-        jest.clearAllMocks();
+    describe("녹음 시작 및 초기화", () => {
+      beforeEach(() => {
+        render(<RecordButton />);
       });
 
       it("오디오 stream을 가져온다.", async () => {
@@ -246,101 +236,84 @@ describe("녹음 비즈니스 로직 테스트", () => {
       });
     });
 
-    // describe("음량 감지 테스트", () => {
-    //   let mockAnalyser: Partial<AnalyserNode>;
-    //   let mockDataArray: Uint8Array;
-    //   let mockSetIsRecording: jest.Mock;
+    describe("음량 감지 테스트", () => {
+      let currentData: Uint8Array;
+      let frameCallback: FrameRequestCallback | null = null;
 
-    //   beforeEach(() => {
-    //     jest.useFakeTimers(); // requestAnimationFrame이 내부적으로 동작하므로 타이머를 모킹
-    //     mockAnalyser = {
-    //       getByteTimeDomainData: jest.fn(),
-    //     };
-    //     mockDataArray = new Uint8Array(2048); // fftSize 2048 기준
-    //     mockSetIsRecording = jest.fn();
-    //   });
+      beforeEach(() => {
+        currentData = new Uint8Array(2048);
 
-    //   afterEach(() => {
-    //     jest.clearAllMocks();
-    //     jest.clearAllTimers();
-    //     jest.useRealTimers();
-    //   });
+        mockGetByteTimeDomainData.mockImplementation((arr: Uint8Array) => {
+          if (arr instanceof Uint8Array) {
+            arr.set(currentData);
+          }
+        });
 
-    //   it("음량을 감지하여 임계값 이상이면 녹음을 계속한다.", async () => {
-    //     render(<RecordButton />);
-    //     await userEvent.click(screen.getByTestId("record-button"));
+        window.requestAnimationFrame = jest.fn(
+          (callback: FrameRequestCallback) => {
+            frameCallback = callback;
+            return 1;
+          }
+        );
 
-    //     // RMS를 계산할 때 dataArray가 모두 128(center)보다 크게 만들어
-    //     // 항상 임계값 이상으로 나오도록 세팅
-    //     // (128은 getByteTimeDomainData로 가져온 값에서 128 기준 0이 되는 음성 신호)
-    //     mockDataArray.fill(180);
+        (useDispatch as unknown as jest.Mock).mockImplementation(() =>
+          jest.fn()
+        );
+      });
 
-    //     // getByteTimeDomainData를 호출하면 mockDataArray가 반환되도록 처리
-    //     (mockAnalyser.getByteTimeDomainData as jest.Mock).mockImplementation(
-    //       (arr: Uint8Array) => {
-    //         arr.set(mockDataArray);
-    //       }
-    //     );
+      afterEach(() => {
+        jest.clearAllTimers();
+        jest.useRealTimers();
+        frameCallback = null;
+      });
 
-    //     // detectSilence(
-    //     //   mockAnalyser as AnalyserNode,
-    //     //   mockDataArray,
-    //     //   mockSetIsRecording,
-    //     //   /* silenceThreshold= */ 0.01,
-    //     //   /* timeout= */ 1000
-    //     // );
+      const setupRecordingEnvironment = async () => {
+        render(<RecordButton />);
+        const recordButton = await screen.getByTestId("record-button");
+        await userEvent.click(recordButton);
+        jest.useFakeTimers();
 
-    //     // requestAnimationFrame 콜백이 여러 번 실행되도록 강제
-    //     // 일반적으로는 animation frame 마다 한 번씩 실행될 것이지만,
-    //     // 테스트에서는 적절히 여러 번 호출 시뮬레이션
-    //     for (let i = 0; i < 10; i++) {
-    //       jest.advanceTimersByTime(16); // 대략 1 frame(16ms 가정)
-    //     }
+        if (frameCallback) frameCallback(0);
+        return recordButton;
+      };
 
-    //     // RMS가 계속 임계값 이상이므로
-    //     // setIsRecording(RecordingStatusType.finished)가 절대 호출되지 않아야 함
-    //     waitFor(() => {
-    //       expect(mockSetIsRecording).not.toHaveBeenCalled();
-    //     });
-    //   });
+      const advanceFramesAndTime = (frames: number, timePerFrame: number) => {
+        for (let i = 0; i < frames; i++) {
+          jest.advanceTimersByTime(timePerFrame);
+          if (frameCallback) frameCallback(performance.now());
+        }
+      };
 
-    //   it("음량을 감지하여 임계값 이하면 녹음을 완료한다.", async () => {
-    //     // 이번엔 RMS가 아주 낮게 계산되도록 128보다 모두 같거나 낮은 값을 채워넣기
-    //     // -> (128/128 - 1) => 0 ~ -1 사이에서 RMS가 매우 낮게 계산되도록
-    //     mockDataArray.fill(128);
+      it("임계값 이상이면 500ms 후에도 녹음이 계속된다.", async () => {
+        // 높은 음량 설정
+        currentData.fill(180);
 
-    //     // getByteTimeDomainData를 호출하면 mockDataArray가 반환되도록 처리
-    //     (mockAnalyser.getByteTimeDomainData as jest.Mock).mockImplementation(
-    //       (arr: Uint8Array) => {
-    //         arr.set(mockDataArray);
-    //       }
-    //     );
+        const recordButton = await setupRecordingEnvironment();
 
-    //     // detectSilence(
-    //     //   mockAnalyser as AnalyserNode,
-    //     //   mockDataArray,
-    //     //   mockSetIsRecording,
-    //     //   /* silenceThreshold= */ 0.01,
-    //     //   /* timeout= */ 1000
-    //     // );
+        expect(recordButton).toHaveAttribute("src", RECORDING_ICON_SRC);
 
-    //     // 시간 경과를 시뮬레이트 하기 위해 타이머를 forward
-    //     // 1초(1000ms) 이상 음성이 임계값 이하 상태가 유지되면 finished 호출
-    //     jest.spyOn(window, "requestAnimationFrame").mockImplementation((cb) => {
-    //       return setTimeout(cb, 0);
-    //     });
+        // 시간 진행
+        advanceFramesAndTime(5, 100); // 500ms
 
-    //     render(<RecordButton />);
-    //     await userEvent.click(screen.getByTestId("record-button"));
+        expect(recordButton).toHaveAttribute("src", RECORDING_ICON_SRC);
+      });
 
-    //     jest.advanceTimersByTime(1001);
+      it("임계값 이하이면 1초 후 녹음을 종료한다.", async () => {
+        // 초기 높은 음량 설정
+        currentData.fill(180);
 
-    //     expect(mockSetIsRecording).toHaveBeenCalledWith(
-    //       RecordingStatusType.finished
-    //     );
-    //   });
+        const recordButton = await setupRecordingEnvironment();
+        expect(recordButton).toHaveAttribute("src", RECORDING_ICON_SRC);
 
-    //   it("녹음 완료 시 녹음 상태를 finished로 변경한다.", async () => {});
-    // });
+        // 낮은 음량으로 변경
+        currentData.fill(128);
+
+        advanceFramesAndTime(12, 100); // 1200ms
+
+        await waitFor(() => {
+          expect(recordButton).toHaveAttribute("src", IDLE_ICON_SRC);
+        });
+      });
+    });
   });
 });
