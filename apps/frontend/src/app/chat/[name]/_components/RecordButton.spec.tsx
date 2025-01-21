@@ -80,12 +80,16 @@ describe("UI 상태 테스트", () => {
       },
       preloadedState: {
         chat: {
+          id: 1,
           contents: [
             {
-              speaker: ChatContentSpeakerType.user,
               status: ChatContentStatusType.fail,
+              speaker: ChatContentSpeakerType.user,
+              content: "test",
+              timeStamp: new Date(),
             },
           ],
+          trySpeechCount: 0,
         },
       },
     });
