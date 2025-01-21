@@ -6,13 +6,16 @@ import RecordButton, {
 } from "./RecordButton";
 import { render, screen, waitFor, cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Provider } from "react-redux";
+import { Provider, useDispatch } from "react-redux";
 import chatReducer from "@/store/redux/features/chat/slice";
 import {
   ChatContentSpeakerType,
   ChatContentStatusType,
 } from "@/store/redux/type";
 
+/**
+ * recorder-js mock
+ */
 const mockRecorderInit = jest.fn().mockResolvedValue(undefined);
 const mockRecorderStart = jest.fn().mockResolvedValue(undefined);
 const mockRecorderStop = jest.fn().mockResolvedValue({
@@ -25,6 +28,51 @@ jest.mock("recorder-js", () => {
     start: mockRecorderStart,
     stop: mockRecorderStop,
   }));
+});
+
+/**
+ * AudioContext, navigator.mediaDevices 관련 mock
+ */
+const mockStream = {};
+
+Object.defineProperty(window, "navigator", {
+  value: {
+    mediaDevices: {
+      getUserMedia: jest.fn().mockResolvedValue(mockStream),
+    },
+  },
+});
+
+const mockGetByteTimeDomainData = jest.fn();
+const mockAnalyserNode = {
+  fftSize: 2048,
+  getByteTimeDomainData: mockGetByteTimeDomainData,
+};
+const mockCreateAnalyser = jest.fn().mockImplementation(() => mockAnalyserNode);
+const mockSource = { connect: jest.fn() };
+const mockCreateMediaStreamSource = jest
+  .fn()
+  .mockImplementation(() => mockSource);
+
+const mockAudioContext = jest.fn().mockImplementation(() => ({
+  createAnalyser: mockCreateAnalyser,
+  createMediaStreamSource: mockCreateMediaStreamSource,
+}));
+
+Object.defineProperty(window, "AudioContext", {
+  value: mockAudioContext,
+});
+
+/**
+ * File 관련 mock
+ */
+const mockFile = jest.fn().mockImplementation(() => ({
+  type: "audio/wav",
+  name: "recording.wav",
+}));
+
+Object.defineProperty(window, "File", {
+  value: mockFile,
 });
 
 afterEach(() => {
@@ -136,36 +184,6 @@ describe("UI 상태 테스트", () => {
       );
     });
   });
-});
-
-const mockStream = {};
-
-Object.defineProperty(window, "navigator", {
-  value: {
-    mediaDevices: {
-      getUserMedia: jest.fn().mockResolvedValue(mockStream),
-    },
-  },
-});
-
-const mockGetByteTimeDomainData = jest.fn();
-const mockAnalyserNode = {
-  fftSize: 2048,
-  getByteTimeDomainData: mockGetByteTimeDomainData,
-};
-const mockCreateAnalyser = jest.fn().mockImplementation(() => mockAnalyserNode);
-const mockSource = { connect: jest.fn() };
-const mockCreateMediaStreamSource = jest
-  .fn()
-  .mockImplementation(() => mockSource);
-
-const mockAudioContext = jest.fn().mockImplementation(() => ({
-  createAnalyser: mockCreateAnalyser,
-  createMediaStreamSource: mockCreateMediaStreamSource,
-}));
-
-Object.defineProperty(window, "AudioContext", {
-  value: mockAudioContext,
 });
 
 describe("녹음 비즈니스 로직 테스트", () => {
@@ -323,5 +341,31 @@ describe("녹음 비즈니스 로직 테스트", () => {
         });
       });
     });
+
+    // describe("녹음 완료 및 후처리", () => {
+    //   beforeEach(() => {
+    //     const store = configureStore({
+    //       reducer: {
+    //         chat: chatReducer,
+    //       },
+    //     });
+
+    //     render(
+    //       <Provider store={store}>
+    //         <RecordButton />
+    //       </Provider>
+    //     );
+    //   });
+
+    //   it("녹음된 데이터로 WAV 파일을 생성한다", async () => {
+    //     const recordButton = screen.getByTestId("record-button");
+    //     await userEvent.click(recordButton);
+
+    //     (useDispatch as unknown as jest.Mock).mockReturnValue(jest.fn());
+    //   });
+    //   it("생성된 파일이 올바른 WAV 형식인지 확인한다", () => {});
+    //   it("FormData에 필요한 파라미터를 포함하여 생성한다", () => {});
+    //   it("Redux action을 통해 서버 전송을 요청한다", () => {});
+    // });
   });
 });
