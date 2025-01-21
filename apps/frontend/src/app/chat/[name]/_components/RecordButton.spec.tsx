@@ -195,17 +195,6 @@ describe("녹음 비즈니스 로직 테스트", () => {
       });
 
       it("음량 감지를 위한 analyser를 생성한다.", async () => {
-        const store = configureStore({
-          reducer: {
-            chat: chatReducer,
-          },
-        });
-
-        render(
-          <Provider store={store}>
-            <RecordButton />
-          </Provider>
-        );
         const recordButton = screen.getByTestId("record-button");
         await userEvent.click(recordButton);
 
@@ -221,17 +210,6 @@ describe("녹음 비즈니스 로직 테스트", () => {
       });
 
       it("stream을 source로 변환하고 analyser에 연결한다.", async () => {
-        const store = configureStore({
-          reducer: {
-            chat: chatReducer,
-          },
-        });
-
-        render(
-          <Provider store={store}>
-            <RecordButton />
-          </Provider>
-        );
         const recordButton = screen.getByTestId("record-button");
         await userEvent.click(recordButton);
 
@@ -241,17 +219,6 @@ describe("녹음 비즈니스 로직 테스트", () => {
       });
 
       it("recorder를 생성 후 stream을 연결하고 초기화 한다.", async () => {
-        const store = configureStore({
-          reducer: {
-            chat: chatReducer,
-          },
-        });
-
-        render(
-          <Provider store={store}>
-            <RecordButton />
-          </Provider>
-        );
         const recordButton = screen.getByTestId("record-button");
         await userEvent.click(recordButton);
 
@@ -261,17 +228,6 @@ describe("녹음 비즈니스 로직 테스트", () => {
       });
 
       it("recorder를 통해 녹음을 시작하고 상태를 recording으로 변경한다.", async () => {
-        const store = configureStore({
-          reducer: {
-            chat: chatReducer,
-          },
-        });
-
-        render(
-          <Provider store={store}>
-            <RecordButton />
-          </Provider>
-        );
         const recordButton = screen.getByTestId("record-button");
         await userEvent.click(recordButton);
 
