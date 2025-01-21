@@ -7,7 +7,7 @@ import RecordButton, {
 import { render, screen, waitFor, cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Provider, useDispatch } from "react-redux";
-import chatReducer from "@/store/redux/features/chat/slice";
+import chatReducer, { SEND_RECORD } from "@/store/redux/features/chat/slice";
 import {
   ChatContentSpeakerType,
   ChatContentStatusType,
@@ -73,6 +73,17 @@ const mockFile = jest.fn().mockImplementation(() => ({
 
 Object.defineProperty(window, "File", {
   value: mockFile,
+});
+
+/**
+ * FormData 관련 mock
+ */
+const mockFormData = {
+  append: jest.fn(),
+};
+const MockFormData = jest.fn().mockImplementation(() => mockFormData);
+Object.defineProperty(window, "FormData", {
+  value: MockFormData,
 });
 
 afterEach(() => {
@@ -345,6 +356,7 @@ describe("녹음 비즈니스 로직 테스트", () => {
     describe("녹음 완료 및 후처리", () => {
       let currentData: Uint8Array;
       let frameCallback: FrameRequestCallback | null = null;
+      let mockDispatch: jest.Mock;
 
       const setupSuccessRecordingEnvironment = async () => {
         currentData.fill(128);
@@ -354,6 +366,8 @@ describe("녹음 비즈니스 로직 테스트", () => {
             chat: chatReducer,
           },
         });
+
+        mockDispatch = jest.spyOn(store, "dispatch") as jest.Mock;
 
         render(
           <Provider store={store}>
@@ -396,6 +410,13 @@ describe("녹음 비즈니스 로직 테스트", () => {
         );
       });
 
+      afterEach(() => {
+        jest.clearAllTimers();
+        jest.useRealTimers();
+        frameCallback = null;
+        mockDispatch.mockClear();
+      });
+
       it("녹음 완료 후, 생성된 파일이 올바른 WAV 형식인지 확인한다", async () => {
         await setupSuccessRecordingEnvironment();
 
@@ -406,8 +427,16 @@ describe("녹음 비즈니스 로직 테스트", () => {
         });
       });
 
-      it("FormData에 필요한 파라미터를 포함하여 생성한다", () => {});
-      it("Redux action을 통해 서버 전송을 요청한다", () => {});
+      it("완성된 FormData를 Redux action을 통해 서버 전송을 요청한다", async () => {
+        await setupSuccessRecordingEnvironment();
+
+        await waitFor(() => {
+          expect(mockDispatch).toHaveBeenCalledWith({
+            type: SEND_RECORD,
+            payload: { formData: mockFormData },
+          });
+        });
+      });
     });
   });
 });
