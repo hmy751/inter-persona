@@ -1,9 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
-import RecordButton, {
+import RecordButton from "./RecordButton";
+import {
   IDLE_ICON_SRC,
   RECORDING_ICON_SRC,
   DISABLED_ICON_SRC,
-} from "./RecordButton";
+} from "./constants";
 import { render, screen, waitFor, cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Provider, useDispatch } from "react-redux";
