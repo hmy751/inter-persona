@@ -1,4 +1,4 @@
-import { RecordingStatusType } from "../_components/RecordButton";
+import { RecordingStatusType } from "./RecordButton";
 
 export const checkFileWave = (audioFile: File) => {
   const reader = new FileReader();
