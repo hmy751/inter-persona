@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect, useCallback, useMemo } from "react";
-import { detectSilence } from "../_utils";
+import { detectSilence } from "./utils";
 import Image from "next/image";
 import styles from "./RecordButton.module.css";
 import Recorder from "recorder-js";
@@ -78,28 +78,34 @@ export default function RecordButton() {
   };
 
   const finishRecord = async () => {
-    if (recorderRef.current === null) return;
+    try {
+      if (recorderRef.current === null) return;
 
-    const { blob } = await recorderRef.current.stop();
-    const audioFile = new File([blob], "recording.wav", { type: "audio/wav" });
+      const { blob } = await recorderRef.current.stop();
+      const audioFile = new File([blob], "recording.wav", {
+        type: "audio/wav",
+      });
 
-    if (!audioFile) {
-      console.error("No audio file to send.");
-      return;
+      if (!audioFile) {
+        console.error("No audio file to send.");
+        return;
+      }
+
+      const params = {
+        language: "ko-KR",
+        completion: "sync",
+        wordAlignment: true,
+        fullText: true,
+      };
+
+      const formData = new FormData();
+      formData.append("media", audioFile);
+      formData.append("params", JSON.stringify(params));
+
+      dispatch({ type: SEND_RECORD, payload: { formData } });
+    } catch (error) {
+      console.error("Error recording audio:", error);
     }
-
-    const params = {
-      language: "ko-KR",
-      completion: "sync",
-      wordAlignment: true,
-      fullText: true,
-    };
-
-    const formData = new FormData();
-    formData.append("media", audioFile);
-    formData.append("params", JSON.stringify(params));
-
-    dispatch({ type: SEND_RECORD, payload: { formData } });
   };
 
   useEffect(() => {
