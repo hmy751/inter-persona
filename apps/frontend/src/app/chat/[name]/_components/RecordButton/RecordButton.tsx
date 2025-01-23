@@ -10,16 +10,17 @@ import { SEND_RECORD } from "@/store/redux/features/chat/slice";
 import { ChatContentStatusType } from "@/store/redux/type";
 import { selectCurrentRecordingAnswer } from "@/store/redux/features/chat/selector";
 import clsx from "clsx";
+import {
+  IDLE_ICON_SRC,
+  RECORDING_ICON_SRC,
+  DISABLED_ICON_SRC,
+} from "./constants";
 
 export enum RecordingStatusType {
   idle = "idle",
   recording = "recording",
   finished = "finished",
 }
-
-export const IDLE_ICON_SRC = "/assets/images/record-button.svg";
-export const RECORDING_ICON_SRC = "/assets/images/recording-animation.svg";
-export const DISABLED_ICON_SRC = "/assets/images/record-button-disabled.svg";
 
 export default function RecordButton() {
   const recorderRef = useRef<Recorder | null>(null);
