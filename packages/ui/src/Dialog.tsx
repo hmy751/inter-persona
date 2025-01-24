@@ -111,7 +111,7 @@ Dialog.Confirm = ({
   const { setOpen } = useContext(DialogContext);
   const handleConfirm = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    callback();
+    callback?.();
     setOpen(false);
   };
 
