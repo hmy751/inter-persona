@@ -122,11 +122,22 @@ Dialog.Confirm = ({
   );
 };
 
-Dialog.Cancel = ({ children }: { children: ReactNode }) => {
+Dialog.Cancel = ({
+  callback,
+  children,
+}: {
+  callback?: () => void;
+  children: ReactNode;
+}) => {
   const { setOpen } = useContext(DialogContext);
+  const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    callback?.();
+    setOpen(false);
+  };
 
   return (
-    <Button variant="outline" fullWidth={true} onClick={() => setOpen(false)}>
+    <Button variant="outline" fullWidth={true} onClick={handleCancel}>
       {children}
     </Button>
   );
