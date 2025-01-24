@@ -15,7 +15,11 @@ import {
   RECORDING_ICON_SRC,
   DISABLED_ICON_SRC,
 } from "./constants";
-
+import { RecordError } from "./_error";
+import { createRecordError, RecordErrorType } from "./_error";
+import useAlertDialogStore from "@repo/store/useAlertDialogStore";
+import useConfirmDialogStore from "@repo/store/useConfirmDialogStore";
+import useToastStore from "@repo/store/useToastStore";
 export enum RecordingStatusType {
   idle = "idle",
   recording = "recording",
@@ -36,60 +40,143 @@ export default function RecordButton() {
   const isDisabledRecord =
     currentRecordingAnswer?.status === ChatContentStatusType.fail;
   const cleanupRef = useRef<() => void>(() => {});
+  const { setAlert } = useAlertDialogStore();
+  const { setConfirm } = useConfirmDialogStore();
+  const { addToast } = useToastStore();
 
   const handleRecord = async () => {
-    cleanupRef.current?.();
+    try {
+      cleanupRef.current?.();
 
-    const isRecordingOrDisabled =
-      recordingStatus === RecordingStatusType.recording || isDisabledRecord;
+      const isRecordingOrDisabled =
+        recordingStatus === RecordingStatusType.recording || isDisabledRecord;
 
-    if (isRecordingOrDisabled) return;
+      if (isRecordingOrDisabled) return;
 
-    // 1. 오디오 스트림 가져오기
-    const { mediaDevices } = navigator;
-    const stream = await mediaDevices.getUserMedia({ audio: true });
+      // 1. 오디오 스트림 가져오기
+      const { mediaDevices } = navigator;
+      if (!mediaDevices?.getUserMedia) {
+        throw createRecordError(RecordErrorType.API_NOT_SUPPORTED);
+      }
 
-    // 2. 음량 감지를 위한 analyser 생성
-    const audioContext = new window.AudioContext();
-    const analyserNode = audioContext.createAnalyser();
-    analyserNode.fftSize = 2048;
-    const dataArray = new Uint8Array(analyserNode.fftSize);
+      let stream: MediaStream;
+      try {
+        stream = await mediaDevices.getUserMedia({ audio: true });
+      } catch (error: any) {
+        switch (error.name) {
+          case "NotAllowedError":
+            throw createRecordError(
+              error.message.includes("denied")
+                ? RecordErrorType.PERMISSION_DENIED
+                : RecordErrorType.PERMISSION_DISMISSED,
+              error
+            );
+          case "NotFoundError":
+            throw createRecordError(RecordErrorType.DEVICE_NOT_FOUND, error);
+          case "NotReadableError":
+          case "TrackStartError":
+            throw createRecordError(RecordErrorType.DEVICE_NOT_READABLE, error);
+          case "OverconstrainedError":
+            throw createRecordError(RecordErrorType.DEVICE_NOT_FOUND, error);
+          default:
+            throw createRecordError(RecordErrorType.UNKNOWN_ERROR, error);
+        }
+      }
 
-    // 3. stream을 source로 변환하고 analyser에 연결
-    const source = audioContext.createMediaStreamSource(stream);
-    source.connect(analyserNode);
+      // 2. 음량 감지를 위한 analyser 생성
+      let audioContext: AudioContext;
+      try {
+        audioContext = new window.AudioContext();
+      } catch (error: any) {
+        throw createRecordError(RecordErrorType.CONTEXT_NOT_ALLOWED, error);
+      }
 
-    // 4. recorder 초기화
-    const recorder = new Recorder(audioContext);
-    recorderRef.current = recorder;
+      const analyserNode = audioContext.createAnalyser();
+      analyserNode.fftSize = 2048;
+      const dataArray = new Uint8Array(analyserNode.fftSize);
 
-    // 5. recorder 초기화
-    await recorderRef.current.init(stream);
+      // 3. stream을 source로 변환하고 analyser에 연결
+      let source: MediaStreamAudioSourceNode;
+      try {
+        source = audioContext.createMediaStreamSource(stream);
+        source.connect(analyserNode);
+      } catch (error: any) {
+        throw createRecordError(RecordErrorType.DEVICE_NOT_READABLE, error);
+      }
 
-    // 6. 녹음 시작
-    recorderRef.current.start().then(() => {
-      setRecordingStatus(RecordingStatusType.recording);
-    });
+      // 4. recorder 초기화
+      const recorder = new Recorder(audioContext);
+      recorderRef.current = recorder;
 
-    cleanupRef.current = detectSilence(
-      analyserNode,
-      dataArray,
-      setRecordingStatus
-    );
+      // 5. recorder 초기화
+      try {
+        await recorderRef.current.init(stream);
+      } catch (error: any) {
+        throw createRecordError(RecordErrorType.DEVICE_NOT_READABLE, error);
+      }
+
+      // 6. 녹음 시작
+      try {
+        await recorderRef.current.start();
+        setRecordingStatus(RecordingStatusType.recording);
+      } catch (error: any) {
+        throw createRecordError(RecordErrorType.UNKNOWN_ERROR, error);
+      }
+
+      cleanupRef.current = detectSilence(
+        analyserNode,
+        dataArray,
+        setRecordingStatus
+      );
+    } catch (error) {
+      if (error instanceof RecordError) {
+        const { manage, title, message } = error.detail;
+        switch (manage) {
+          case "alertDialog":
+            setAlert(title, message);
+            break;
+          case "confirmDialog":
+            setConfirm(title, message, () => {});
+            break;
+          case "toast":
+            addToast({
+              title,
+              description: message,
+              duration: 3000,
+            });
+            break;
+        }
+
+        return;
+      }
+
+      addToast({
+        title: "알 수 없는 오류",
+        description: "알 수 없는 오류가 발생했습니다. 다시 시도해주세요.",
+        duration: 3000,
+      });
+    }
   };
 
   const finishRecord = async () => {
     try {
-      if (recorderRef.current === null) return;
+      if (recorderRef.current === null) {
+        throw createRecordError(RecordErrorType.UNKNOWN_ERROR);
+      }
 
       const { blob } = await recorderRef.current.stop();
+
+      // 파일 크기 체크 (예: 50MB 제한)
+      if (blob.size > 50 * 1024 * 1024) {
+        throw createRecordError(RecordErrorType.FILE_TOO_LARGE);
+      }
+
       const audioFile = new File([blob], "recording.wav", {
         type: "audio/wav",
       });
 
       if (!audioFile) {
-        console.error("No audio file to send.");
-        return;
+        throw createRecordError(RecordErrorType.UNKNOWN_ERROR);
       }
 
       const params = {
@@ -105,7 +192,32 @@ export default function RecordButton() {
 
       dispatch({ type: SEND_RECORD, payload: { formData } });
     } catch (error) {
-      console.error("Error recording audio:", error);
+      if (error instanceof RecordError) {
+        const { manage, title, message } = error.detail;
+        switch (manage) {
+          case "alertDialog":
+            setAlert(title, message);
+            break;
+          case "confirmDialog":
+            setConfirm(title, message, () => {});
+            break;
+          case "toast":
+            addToast({
+              title,
+              description: message,
+              duration: 3000,
+            });
+            break;
+        }
+
+        return;
+      }
+
+      addToast({
+        title: "알 수 없는 오류",
+        description: "알 수 없는 오류가 발생했습니다. 다시 시도해주세요.",
+        duration: 3000,
+      });
     }
   };
 
