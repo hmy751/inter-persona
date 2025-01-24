@@ -4,7 +4,8 @@
   "private": true,
   "exports": {
     ".": "./index.ts",
-    "./useToastStore": "./useToastStore.ts"
+    "./useToastStore": "./useToastStore.ts",
+    "./useAlertDialogStore": "./useAlertDialogStore.ts"
   },
   "dependencies": {
     "zustand": "^4.5.0"
