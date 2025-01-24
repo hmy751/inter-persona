@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import Dialog from "./Dialog";
 import Button from "./Button";
+import { useAlertDialogStore } from "@repo/store/useAlertDialogStore";
 
 const meta = {
   title: "Common/Dialog",
@@ -63,6 +64,33 @@ export const WithFooter: Story = {
           </Dialog.Footer>
         </Dialog.Content>
       </Dialog>
+    );
+  },
+};
+
+export const ControlledAlertDialog: Story = {
+  args: {
+    children: <div></div>,
+  },
+  render: () => {
+    const { open, title, description, setAlert, clearAlert } =
+      useAlertDialogStore();
+
+    return (
+      <>
+        <Button onClick={() => setAlert("Error", "This is a Network Error")}>
+          Set Alert
+        </Button>
+        <Dialog open={open}>
+          <Dialog.Content>
+            <Dialog.Title>{title}</Dialog.Title>
+            <Dialog.Description>{description}</Dialog.Description>
+            <Dialog.Footer>
+              <Dialog.Cancel callback={clearAlert}>Ok</Dialog.Cancel>
+            </Dialog.Footer>
+          </Dialog.Content>
+        </Dialog>
+      </>
     );
   },
 };
