@@ -5,7 +5,8 @@
   "exports": {
     ".": "./index.ts",
     "./useToastStore": "./useToastStore.ts",
-    "./useAlertDialogStore": "./useAlertDialogStore.ts"
+    "./useAlertDialogStore": "./useAlertDialogStore.ts",
+    "./useConfirmDialogStore": "./useConfirmDialogStore.ts"
   },
   "dependencies": {
     "zustand": "^4.5.0"
