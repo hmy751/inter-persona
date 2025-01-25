@@ -35,11 +35,12 @@ jest.mock("recorder-js", () => {
  * AudioContext, navigator.mediaDevices 관련 mock
  */
 const mockStream = {};
+const mockGetUserMedia = jest.fn().mockResolvedValue(mockStream);
 
 Object.defineProperty(window, "navigator", {
   value: {
     mediaDevices: {
-      getUserMedia: jest.fn().mockResolvedValue(mockStream),
+      getUserMedia: mockGetUserMedia,
     },
   },
 });
@@ -415,7 +416,6 @@ describe("녹음 비즈니스 로직 테스트", () => {
         jest.clearAllTimers();
         jest.useRealTimers();
         frameCallback = null;
-        mockDispatch.mockClear();
       });
 
       it("녹음 완료 후, 생성된 파일이 올바른 WAV 형식인지 확인한다", async () => {
@@ -436,6 +436,223 @@ describe("녹음 비즈니스 로직 테스트", () => {
             type: SEND_RECORD,
             payload: { formData: mockFormData },
           });
+        });
+      });
+    });
+  });
+});
+
+const setAlertMock = jest.fn();
+jest.mock("@repo/store/useAlertDialogStore", () => {
+  return jest.fn().mockImplementation(() => ({
+    setAlert: setAlertMock,
+    setOpen: jest.fn(),
+    clearAlert: jest.fn(),
+  }));
+});
+
+jest.mock("@repo/store/useConfirmDialogStore", () => {
+  return jest.fn().mockImplementation(() => ({
+    setConfirm: jest.fn(),
+  }));
+});
+
+const addToastMock = jest.fn();
+jest.mock("@repo/store/useToastStore", () => {
+  return jest.fn().mockImplementation(() => ({
+    addToast: addToastMock,
+  }));
+});
+
+describe("에러 처리 테스트", () => {
+  let store: ReturnType<typeof configureStore>;
+
+  describe("handleRecord 단계에서 발생하는 에러 처리", () => {
+    beforeEach(() => {
+      store = configureStore({
+        reducer: {
+          chat: chatReducer,
+        },
+      });
+    });
+
+    it("권한 거부(NotAllowedError) 시, setAlert 호출한다.", async () => {
+      mockGetUserMedia.mockRejectedValue({
+        name: "NotAllowedError",
+        message: "User denied mic permission",
+      });
+
+      render(
+        <Provider store={store}>
+          <RecordButton />
+        </Provider>
+      );
+
+      const recordButton = screen.getByTestId("record-button");
+      await userEvent.click(recordButton);
+
+      await waitFor(() => {
+        expect(setAlertMock).toHaveBeenCalledTimes(1);
+        expect(setAlertMock).toHaveBeenCalledWith(
+          "Permission Denied",
+          expect.stringContaining("마이크 사용 권한이 거부되었습니다")
+        );
+      });
+    });
+
+    it("마이크 디바이스가 없을 때(NotFoundError) 시, setAlert 호출한다.", async () => {
+      mockGetUserMedia.mockRejectedValue({
+        name: "NotFoundError",
+        message: "No microphone found",
+      });
+
+      render(
+        <Provider store={store}>
+          <RecordButton />
+        </Provider>
+      );
+
+      // 녹음 버튼 클릭
+      const recordButton = screen.getByTestId("record-button");
+      await userEvent.click(recordButton);
+
+      await waitFor(() => {
+        expect(setAlertMock).toHaveBeenCalledTimes(1);
+        expect(setAlertMock).toHaveBeenCalledWith(
+          "Device Not Found",
+          expect.stringContaining("마이크를 찾을 수 없습니다")
+        );
+      });
+    });
+
+    it("기타 알 수 없는 에러 발생 시, addToast 호출한다.", async () => {
+      mockGetUserMedia.mockRejectedValue({
+        name: "RandomUnexpectedError",
+        message: "Some random error",
+      });
+
+      render(
+        <Provider store={store}>
+          <RecordButton />
+        </Provider>
+      );
+
+      const recordButton = screen.getByTestId("record-button");
+      await userEvent.click(recordButton);
+
+      await waitFor(() => {
+        expect(addToastMock).toHaveBeenCalledTimes(1);
+        expect(addToastMock).toHaveBeenCalledWith({
+          title: "Unknown Error",
+          description:
+            expect.stringContaining("알 수 없는 오류가 발생했습니다"),
+          duration: 3000,
+        });
+      });
+    });
+  });
+
+  describe("finishRecord 단계에서 발생하는 에러 처리", () => {
+    let currentData: Uint8Array;
+    let frameCallback: FrameRequestCallback | null = null;
+    let mockDispatch: jest.Mock;
+
+    const setupSuccessRecordingEnvironment = async () => {
+      currentData.fill(128);
+
+      const store = configureStore({
+        reducer: {
+          chat: chatReducer,
+        },
+      });
+
+      mockDispatch = jest.spyOn(store, "dispatch") as jest.Mock;
+
+      render(
+        <Provider store={store}>
+          <RecordButton />
+        </Provider>
+      );
+
+      const recordButton = await screen.getByTestId("record-button");
+      await userEvent.click(recordButton);
+
+      jest.useFakeTimers();
+
+      advanceFramesAndTime(12, 100);
+
+      if (frameCallback) frameCallback(0);
+      return recordButton;
+    };
+
+    const advanceFramesAndTime = (frames: number, timePerFrame: number) => {
+      for (let i = 0; i < frames; i++) {
+        jest.advanceTimersByTime(timePerFrame);
+        if (frameCallback) frameCallback(performance.now());
+      }
+    };
+    beforeEach(() => {
+      currentData = new Uint8Array(2048);
+      mockGetUserMedia.mockResolvedValue(mockStream);
+
+      mockGetByteTimeDomainData.mockImplementation((arr: Uint8Array) => {
+        if (arr instanceof Uint8Array) {
+          arr.set(currentData);
+        }
+      });
+
+      window.requestAnimationFrame = jest.fn(
+        (callback: FrameRequestCallback) => {
+          frameCallback = callback;
+          return 1;
+        }
+      );
+    });
+
+    afterEach(() => {
+      jest.clearAllTimers();
+      jest.useRealTimers();
+      frameCallback = null;
+    });
+
+    it("파일 크기가 너무 클 때(FILE_TOO_LARGE), addToast 호출한다.", async () => {
+      const largeBlob = new Blob(["a".repeat(60 * 1024 * 1024)], {
+        type: "audio/wav",
+      });
+
+      mockRecorderStop.mockResolvedValue({ blob: largeBlob });
+
+      await setupSuccessRecordingEnvironment();
+
+      await waitFor(() => {
+        expect(mockRecorderStop).toHaveBeenCalled();
+      });
+
+      await waitFor(() => {
+        expect(addToastMock).toHaveBeenCalledTimes(1);
+        expect(addToastMock).toHaveBeenCalledWith({
+          title: "File Too Large",
+          description: expect.stringContaining("녹음 파일이 너무 큽니다"),
+          duration: 3000,
+        });
+      });
+    });
+
+    it("알 수 없는 에러가 발생하면, addToast 호출한다.", async () => {
+      mockRecorderStop.mockRejectedValue(new Error("Unknown stop error"));
+
+      await setupSuccessRecordingEnvironment();
+
+      await waitFor(() => {
+        expect(mockRecorderStop).toHaveBeenCalled();
+      });
+
+      await waitFor(() => {
+        expect(addToastMock).toHaveBeenCalledTimes(1);
+        expect(addToastMock).toHaveBeenCalledWith({
+          title: "알 수 없는 오류",
+          description: "알 수 없는 오류가 발생했습니다. 다시 시도해주세요.",
+          duration: 3000,
         });
       });
     });
