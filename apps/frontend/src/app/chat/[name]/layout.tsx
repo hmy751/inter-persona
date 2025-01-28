@@ -1,4 +1,4 @@
-import RecordButton from "./_components/RecordButton";
+import RecordButton from "./_components/RecordButton/RecordButton";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (

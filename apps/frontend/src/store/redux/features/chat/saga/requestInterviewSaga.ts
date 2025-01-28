@@ -10,7 +10,6 @@ import {
   updateContent,
   removeContent,
   startChat,
-  failAIResponse,
   resetTrySpeechCount,
   CANCEL_CURRENT_REQUEST_INTERVIEW,
   resetContentStatus,

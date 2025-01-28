@@ -11,24 +11,50 @@ import { createPortal } from "react-dom";
 import styles from "./Dialog.module.css";
 import Text from "./Text";
 import Button from "./Button";
+
 interface DialogContextType {
   open: boolean;
   setOpen: (open: boolean) => void;
+  controlled?: boolean;
 }
 
 interface DialogProps {
   children: ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 const DialogContext = createContext<DialogContextType>({
   open: false,
   setOpen: () => {},
+  controlled: false,
 });
 
-export default function Dialog({ children }: DialogProps): ReactElement {
-  const [open, setOpen] = useState(false);
+export default function Dialog({
+  children,
+  open: controlledOpen,
+  onOpenChange,
+}: DialogProps): ReactElement {
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
 
-  const value = useMemo(() => ({ open, setOpen }), [open, setOpen]);
+  const isControlled = controlledOpen !== undefined;
+
+  const open = isControlled ? controlledOpen : uncontrolledOpen;
+  const setOpen = useMemo(() => {
+    if (isControlled) {
+      return onOpenChange || (() => {});
+    }
+    return setUncontrolledOpen;
+  }, [isControlled, onOpenChange]);
+
+  const value = useMemo(
+    () => ({
+      open,
+      setOpen,
+      controlled: isControlled,
+    }),
+    [open, setOpen, isControlled]
+  );
 
   return (
     <DialogContext.Provider value={value}>{children}</DialogContext.Provider>
@@ -85,7 +111,7 @@ Dialog.Confirm = ({
   const { setOpen } = useContext(DialogContext);
   const handleConfirm = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    callback();
+    callback?.();
     setOpen(false);
   };
 
@@ -96,11 +122,22 @@ Dialog.Confirm = ({
   );
 };
 
-Dialog.Cancel = ({ children }: { children: ReactNode }) => {
+Dialog.Cancel = ({
+  callback,
+  children,
+}: {
+  callback?: () => void;
+  children: ReactNode;
+}) => {
   const { setOpen } = useContext(DialogContext);
+  const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    callback?.();
+    setOpen(false);
+  };
 
   return (
-    <Button variant="outline" fullWidth={true} onClick={() => setOpen(false)}>
+    <Button variant="outline" fullWidth={true} onClick={handleCancel}>
       {children}
     </Button>
   );

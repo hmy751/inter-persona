@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import Dialog from "./Dialog";
 import Button from "./Button";
-
+import { useAlertDialogStore } from "@repo/store/useAlertDialogStore";
+import { useConfirmDialogStore } from "@repo/store/useConfirmDialogStore";
 const meta = {
   title: "Common/Dialog",
   component: Dialog,
@@ -63,6 +64,76 @@ export const WithFooter: Story = {
           </Dialog.Footer>
         </Dialog.Content>
       </Dialog>
+    );
+  },
+};
+
+export const ControlledAlertDialog: Story = {
+  args: {
+    children: <div></div>,
+  },
+  render: () => {
+    const { open, setOpen, title, description, setAlert, clearAlert } =
+      useAlertDialogStore();
+
+    return (
+      <>
+        <Button onClick={() => setAlert("Error", "This is a Network Error")}>
+          Set Alert
+        </Button>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <Dialog.Content>
+            <Dialog.Title>{title}</Dialog.Title>
+            <Dialog.Description>{description}</Dialog.Description>
+            <Dialog.Footer>
+              <Dialog.Cancel callback={clearAlert}>Ok</Dialog.Cancel>
+            </Dialog.Footer>
+          </Dialog.Content>
+        </Dialog>
+      </>
+    );
+  },
+};
+
+export const ControlledConfirmDialog: Story = {
+  args: {
+    children: <div></div>,
+  },
+  render: () => {
+    const {
+      open,
+      setOpen,
+      title,
+      description,
+      confirmCallback,
+      clearConfirm,
+      setConfirm,
+    } = useConfirmDialogStore();
+
+    return (
+      <>
+        <Button
+          onClick={() =>
+            setConfirm("Confirm", "Are you sure?", () => {
+              console.log("Confirmed");
+            })
+          }
+        >
+          Set Confirm
+        </Button>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <Dialog.Content>
+            <Dialog.Title>{title}</Dialog.Title>
+            <Dialog.Description>{description}</Dialog.Description>
+            <Dialog.Footer>
+              <Dialog.Cancel callback={clearConfirm}>Cancel</Dialog.Cancel>
+              <Dialog.Confirm callback={confirmCallback}>
+                Confirm
+              </Dialog.Confirm>
+            </Dialog.Footer>
+          </Dialog.Content>
+        </Dialog>
+      </>
     );
   },
 };

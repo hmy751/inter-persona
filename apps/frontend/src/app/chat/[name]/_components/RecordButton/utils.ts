@@ -1,4 +1,4 @@
-import { RecordingStatusType } from "../_components/RecordButton";
+import { RecordingStatusType } from "./RecordButton";
 
 export const checkFileWave = (audioFile: File) => {
   const reader = new FileReader();
@@ -30,22 +30,28 @@ export const detectSilence = (
   silenceThreshold = 0.01,
   timeout = 1000
 ) => {
+
   let silenceStart = performance.now();
+  let animationFrameId: number;
 
   function checkSilence() {
     analyser.getByteTimeDomainData(dataArray);
 
+    let sumSquares = 0;
+
+
     // RMS 계산
-    let rms = 0;
     for (let i = 0; i < dataArray.length; i++) {
       const normalized = (dataArray[i] as number) / 128 - 1;
-      rms += normalized * normalized;
+      sumSquares += normalized * normalized;
     }
-    rms = Math.sqrt(rms / dataArray.length);
+    const rms = Math.sqrt(sumSquares / dataArray.length);
 
     if (rms < silenceThreshold) {
+      const silenceDuration = performance.now() - silenceStart;
+
       // 음성 중지 감지 (특정 시간 동안 rms가 임계값 이하인 경우)
-      if (performance.now() - silenceStart > timeout) {
+      if (silenceDuration > timeout) {
         setIsRecording(RecordingStatusType.finished);
         return;
       }
@@ -54,8 +60,12 @@ export const detectSilence = (
       silenceStart = performance.now();
     }
 
-    requestAnimationFrame(checkSilence);
+    animationFrameId = requestAnimationFrame(checkSilence);
   }
 
   checkSilence();
+
+  return () => {
+    cancelAnimationFrame(animationFrameId);
+  };
 };
