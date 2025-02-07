@@ -1,9 +1,9 @@
 "use client";
 
-import InterviewerProfileSection from "./_components/InterviewerProfileSection";
+import InterviewerProfileSection from "@/_components/chat/[name]/InterviewerProfileSection";
 import styles from "./page.module.css";
 import Text from "@repo/ui/Text";
-import ChatSection from "./_components/ChatSection";
+import ChatSection from "@/_components/chat/[name]/ChatSection";
 import useUserStore from "@/_store/useUserStore";
 import { useInterviewerStore } from "@/_store/useInterviewerStore";
 import { useRouter } from "next/navigation";
