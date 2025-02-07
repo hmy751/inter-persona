@@ -9,6 +9,42 @@ ChatGPT의 프롬프트를 활용하여 가상의 면접관과 모의 면접을 
 
 Next.js (v.14) | React (v.18) | TypeScript | Turborepo | Storybook | CSS Modules | MSW | Redux Toolkit | Redux-Saga | Zustand | Jest | React Testing Library
 
+# Project Structure
+
+```
+├── apps
+│   └── frontend
+│       ├── public                     # 정적 파일(이미지, 폰트 등)
+│       └── src
+│           ├── _apis                  # API 호출 로직
+│           ├── _components            # 레이아웃/페이지별 컴포넌트
+│           │   ├── layout
+│           │   └── pages
+│           ├── _hooks                 # 커스텀 훅
+│           ├── _mocks                 # Mock 데이터(테스트/개발 환경)
+│           ├── _store                 # 프론트엔드 상태(Redux, Zustand)
+│           ├── _storybook             # 프론트엔드 앱 전용 스토리북
+│           └── app                    # Next.js App Router 구조
+│               ├── api
+│               │   └── chat
+│               │       └── route.ts   # STT API 프록시 라우트 등 서버 로직
+│               ├── chat
+│               │   ├── layout.tsx
+│               │   ├── page.module.css
+│               │   └── page.tsx       # 채팅(인터뷰) 페이지
+│               ...
+│               ├── layout.tsx
+│               └── page.tsx
+├── packages
+│   ├── store                          # 전역 상태, Hooks 관리 (ex: useToastStore 등)
+│   ├── eslint-config                  # 공통 ESLint 설정
+│   ├── typescript-config              # 공통 TypeScript 설정
+│   └── ui                             # 공통 UI 컴포넌트
+│       └── src                       # 버튼, 모달 등 재사용 컴포넌트와 스토리북
+│           └── style                 # 글로벌 스타일 테마
+└── turbo.json                         # Turborepo 설정
+```
+
 # Flow Chart
 
 ## 유저 정보 입력
