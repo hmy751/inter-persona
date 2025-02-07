@@ -1,5 +1,5 @@
-import { RootState } from "@/store/redux/rootStore";
-import { ChatContentSpeakerType } from "@/store/redux/type";
+import { RootState } from "@/_store/redux/rootStore";
+import { ChatContentSpeakerType } from "@/_store/redux/type";
 
 const CHAT_LIMIT = 21;
 

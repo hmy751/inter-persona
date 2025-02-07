@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import createSagaMiddleware from "redux-saga";
-import chatReducer from "@/store/redux/features/chat/slice";
+import chatReducer from "@/_store/redux/features/chat/slice";
 import { rootSaga } from "./rootSaga";
 
 const sagaMiddleware = createSagaMiddleware();

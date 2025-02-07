@@ -1,7 +1,7 @@
 "use client";
 
 import Button from "@repo/ui/Button";
-import { useInterviewerStore } from "@/store/useInterviewerStore";
+import { useInterviewerStore } from "@/_store/useInterviewerStore";
 import { useRouter } from "next/navigation";
 
 interface StartInterviewButtonProps {

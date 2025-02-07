@@ -15,12 +15,12 @@ import {
   resetContentStatus,
 } from "../slice";
 import { delay } from "../../../utils";
-import { RootState } from "@/store/redux/rootStore";
+import { RootState } from "@/_store/redux/rootStore";
 import {
   fetchAIChat,
   AIChatData,
 } from "@/apis/interview";
-import { ChatContentSpeakerType } from "@/store/redux/type";
+import { ChatContentSpeakerType } from "@/_store/redux/type";
 import { useToastStore } from "@repo/store/useToastStore";
 import { AI_ERROR_TOAST, AI_NETWORK_ERROR_TOAST } from "../constants";
 import { errorContent } from "../slice";
