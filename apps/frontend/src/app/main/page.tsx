@@ -5,7 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import useUserStore from "@/_store/useUserStore";
-import { fetchLogin } from "@/apis/user";
+import { fetchLogin } from "@/_apis/user";
 
 import Text from "@repo/ui/Text";
 import InputField from "@repo/ui/InputField";

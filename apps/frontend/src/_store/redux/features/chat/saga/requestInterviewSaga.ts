@@ -19,7 +19,7 @@ import { RootState } from "@/_store/redux/rootStore";
 import {
   fetchAIChat,
   AIChatData,
-} from "@/apis/interview";
+} from "@/_apis/interview";
 import { ChatContentSpeakerType } from "@/_store/redux/type";
 import { useToastStore } from "@repo/store/useToastStore";
 import { AI_ERROR_TOAST, AI_NETWORK_ERROR_TOAST } from "../constants";

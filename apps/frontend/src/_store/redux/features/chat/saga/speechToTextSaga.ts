@@ -17,7 +17,7 @@ import { RootState } from "@/_store/redux/rootStore";
 import {
   fetchSpeechToText,
   SpeechToTextData,
-} from "@/apis/interview";
+} from "@/_apis/interview";
 import { ChatContentSpeakerType } from "@/_store/redux/type";
 import { useToastStore } from "@repo/store/useToastStore";
 import { STT_ERROR_TOAST, STT_NETWORK_ERROR_TOAST } from "../constants";

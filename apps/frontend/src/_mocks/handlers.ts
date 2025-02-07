@@ -1,8 +1,8 @@
 import { http, HttpResponse, RequestHandler } from "msw";
-import { baseURL } from "@/apis/fetcher";
-import { LoginBody } from "@/apis/user";
+import { baseURL } from "@/_apis/fetcher";
+import { LoginBody } from "@/_apis/user";
 
-import { InterviewBody, AIChatBody } from "@/apis/interview";
+import { InterviewBody, AIChatBody } from "@/_apis/interview";
 
 const userHandler = [
   http.post<never, LoginBody>(`${baseURL}/login`, async ({ request }) => {
