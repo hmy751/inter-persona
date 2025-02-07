@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import ChatArticle from "@/_components/pages/chat/[name]/ChatArticle";
+import ChatArticle from "@/_components/pages/chat/ChatArticle";
 import {
   ChatContentSpeakerType,
   ChatContentStatusType,
