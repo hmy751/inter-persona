@@ -4,15 +4,14 @@ import { useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styles from "./page.module.css";
 
-import InterviewerProfile from "./_components/InterviewerProfile";
 import { useQuery } from "@tanstack/react-query";
 import { selectChatId } from "@/_store/redux/features/chat/selector";
 import { useInterviewerStore } from "@/_store/useInterviewerStore";
 import Text from "@repo/ui/Text";
-import ScoreSection from "./_components/ScoreSection";
-import TotalEvaluationSection from "./_components/TotalEvaluationSection";
-import QuestionEvaluationSection from "./_components/QuestionEvaluationSection";
-import ButtonGroupSection from "./_components/ButtonGroupSection";
+import ScoreSection from "@/_components/result/ScoreSection";
+import TotalEvaluationSection from "@/_components/result/TotalEvaluationSection";
+import QuestionEvaluationSection from "@/_components/result/QuestionEvaluationSection";
+import ButtonGroupSection from "@/_components/result/ButtonGroupSection";
 
 interface Scores {
   standard: string;
