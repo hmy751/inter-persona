@@ -2,7 +2,7 @@ import AppToast from "@/_components/layout/AppToast";
 import AppAlertDialog from "@/_components/layout/AppAlertDialog";
 import AppConfirmDialog from "@/_components/layout/AppConfirmDialog";
 import Header from "@/_components/layout/Header/Header";
-import styles from "./_layout.module.css";
+import styles from "./LayoutUI.module.css";
 
 interface LayoutProps {
   children: React.ReactNode;
