@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Text from "@repo/ui/Text";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useMediaQuery } from "@/_hooks/useMediaQuery";
 
 interface HeaderTitleProps extends React.HTMLAttributes<HTMLDivElement> {}
 
