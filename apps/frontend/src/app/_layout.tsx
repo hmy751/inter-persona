@@ -1,7 +1,7 @@
-import AppToast from "./_components/AppToast";
-import AppAlertDialog from "./_components/AppAlertDialog";
-import AppConfirmDialog from "./_components/AppConfirmDialog";
-import Header from "./_components/Header/Header";
+import AppToast from "@/_components/layout/AppToast";
+import AppAlertDialog from "@/_components/layout/AppAlertDialog";
+import AppConfirmDialog from "@/_components/layout/AppConfirmDialog";
+import Header from "@/_components/layout/Header/Header";
 import styles from "./_layout.module.css";
 
 interface LayoutProps {
