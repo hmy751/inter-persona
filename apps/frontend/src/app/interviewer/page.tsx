@@ -1,4 +1,4 @@
-import InterviewerCard from "@/_components/interviewer/InterviewerCard";
+import InterviewerCard from "@/_components/pages/interviewer/InterviewerCard";
 import styles from "./page.module.css";
 import Text from "@repo/ui/Text";
 
