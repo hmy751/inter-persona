@@ -12,7 +12,7 @@ export default function MSWProvider({
   useEffect(() => {
     if (process.env.NEXT_PUBLIC_USE_MSW === "true") {
       (async function () {
-        const { worker } = await import("@/mocks/browser");
+        const { worker } = await import("@/_mocks/browser");
         await worker.start({
           quiet: false,
         });
