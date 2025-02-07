@@ -3,7 +3,7 @@
 import Avatar from "@repo/ui/Avatar";
 import Text from "@repo/ui/Text";
 import styles from "./HeaderUserInfo.module.css";
-import useUserStore from "@/store/useUserStore";
+import useUserStore from "@/_store/useUserStore";
 
 interface HeaderUserInfoProps extends React.HTMLAttributes<HTMLDivElement> {}
 

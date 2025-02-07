@@ -3,7 +3,7 @@ import ChatArticle from "./ChatArticle";
 import {
   ChatContentSpeakerType,
   ChatContentStatusType,
-} from "@/store/redux/type";
+} from "@/_store/redux/type";
 
 const interviewer = {
   imgUrl: "/assets/images/elon_musk.png",

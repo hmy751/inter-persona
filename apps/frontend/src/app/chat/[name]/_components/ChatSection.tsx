@@ -4,15 +4,15 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   selectChatContents,
   selectChatLimit,
-} from "@/store/redux/features/chat/selector";
+} from "@/_store/redux/features/chat/selector";
 import ChatArticle from "./ChatArticle";
-import { useInterviewerStore } from "@/store/useInterviewerStore";
-import useUserStore from "@/store/useUserStore";
+import { useInterviewerStore } from "@/_store/useInterviewerStore";
+import useUserStore from "@/_store/useUserStore";
 import { fetchInterview } from "@/apis/interview";
 import {
   START_CHAT,
   initializeChatState,
-} from "@/store/redux/features/chat/slice";
+} from "@/_store/redux/features/chat/slice";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./chat.module.css";

@@ -3,12 +3,12 @@ import ChatSection from "./ChatSection";
 import {
   ChatContentSpeakerType,
   ChatContentStatusType,
-} from "@/store/redux/type";
+} from "@/_store/redux/type";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
-import { useInterviewerStore } from "@/store/useInterviewerStore";
-import useUserStore from "@/store/useUserStore";
-import chatReducer from "@/store/redux/features/chat/slice";
+import { useInterviewerStore } from "@/_store/useInterviewerStore";
+import useUserStore from "@/_store/useUserStore";
+import chatReducer from "@/_store/redux/features/chat/slice";
 
 const mockInterviewer = {
   id: 1,

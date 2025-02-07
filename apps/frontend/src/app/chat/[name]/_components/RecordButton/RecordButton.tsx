@@ -6,9 +6,9 @@ import Image from "next/image";
 import styles from "./RecordButton.module.css";
 import Recorder from "recorder-js";
 import { useDispatch, useSelector } from "react-redux";
-import { SEND_RECORD } from "@/store/redux/features/chat/slice";
-import { ChatContentStatusType } from "@/store/redux/type";
-import { selectCurrentRecordingAnswer } from "@/store/redux/features/chat/selector";
+import { SEND_RECORD } from "@/_store/redux/features/chat/slice";
+import { ChatContentStatusType } from "@/_store/redux/type";
+import { selectCurrentRecordingAnswer } from "@/_store/redux/features/chat/selector";
 import clsx from "clsx";
 import {
   IDLE_ICON_SRC,

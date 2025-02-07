@@ -3,7 +3,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import {
   ChatContentStatusType,
   ChatContentSpeakerType,
-} from "@/store/redux/type";
+} from "@/_store/redux/type";
 
 export interface ChatContent {
   status: ChatContentStatusType;

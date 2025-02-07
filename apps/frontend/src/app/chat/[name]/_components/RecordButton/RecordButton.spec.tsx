@@ -8,11 +8,11 @@ import {
 import { render, screen, waitFor, cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Provider, useDispatch } from "react-redux";
-import chatReducer, { SEND_RECORD } from "@/store/redux/features/chat/slice";
+import chatReducer, { SEND_RECORD } from "@/_store/redux/features/chat/slice";
 import {
   ChatContentSpeakerType,
   ChatContentStatusType,
-} from "@/store/redux/type";
+} from "@/_store/redux/type";
 
 /**
  * recorder-js mock

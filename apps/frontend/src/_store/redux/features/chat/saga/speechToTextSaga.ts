@@ -13,12 +13,12 @@ import {
   increaseTrySpeechCount,
 } from "../slice";
 import { delay } from "../../../utils";
-import { RootState } from "@/store/redux/rootStore";
+import { RootState } from "@/_store/redux/rootStore";
 import {
   fetchSpeechToText,
   SpeechToTextData,
 } from "@/apis/interview";
-import { ChatContentSpeakerType } from "@/store/redux/type";
+import { ChatContentSpeakerType } from "@/_store/redux/type";
 import { useToastStore } from "@repo/store/useToastStore";
 import { STT_ERROR_TOAST, STT_NETWORK_ERROR_TOAST } from "../constants";
 
