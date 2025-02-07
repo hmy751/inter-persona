@@ -17,7 +17,7 @@ export default function StartInterviewButton({
   const router = useRouter();
   const handleClick = () => {
     setInterviewerId(id);
-    router.push(`/chat/31`);
+    router.push(`/chat`);
   };
   return (
     <Button variant="outline" size="md" onClick={handleClick}>

@@ -56,7 +56,7 @@ const interviewHandlerforInterviewerError = [
       });
     }
   ),
-  http.post('/api/chat', async ({ request }) => {
+  http.post('/chat', async ({ request }) => {
     try {
       const formData = await request.formData();
       return HttpResponse.json({

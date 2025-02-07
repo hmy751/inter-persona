@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import ChatSection from "@/_components/pages/chat/[name]/ChatSection";
+import ChatSection from "@/_components/pages/chat/ChatSection";
 import {
   ChatContentSpeakerType,
   ChatContentStatusType,
