@@ -1,5 +1,5 @@
 import { http } from 'msw';
-import { baseURL } from '@/apis/fetcher';
+import { baseURL } from '@/_apis/fetcher';
 import { server } from '@/_mocks/server';
 import { runSaga } from 'redux-saga';
 import useToastStore from '@repo/store/useToastStore';

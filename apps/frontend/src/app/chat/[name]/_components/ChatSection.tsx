@@ -8,7 +8,7 @@ import {
 import ChatArticle from "./ChatArticle";
 import { useInterviewerStore } from "@/_store/useInterviewerStore";
 import useUserStore from "@/_store/useUserStore";
-import { fetchInterview } from "@/apis/interview";
+import { fetchInterview } from "@/_apis/interview";
 import {
   START_CHAT,
   initializeChatState,
