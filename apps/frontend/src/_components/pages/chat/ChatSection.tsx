@@ -6,8 +6,8 @@ import {
   selectChatLimit,
 } from "@/_store/redux/features/chat/selector";
 import ChatArticle from "./ChatArticle";
-import { useInterviewerStore } from "@/_store/useInterviewerStore";
-import useUserStore from "@/_store/useUserStore";
+import { useInterviewerStore } from "@/_store/zustand/useInterviewerStore";
+import useUserStore from "@/_store/zustand/useUserStore";
 import { fetchInterview } from "@/_apis/interview";
 import {
   START_CHAT,

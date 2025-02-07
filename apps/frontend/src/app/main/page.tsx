@@ -4,7 +4,7 @@ import styles from "./page.module.css";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import useUserStore from "@/_store/useUserStore";
+import useUserStore from "@/_store/zustand/useUserStore";
 import { fetchLogin } from "@/_apis/user";
 
 import Text from "@repo/ui/Text";

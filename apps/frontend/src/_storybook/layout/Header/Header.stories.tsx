@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import Header from "@/_components/layout/Header/Header";
-import useUserStore from "@/_store/useUserStore";
+import useUserStore from "@/_store/zustand/useUserStore";
 
 const mockUser = {
   id: 1,

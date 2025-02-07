@@ -4,8 +4,8 @@ import InterviewerProfileSection from "@/_components/pages/chat/InterviewerProfi
 import styles from "./page.module.css";
 import Text from "@repo/ui/Text";
 import ChatSection from "@/_components/pages/chat/ChatSection";
-import useUserStore from "@/_store/useUserStore";
-import { useInterviewerStore } from "@/_store/useInterviewerStore";
+import useUserStore from "@/_store/zustand/useUserStore";
+import { useInterviewerStore } from "@/_store/zustand/useInterviewerStore";
 import { useRouter } from "next/navigation";
 
 export default function Page() {
