@@ -24,6 +24,7 @@ Next.js (v.14) | React (v.18) | TypeScript | Turborepo | Storybook | CSS Modules
 │           ├── _mocks                 # Mock 데이터(테스트/개발 환경)
 │           ├── _store                 # 프론트엔드 상태(Redux, Zustand)
 │           ├── _storybook             # 프론트엔드 앱 전용 스토리북
+│           ├── _tests                 # 프론트엔드 앱 전용 테스트
 │           └── app                    # Next.js App Router 구조
 │               ├── api
 │               │   └── chat
