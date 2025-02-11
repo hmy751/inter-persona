@@ -5,13 +5,21 @@ import { rootSaga } from "./rootSaga";
 
 const sagaMiddleware = createSagaMiddleware();
 
-export const makeStore = () => {
+export const makeStore = (preloadedState = {}) => {
   const store = configureStore({
     middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware().concat(sagaMiddleware),
+      getDefaultMiddleware({
+        serializableCheck: {
+          // FormData와 같은 비직렬화 가능한 값을 허용
+          ignoredActions: ["SEND_RECORD"], // SEND_RECORD 액션 무시
+          // 또는 특정 경로 무시
+          ignoredActionPaths: ["payload.formData"],
+        },
+      }).concat(sagaMiddleware),
     reducer: {
       chat: chatReducer,
     },
+    preloadedState,
     devTools: process.env.NODE_ENV !== "production",
   });
 
