@@ -6,3 +6,4 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 import "@/_tests/_mocks/recorder";
+import "@/_tests/_mocks/window";

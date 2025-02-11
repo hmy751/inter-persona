@@ -14,40 +14,7 @@ import {
   ChatContentStatusType,
 } from "@/_store/redux/type";
 import Recorder from "recorder-js";
-
-/**
- * AudioContext, navigator.mediaDevices 관련 mock
- */
-const mockStream = {};
-const mockGetUserMedia = jest.fn().mockResolvedValue(mockStream);
-
-Object.defineProperty(window, "navigator", {
-  value: {
-    mediaDevices: {
-      getUserMedia: mockGetUserMedia,
-    },
-  },
-});
-
-const mockGetByteTimeDomainData = jest.fn();
-const mockAnalyserNode = {
-  fftSize: 2048,
-  getByteTimeDomainData: mockGetByteTimeDomainData,
-};
-const mockCreateAnalyser = jest.fn().mockImplementation(() => mockAnalyserNode);
-const mockSource = { connect: jest.fn() };
-const mockCreateMediaStreamSource = jest
-  .fn()
-  .mockImplementation(() => mockSource);
-
-const mockAudioContext = jest.fn().mockImplementation(() => ({
-  createAnalyser: mockCreateAnalyser,
-  createMediaStreamSource: mockCreateMediaStreamSource,
-}));
-
-Object.defineProperty(window, "AudioContext", {
-  value: mockAudioContext,
-});
+import { mockStream } from "@/_tests/_mocks/window";
 
 /**
  * File 관련 mock
@@ -213,12 +180,15 @@ describe("녹음 비즈니스 로직 테스트", () => {
         const recordButton = screen.getByTestId("record-button");
         await userEvent.click(recordButton);
 
+        const audioContext = (window.AudioContext as unknown as jest.Mock).mock
+          .instances[0];
+
         await waitFor(() => {
-          expect(mockAudioContext).toHaveBeenCalledTimes(1);
-          expect(mockCreateAnalyser).toHaveBeenCalledTimes(1);
+          expect(window.AudioContext).toHaveBeenCalledTimes(1);
+          expect(audioContext.createAnalyser).toHaveBeenCalledTimes(1);
         });
 
-        const analyserInstance = mockCreateAnalyser.mock.results[0]?.value;
+        const analyserInstance = audioContext.createAnalyser();
         await waitFor(() => {
           expect(analyserInstance?.fftSize).toBe(2048);
         });
@@ -228,8 +198,13 @@ describe("녹음 비즈니스 로직 테스트", () => {
         const recordButton = screen.getByTestId("record-button");
         await userEvent.click(recordButton);
 
+        const audioContext = (window.AudioContext as unknown as jest.Mock).mock
+          .instances[0];
+
         await waitFor(() => {
-          expect(mockSource.connect).toHaveBeenCalledWith(mockAnalyserNode);
+          expect(audioContext.createMediaStreamSource).toHaveBeenCalledWith(
+            mockStream
+          );
         });
       });
 
@@ -275,6 +250,20 @@ describe("녹음 비즈니스 로직 테스트", () => {
 
         const recordButton = await screen.getByTestId("record-button");
         await userEvent.click(recordButton);
+
+        currentData = new Uint8Array(2048);
+        const audioContext = (window.AudioContext as unknown as jest.Mock).mock
+          .instances[0];
+        const analyserNode = audioContext.createAnalyser();
+
+        analyserNode.getByteTimeDomainData.mockImplementation(
+          (arr: Uint8Array) => {
+            if (arr instanceof Uint8Array) {
+              arr.set(currentData);
+            }
+          }
+        );
+
         jest.useFakeTimers();
 
         if (frameCallback) frameCallback(0);
@@ -289,14 +278,6 @@ describe("녹음 비즈니스 로직 테스트", () => {
       };
 
       beforeEach(() => {
-        currentData = new Uint8Array(2048);
-
-        mockGetByteTimeDomainData.mockImplementation((arr: Uint8Array) => {
-          if (arr instanceof Uint8Array) {
-            arr.set(currentData);
-          }
-        });
-
         window.requestAnimationFrame = jest.fn(
           (callback: FrameRequestCallback) => {
             frameCallback = callback;
@@ -312,10 +293,9 @@ describe("녹음 비즈니스 로직 테스트", () => {
       });
 
       it("임계값 이상이면 500ms 후에도 녹음이 계속된다.", async () => {
+        const recordButton = await setupRecordingEnvironment();
         // 높은 음량 설정
         currentData.fill(180);
-
-        const recordButton = await setupRecordingEnvironment();
 
         expect(recordButton).toHaveAttribute("src", RECORDING_ICON_SRC);
 
@@ -327,9 +307,9 @@ describe("녹음 비즈니스 로직 테스트", () => {
 
       it("임계값 이하이면 1초 후 녹음을 종료한다.", async () => {
         // 초기 높은 음량 설정
+        const recordButton = await setupRecordingEnvironment();
         currentData.fill(180);
 
-        const recordButton = await setupRecordingEnvironment();
         expect(recordButton).toHaveAttribute("src", RECORDING_ICON_SRC);
 
         // 낮은 음량으로 변경
@@ -368,7 +348,22 @@ describe("녹음 비즈니스 로직 테스트", () => {
         const recordButton = await screen.getByTestId("record-button");
         await userEvent.click(recordButton);
 
+        currentData = new Uint8Array(2048);
+
+        const audioContext = (window.AudioContext as unknown as jest.Mock).mock
+          .instances[0];
+        const analyserNode = audioContext.createAnalyser();
+
+        analyserNode.getByteTimeDomainData.mockImplementation(
+          (arr: Uint8Array) => {
+            if (arr instanceof Uint8Array) {
+              arr.set(currentData);
+            }
+          }
+        );
+
         jest.useFakeTimers();
+        currentData.fill(128);
 
         advanceFramesAndTime(12, 100);
 
@@ -385,12 +380,6 @@ describe("녹음 비즈니스 로직 테스트", () => {
 
       beforeEach(() => {
         currentData = new Uint8Array(2048);
-
-        mockGetByteTimeDomainData.mockImplementation((arr: Uint8Array) => {
-          if (arr instanceof Uint8Array) {
-            arr.set(currentData);
-          }
-        });
 
         window.requestAnimationFrame = jest.fn(
           (callback: FrameRequestCallback) => {
@@ -468,7 +457,9 @@ describe("에러 처리 테스트", () => {
     });
 
     it("권한 거부(NotAllowedError) 시, setAlert 호출한다.", async () => {
-      mockGetUserMedia.mockRejectedValue({
+      (
+        window.navigator.mediaDevices.getUserMedia as jest.Mock
+      ).mockRejectedValue({
         name: "NotAllowedError",
         message: "User denied mic permission",
       });
@@ -492,7 +483,9 @@ describe("에러 처리 테스트", () => {
     });
 
     it("마이크 디바이스가 없을 때(NotFoundError) 시, setAlert 호출한다.", async () => {
-      mockGetUserMedia.mockRejectedValue({
+      (
+        window.navigator.mediaDevices.getUserMedia as jest.Mock
+      ).mockRejectedValue({
         name: "NotFoundError",
         message: "No microphone found",
       });
@@ -517,7 +510,9 @@ describe("에러 처리 테스트", () => {
     });
 
     it("기타 알 수 없는 에러 발생 시, addToast 호출한다.", async () => {
-      mockGetUserMedia.mockRejectedValue({
+      (
+        window.navigator.mediaDevices.getUserMedia as jest.Mock
+      ).mockRejectedValue({
         name: "RandomUnexpectedError",
         message: "Some random error",
       });
@@ -549,8 +544,6 @@ describe("에러 처리 테스트", () => {
     let mockDispatch: jest.Mock;
 
     const setupSuccessRecordingEnvironment = async () => {
-      currentData.fill(128);
-
       const store = configureStore({
         reducer: {
           chat: chatReducer,
@@ -567,6 +560,20 @@ describe("에러 처리 테스트", () => {
 
       const recordButton = await screen.getByTestId("record-button");
       await userEvent.click(recordButton);
+      currentData = new Uint8Array(2048);
+      currentData.fill(128);
+
+      const audioContext = (window.AudioContext as unknown as jest.Mock).mock
+        .instances[0];
+      const analyserNode = audioContext.createAnalyser();
+
+      analyserNode.getByteTimeDomainData.mockImplementation(
+        (arr: Uint8Array) => {
+          if (arr instanceof Uint8Array) {
+            arr.set(currentData);
+          }
+        }
+      );
 
       jest.useFakeTimers();
 
@@ -583,14 +590,9 @@ describe("에러 처리 테스트", () => {
       }
     };
     beforeEach(() => {
-      currentData = new Uint8Array(2048);
-      mockGetUserMedia.mockResolvedValue(mockStream);
-
-      mockGetByteTimeDomainData.mockImplementation((arr: Uint8Array) => {
-        if (arr instanceof Uint8Array) {
-          arr.set(currentData);
-        }
-      });
+      (
+        window.navigator.mediaDevices.getUserMedia as jest.Mock
+      ).mockResolvedValue(mockStream);
 
       window.requestAnimationFrame = jest.fn(
         (callback: FrameRequestCallback) => {
