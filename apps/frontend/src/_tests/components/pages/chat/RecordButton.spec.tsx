@@ -14,30 +14,7 @@ import {
   ChatContentStatusType,
 } from "@/_store/redux/type";
 import Recorder from "recorder-js";
-import { mockStream } from "@/_tests/_mocks/window";
-
-/**
- * File 관련 mock
- */
-const mockFile = jest.fn().mockImplementation(() => ({
-  type: "audio/wav",
-  name: "recording.wav",
-}));
-
-Object.defineProperty(window, "File", {
-  value: mockFile,
-});
-
-/**
- * FormData 관련 mock
- */
-const mockFormData = {
-  append: jest.fn(),
-};
-const MockFormData = jest.fn().mockImplementation(() => mockFormData);
-Object.defineProperty(window, "FormData", {
-  value: MockFormData,
-});
+import { mockStream, mockFormData } from "@/_tests/_mocks/window";
 
 afterEach(() => {
   jest.clearAllMocks();
