@@ -39,3 +39,26 @@ function MockAudioContextConstructor(this: any) {
 Object.defineProperty(window, "AudioContext", {
   value: jest.fn(MockAudioContextConstructor),
 });
+
+/**
+ * File 관련 mock
+ */
+const mockFile = jest.fn().mockImplementation(() => ({
+  type: "audio/wav",
+  name: "recording.wav",
+}));
+
+Object.defineProperty(window, "File", {
+  value: mockFile,
+});
+
+/**
+ * FormData 관련 mock
+ */
+export const mockFormData = {
+  append: jest.fn(),
+};
+const MockFormData = jest.fn().mockImplementation(() => mockFormData);
+Object.defineProperty(window, "FormData", {
+  value: MockFormData,
+});
