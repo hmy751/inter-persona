@@ -1,20 +1,19 @@
-import { configureStore } from "@reduxjs/toolkit";
 import RecordButton from "@/_components/pages/chat/RecordButton/RecordButton";
 import {
   IDLE_ICON_SRC,
   RECORDING_ICON_SRC,
   DISABLED_ICON_SRC,
 } from "@/_components/pages/chat/RecordButton/constants";
-import { render, screen, waitFor, cleanup } from "@testing-library/react";
+import { screen, waitFor, cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Provider, useDispatch } from "react-redux";
-import chatReducer, { SEND_RECORD } from "@/_store/redux/features/chat/slice";
+import { SEND_RECORD } from "@/_store/redux/features/chat/slice";
 import {
   ChatContentSpeakerType,
   ChatContentStatusType,
 } from "@/_store/redux/type";
 import Recorder from "recorder-js";
 import { mockStream, mockFormData } from "@/_tests/_mocks/window";
+import { renderWithProviders } from "@/_tests/_mocks/providers";
 
 afterEach(() => {
   jest.clearAllMocks();
@@ -22,18 +21,8 @@ afterEach(() => {
 });
 
 describe("UI 상태 테스트", () => {
-  it("초기에는 일반 버튼 상태로 시작한다.", () => {
-    const store = configureStore({
-      reducer: {
-        chat: chatReducer,
-      },
-    });
-
-    render(
-      <Provider store={store}>
-        <RecordButton />
-      </Provider>
-    );
+  it("초기에는 일반 버튼 상태로 시작한다.", async () => {
+    renderWithProviders(<RecordButton />);
 
     const recordButton = screen.getByTestId("record-button");
 
@@ -41,17 +30,7 @@ describe("UI 상태 테스트", () => {
   });
 
   it("녹음 버튼을 누르면, 녹음 상태로 변경된다.", async () => {
-    const store = configureStore({
-      reducer: {
-        chat: chatReducer,
-      },
-    });
-
-    render(
-      <Provider store={store}>
-        <RecordButton />
-      </Provider>
-    );
+    renderWithProviders(<RecordButton />);
 
     const recordButton = screen.getByTestId("record-button");
     await userEvent.click(recordButton);
@@ -63,31 +42,22 @@ describe("UI 상태 테스트", () => {
   });
 
   it("응답에 실패하면, 비활성 상태로 변경된다.", async () => {
-    const store = configureStore({
-      reducer: {
-        chat: chatReducer,
+    const preloadedState = {
+      chat: {
+        id: 1,
+        contents: [
+          {
+            status: ChatContentStatusType.fail,
+            speaker: ChatContentSpeakerType.user,
+            content: "test",
+            timeStamp: new Date(),
+          },
+        ],
+        trySpeechCount: 0,
       },
-      preloadedState: {
-        chat: {
-          id: 1,
-          contents: [
-            {
-              status: ChatContentStatusType.fail,
-              speaker: ChatContentSpeakerType.user,
-              content: "test",
-              timeStamp: new Date(),
-            },
-          ],
-          trySpeechCount: 0,
-        },
-      },
-    });
+    };
 
-    render(
-      <Provider store={store}>
-        <RecordButton />
-      </Provider>
-    );
+    renderWithProviders(<RecordButton />, { preloadedState });
 
     expect(await screen.findByTestId("record-button")).toHaveAttribute(
       "src",
@@ -96,17 +66,8 @@ describe("UI 상태 테스트", () => {
   });
 
   it("녹음이 완료되면 초기 일반 상태로 돌아간다.", async () => {
-    const store = configureStore({
-      reducer: {
-        chat: chatReducer,
-      },
-    });
+    renderWithProviders(<RecordButton />);
 
-    render(
-      <Provider store={store}>
-        <RecordButton />
-      </Provider>
-    );
     const recordButton = screen.getByTestId("record-button");
 
     await userEvent.click(recordButton);
@@ -131,17 +92,7 @@ describe("녹음 비즈니스 로직 테스트", () => {
   describe("개별 기능 테스트", () => {
     describe("녹음 시작 및 초기화", () => {
       beforeEach(() => {
-        const store = configureStore({
-          reducer: {
-            chat: chatReducer,
-          },
-        });
-
-        render(
-          <Provider store={store}>
-            <RecordButton />
-          </Provider>
-        );
+        renderWithProviders(<RecordButton />);
       });
 
       it("오디오 stream을 가져온다.", async () => {
@@ -213,17 +164,7 @@ describe("녹음 비즈니스 로직 테스트", () => {
       let frameCallback: FrameRequestCallback | null = null;
 
       const setupRecordingEnvironment = async () => {
-        const store = configureStore({
-          reducer: {
-            chat: chatReducer,
-          },
-        });
-
-        render(
-          <Provider store={store}>
-            <RecordButton />
-          </Provider>
-        );
+        renderWithProviders(<RecordButton />);
 
         const recordButton = await screen.getByTestId("record-button");
         await userEvent.click(recordButton);
@@ -308,19 +249,8 @@ describe("녹음 비즈니스 로직 테스트", () => {
       const setupSuccessRecordingEnvironment = async () => {
         currentData.fill(128);
 
-        const store = configureStore({
-          reducer: {
-            chat: chatReducer,
-          },
-        });
-
+        const { store } = renderWithProviders(<RecordButton />);
         mockDispatch = jest.spyOn(store, "dispatch") as jest.Mock;
-
-        render(
-          <Provider store={store}>
-            <RecordButton />
-          </Provider>
-        );
 
         const recordButton = await screen.getByTestId("record-button");
         await userEvent.click(recordButton);
@@ -422,15 +352,9 @@ jest.mock("@repo/store/useToastStore", () => {
 });
 
 describe("에러 처리 테스트", () => {
-  let store: ReturnType<typeof configureStore>;
-
   describe("handleRecord 단계에서 발생하는 에러 처리", () => {
     beforeEach(() => {
-      store = configureStore({
-        reducer: {
-          chat: chatReducer,
-        },
-      });
+      renderWithProviders(<RecordButton />);
     });
 
     it("권한 거부(NotAllowedError) 시, setAlert 호출한다.", async () => {
@@ -440,12 +364,6 @@ describe("에러 처리 테스트", () => {
         name: "NotAllowedError",
         message: "User denied mic permission",
       });
-
-      render(
-        <Provider store={store}>
-          <RecordButton />
-        </Provider>
-      );
 
       const recordButton = screen.getByTestId("record-button");
       await userEvent.click(recordButton);
@@ -466,12 +384,6 @@ describe("에러 처리 테스트", () => {
         name: "NotFoundError",
         message: "No microphone found",
       });
-
-      render(
-        <Provider store={store}>
-          <RecordButton />
-        </Provider>
-      );
 
       // 녹음 버튼 클릭
       const recordButton = screen.getByTestId("record-button");
@@ -494,12 +406,6 @@ describe("에러 처리 테스트", () => {
         message: "Some random error",
       });
 
-      render(
-        <Provider store={store}>
-          <RecordButton />
-        </Provider>
-      );
-
       const recordButton = screen.getByTestId("record-button");
       await userEvent.click(recordButton);
 
@@ -518,22 +424,9 @@ describe("에러 처리 테스트", () => {
   describe("finishRecord 단계에서 발생하는 에러 처리", () => {
     let currentData: Uint8Array;
     let frameCallback: FrameRequestCallback | null = null;
-    let mockDispatch: jest.Mock;
 
     const setupSuccessRecordingEnvironment = async () => {
-      const store = configureStore({
-        reducer: {
-          chat: chatReducer,
-        },
-      });
-
-      mockDispatch = jest.spyOn(store, "dispatch") as jest.Mock;
-
-      render(
-        <Provider store={store}>
-          <RecordButton />
-        </Provider>
-      );
+      renderWithProviders(<RecordButton />);
 
       const recordButton = await screen.getByTestId("record-button");
       await userEvent.click(recordButton);
