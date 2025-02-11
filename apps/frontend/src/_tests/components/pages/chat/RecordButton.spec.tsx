@@ -13,23 +13,7 @@ import {
   ChatContentSpeakerType,
   ChatContentStatusType,
 } from "@/_store/redux/type";
-
-/**
- * recorder-js mock
- */
-const mockRecorderInit = jest.fn().mockResolvedValue(undefined);
-const mockRecorderStart = jest.fn().mockResolvedValue(undefined);
-const mockRecorderStop = jest.fn().mockResolvedValue({
-  blob: new Blob(["mock audio data"], { type: "audio/wav" }),
-});
-
-jest.mock("recorder-js", () => {
-  return jest.fn().mockImplementation(() => ({
-    init: mockRecorderInit,
-    start: mockRecorderStart,
-    stop: mockRecorderStop,
-  }));
-});
+import Recorder from "recorder-js";
 
 /**
  * AudioContext, navigator.mediaDevices 관련 mock
@@ -252,18 +236,22 @@ describe("녹음 비즈니스 로직 테스트", () => {
       it("recorder를 생성 후 stream을 연결하고 초기화 한다.", async () => {
         const recordButton = screen.getByTestId("record-button");
         await userEvent.click(recordButton);
+        const recorderInstance = (Recorder as unknown as jest.Mock).mock
+          .instances[0];
 
         await waitFor(() => {
-          expect(mockRecorderInit).toHaveBeenCalledWith(mockStream);
+          expect(recorderInstance.init).toHaveBeenCalledWith(mockStream);
         });
       });
 
       it("recorder를 통해 녹음을 시작하고 상태를 recording으로 변경한다.", async () => {
         const recordButton = screen.getByTestId("record-button");
         await userEvent.click(recordButton);
+        const recorderInstance = (Recorder as unknown as jest.Mock).mock
+          .instances[0];
 
         await waitFor(() => {
-          expect(mockRecorderStart).toHaveBeenCalled();
+          expect(recorderInstance.start).toHaveBeenCalled();
         });
       });
     });
@@ -421,9 +409,12 @@ describe("녹음 비즈니스 로직 테스트", () => {
       it("녹음 완료 후, 생성된 파일이 올바른 WAV 형식인지 확인한다", async () => {
         await setupSuccessRecordingEnvironment();
 
+        const recorderInstance = (Recorder as unknown as jest.Mock).mock
+          .instances[0];
+
         await waitFor(async () => {
-          expect(mockRecorderStop).toHaveBeenCalled();
-          const { blob } = await mockRecorderStop.mock.results[0]?.value;
+          expect(recorderInstance.stop).toHaveBeenCalled();
+          const { blob } = await recorderInstance.stop.mock.results[0]?.value;
           expect(blob.type).toBe("audio/wav");
         });
       });
@@ -620,12 +611,15 @@ describe("에러 처리 테스트", () => {
         type: "audio/wav",
       });
 
-      mockRecorderStop.mockResolvedValue({ blob: largeBlob });
-
       await setupSuccessRecordingEnvironment();
 
+      const recorderInstance = (Recorder as unknown as jest.Mock).mock
+        .instances[0];
+
+      recorderInstance.stop.mockResolvedValueOnce({ blob: largeBlob });
+
       await waitFor(() => {
-        expect(mockRecorderStop).toHaveBeenCalled();
+        expect(recorderInstance.stop).toHaveBeenCalled();
       });
 
       await waitFor(() => {
@@ -639,12 +633,16 @@ describe("에러 처리 테스트", () => {
     });
 
     it("알 수 없는 에러가 발생하면, addToast 호출한다.", async () => {
-      mockRecorderStop.mockRejectedValue(new Error("Unknown stop error"));
-
       await setupSuccessRecordingEnvironment();
+      const recorderInstance = (Recorder as unknown as jest.Mock).mock
+        .instances[0];
+
+      recorderInstance.stop.mockRejectedValueOnce(
+        new Error("Unknown stop error")
+      );
 
       await waitFor(() => {
-        expect(mockRecorderStop).toHaveBeenCalled();
+        expect(recorderInstance.stop).toHaveBeenCalled();
       });
 
       await waitFor(() => {
