@@ -4,11 +4,11 @@ import { server } from '@/_mocks/server';
 import { runSaga } from 'redux-saga';
 import useToastStore from '@repo/store/useToastStore';
 
-import { speechToTextSaga } from './speechToTextSaga';
-import { cancelCurrentRequestInterviewSaga, requestInterviewSaga, retryInterviewSaga } from './requestInterviewSaga';
-import { removeContent, triggerContent, SEND_RECORD, increaseTrySpeechCount, REQUEST_INTERVIEW, errorContent, updateContent, CANCEL_CURRENT_REQUEST_INTERVIEW, resetTrySpeechCount, RETRY_INTERVIEW, resetContentStatus } from '../slice';
-import { ChatContentSpeakerType } from '../../../type';
-import { STT_ERROR_TOAST, STT_NETWORK_ERROR_TOAST, } from '../constants';
+import { speechToTextSaga } from '@/_store/redux/features/chat/saga/speechToTextSaga';
+import { cancelCurrentRequestInterviewSaga, requestInterviewSaga, retryInterviewSaga } from '@/_store/redux/features/chat/saga/requestInterviewSaga';
+import { removeContent, triggerContent, SEND_RECORD, increaseTrySpeechCount, REQUEST_INTERVIEW, errorContent, updateContent, CANCEL_CURRENT_REQUEST_INTERVIEW, resetTrySpeechCount, RETRY_INTERVIEW, resetContentStatus } from '@/_store/redux/features/chat/slice';
+import { ChatContentSpeakerType } from '@/_store/redux/type';
+import { STT_ERROR_TOAST, STT_NETWORK_ERROR_TOAST, } from '@/_store/redux/features/chat/constants';
 
 afterEach(() => {
   jest.clearAllMocks();
