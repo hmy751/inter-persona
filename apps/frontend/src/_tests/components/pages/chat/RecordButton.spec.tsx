@@ -23,7 +23,7 @@ afterEach(() => {
   cleanup();
 });
 
-describe("UI 상태 테스트", () => {
+describe("녹음 버튼 UI 상태 테스트", () => {
   it("초기에는 일반 버튼 상태로 시작한다.", async () => {
     renderWithProviders(<RecordButton />);
 
@@ -91,9 +91,9 @@ describe("UI 상태 테스트", () => {
   });
 });
 
-describe("녹음 비즈니스 로직 테스트", () => {
-  describe("개별 기능 테스트", () => {
-    describe("녹음 시작 및 초기화", () => {
+describe("녹음 프로세스 테스트", () => {
+  describe("1. handleRecord", () => {
+    describe("녹음 초기화 및 시작", () => {
       beforeEach(() => {
         renderWithProviders(<RecordButton />);
       });
@@ -162,7 +162,7 @@ describe("녹음 비즈니스 로직 테스트", () => {
       });
     });
 
-    describe("음량 감지 테스트", () => {
+    describe("음량 감지", () => {
       const testSetup = createTestSetup();
 
       beforeEach(() => {
@@ -207,41 +207,41 @@ describe("녹음 비즈니스 로직 테스트", () => {
         });
       });
     });
+  });
 
-    describe("녹음 완료 및 후처리", () => {
-      const testSetup = createSuccessRecordingSetup();
+  describe("2. finishRecord", () => {
+    const testSetup = createSuccessRecordingSetup();
 
-      beforeEach(() => {
-        testSetup.setupRequestAnimationFrame();
+    beforeEach(() => {
+      testSetup.setupRequestAnimationFrame();
+    });
+
+    afterEach(() => {
+      testSetup.cleanup();
+    });
+
+    it("녹음 완료 후, 생성된 파일이 올바른 WAV 형식인지 확인한다", async () => {
+      await testSetup.setupSuccessRecordingEnvironment();
+
+      const recorderInstance = (Recorder as unknown as jest.Mock).mock
+        .instances[0];
+
+      await waitFor(async () => {
+        expect(recorderInstance.stop).toHaveBeenCalled();
+        const { blob } = await recorderInstance.stop.mock.results[0]?.value;
+        expect(blob.type).toBe("audio/wav");
       });
+    });
 
-      afterEach(() => {
-        testSetup.cleanup();
-      });
+    it("완성된 FormData를 Redux action을 통해 서버 전송을 요청한다", async () => {
+      await testSetup.setupSuccessRecordingEnvironment();
 
-      it("녹음 완료 후, 생성된 파일이 올바른 WAV 형식인지 확인한다", async () => {
-        await testSetup.setupSuccessRecordingEnvironment();
+      const mockDispatch = jest.spyOn(testSetup.config.store!, "dispatch");
 
-        const recorderInstance = (Recorder as unknown as jest.Mock).mock
-          .instances[0];
-
-        await waitFor(async () => {
-          expect(recorderInstance.stop).toHaveBeenCalled();
-          const { blob } = await recorderInstance.stop.mock.results[0]?.value;
-          expect(blob.type).toBe("audio/wav");
-        });
-      });
-
-      it("완성된 FormData를 Redux action을 통해 서버 전송을 요청한다", async () => {
-        await testSetup.setupSuccessRecordingEnvironment();
-
-        const mockDispatch = jest.spyOn(testSetup.config.store!, "dispatch");
-
-        await waitFor(() => {
-          expect(mockDispatch).toHaveBeenCalledWith({
-            type: SEND_RECORD,
-            payload: { formData: mockFormData },
-          });
+      await waitFor(() => {
+        expect(mockDispatch).toHaveBeenCalledWith({
+          type: SEND_RECORD,
+          payload: { formData: mockFormData },
         });
       });
     });
@@ -270,8 +270,8 @@ jest.mock("@repo/store/useToastStore", () => {
   }));
 });
 
-describe("에러 처리 테스트", () => {
-  describe("handleRecord 단계에서 발생하는 에러 처리", () => {
+describe("녹음 프로세스 에러 처리 테스트", () => {
+  describe("1. handleRecord 단계에서 발생하는 에러 처리", () => {
     beforeEach(() => {
       renderWithProviders(<RecordButton />);
     });
@@ -340,7 +340,7 @@ describe("에러 처리 테스트", () => {
     });
   });
 
-  describe("finishRecord 단계에서 발생하는 에러 처리", () => {
+  describe("2. finishRecord 단계에서 발생하는 에러 처리", () => {
     const testSetup = createSuccessRecordingSetup();
 
     beforeEach(() => {
