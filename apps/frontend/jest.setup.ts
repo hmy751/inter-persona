@@ -7,3 +7,4 @@ afterAll(() => server.close());
 
 import "@/_tests/_mocks/recorder";
 import "@/_tests/_mocks/window";
+import "@/_tests/_mocks/zustand";
