@@ -64,10 +64,10 @@ export default function ChatSection({
 
   return (
     <div className={styles.chatSectionContainer}>
-      {chatContents.map(({ speaker, content, status }) => {
+      {chatContents.map(({ speaker, content, status }, index) => {
         return (
           <ChatArticle
-            key={speaker}
+            key={`${speaker}-${index}`}
             type={speaker}
             status={status}
             content={content}
