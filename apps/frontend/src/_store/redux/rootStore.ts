@@ -9,11 +9,10 @@ export const makeStore = (preloadedState = {}) => {
   const store = configureStore({
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
-        serializableCheck: {
-          // FormData와 같은 비직렬화 가능한 값을 허용
-          ignoredActions: ["SEND_RECORD"], // SEND_RECORD 액션 무시
-          // 또는 특정 경로 무시
+        serializableCheck: process.env.NODE_ENV === 'test' ? false : {
+          ignoredActions: ["SEND_RECORD", 'chat/startChat', 'chat/triggerContent'],
           ignoredActionPaths: ["payload.formData"],
+          ignoredPaths: ['chat.contents.*.timeStamp'],
         },
       }).concat(sagaMiddleware),
     reducer: {
