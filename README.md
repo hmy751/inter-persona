@@ -382,7 +382,7 @@ export const WithInterviewerChatError: Story = {
 
 그래서 실제 API가 없어도 MSW를 활용해서 테스트하도록 했고 또 주요기능들을 안정적으로 빠르게 검증할 수 있었습니다.
 
-(chat/saga.spec.ts, RecordButton.spec.tsx 참조)
+(store/redux/chat/saga.spec.ts, components/pages/chat/RecordButton.spec.tsx, app/chat/page.spec.tsx 참조)
 
 또한 안정성 뿐만 아니라 시나리오를 체계화하여 로직을 이해하는데 도움이되고 추후에도 협업시 명세서처럼 활용하기 좋다고 생각했습니다.
 
