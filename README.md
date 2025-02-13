@@ -197,7 +197,7 @@ export function* watchRecord() {
 
 ...
 
-// chat/saga/sppechToTextSaga.ts
+// chat/saga/speechToTextSaga.ts
 
 export function* speechToTextSaga(action: SendRecordAction): Generator<any, void, any> {
   try {
@@ -378,13 +378,147 @@ export const WithInterviewerChatError: Story = {
 
 ## Jest와 MSW를 활용하여 인터뷰 및 녹음 기능의 테스트를 작성하여 안정성 확보하기
 
-인터뷰 프로세스에는 다양한 로직이 있어 안정성을 유지하고자 관련 로직들을 Jest, MSW를 활용해 자동화 테스트를 작성했습니다.
+인터뷰 프로세스에는 다양한 로직이 있어 안정성을 유지하고자 관련 로직들을 Jest, MSW를 활용해 유닛, 통합 테스트를 작성했습니다.
+(store/redux/chat/saga.spec.ts, components/pages/chat/RecordButton.spec.tsx, app/chat/page.spec.tsx 참조)
 
 그래서 실제 API가 없어도 MSW를 활용해서 테스트하도록 했고 또 주요기능들을 안정적으로 빠르게 검증할 수 있었습니다.
 
-(store/redux/chat/saga.spec.ts, components/pages/chat/RecordButton.spec.tsx, app/chat/page.spec.tsx 참조)
-
 또한 안정성 뿐만 아니라 시나리오를 체계화하여 로직을 이해하는데 도움이되고 추후에도 협업시 명세서처럼 활용하기 좋다고 생각했습니다.
+
+## Jest 테스트 이슈 해결 과정 및 활용 방법
+
+인터뷰 프로세스의 테스트 환경을 구성하면서 반복되는 설정 코드를 효율적으로 관리하기 위해 유틸 및 프로바이더를 구현했고 또 몇가지 이슈가 발생했습니다.
+
+1. jest.mock 모듈 설정 및 jest.setup.ts 파일 구성
+
+테스트 유틸리티를 분리하는 과정에서 먼저 시도한 방법은 기존에 작성된 jest.mock을 활용하여 유틸로 분리하고 활용하는 방법이었습니다.
+
+하지만 유틸을 분리하고 import 하는 과정에서 제대로 목킹이 되지 않아 문제가 발생했습니다. 확인한 결과 jest.mock은 자동 호이스팅이 되는데 기존 테스트 파일은 호이스팅 되고 컴포넌트가 import되어 잘 동작 했고 유틸을 적용하는 파일은 import 구문이 하단에 위치하여 제대로 호이스팅 되지 않고 목킹이 되지않아 문제가 발생했습니다.
+
+유틸을 분리한 뒤에는 최상단에 해당 유틸을 선언하면 문제는 해결됐지만 최상단에 선언해야 한다는 제약이 있었습니다. 그래서 단순 유틸 분리 대신 jest.setup.ts를 이용하여 테스트 파일이 실행 되기 전에 목킹이 자동으로 적용되도록 설정했습니다.
+
+```ts
+// jest.mock 유틸 분리 방법
+import { mockRecorder } from "_tests/_utils/mockRecorder";
+...
+
+import RecordButton from "@/components/pages/chat/RecordButton";
+...
+```
+
+```ts
+// jest.setup.ts
+
+import "@/_tests/_mocks/recorder";
+```
+
+만약 테스트에서 해당 목킹의 실제 구현이 필요할 경우는 jest.resetModules(), jest.unmock()을 통해 실제 모듈을 가져오는 방법을 사용할 수 있습니다.
+
+```ts
+jest.resetModules();
+jest.unmock("recorder-js");
+
+const Recorder = require("recorder-js"); // requireActual 없이 실제 모듈 가져오기
+
+test("real module test", () => {
+  const recorder = new Recorder();
+});
+```
+
+2. jest.setup.ts, window.navigator.mediaDevices 모킹 이슈
+
+브라우저 API인 navigator.mediaDevices를 모킹하는 과정에서 window 객체의 속성 특성으로 인한 문제가 발생했습니다. JSDOM 환경으로 직접적인 속성 구현이 아니기 때문에 navigator의 mediaDevices의 속성을 재정의하는 과정이 필요했습니다.
+
+```ts
+// _tests/_mocks/window.ts
+if (!window.navigator.mediaDevices) {
+  Object.defineProperty(window.navigator, "mediaDevices", {
+    configurable: true,
+    enumerable: true,
+    writable: true,
+    value: {},
+  });
+}
+
+window.navigator.mediaDevices.getUserMedia = jest.fn().mockResolvedValue({});
+```
+
+3. 테스트 간 목킹 메서드의 반환값 설정 이슈
+
+위 과정을 통해서 jest.setup.ts를 통해 테스트 파일이 실행되기 전에 목킹이 자동으로 적용되도록 설정했습니다. 그리고 만약 테스트에 맞춰 개별적으로 목킹 메서드의 반환값 설정이 필요한 경우 mockResolvedValue, mockRejectedValue 등을 활용햇습니다.
+
+다만 위의 메서드는 반환 값 설정으로, afterEach에서 jest.clearAllMocks() 메서드가 실행되어도 기존에 설정한 반환값이 유지되어 테스트간에 영향을 주는 문제가 있었습니다.
+
+그래서 대신 mockResolvedValueOnce, mockRejectedValueOnce 등을 활용했습니다.
+
+```ts
+it("알 수 없는 에러가 발생하면, addToast 호출한다.", async () => {
+  await testSetup.setupSuccessRecordingEnvironment();
+  const recorderInstance = (Recorder as unknown as jest.Mock).mock.instances[0];
+
+  recorderInstance.stop.mockRejectedValueOnce(new Error("Unknown stop error"));
+
+  await waitFor(() => {
+    expect(recorderInstance.stop).toHaveBeenCalled();
+  });
+
+  await waitFor(() => {
+    expect(addToastMock).toHaveBeenCalledTimes(1);
+    expect(addToastMock).toHaveBeenCalledWith({
+      title: "알 수 없는 오류",
+      description: "알 수 없는 오류가 발생했습니다. 다시 시도해주세요.",
+      duration: 3000,
+    });
+  });
+});
+```
+
+4. jest.useFakeTimers() 타이머 이슈
+
+인터뷰 프로세스 중 녹음 기능에서 requestAnimationFrame를 활용하는 부분이 있었고, 테스트 목킹과 테스트 환경을 위해 jest.useFakeTimers()를 통해 구성했습니다.
+(\_tests/\_utils/recordingTest.tsx, \_tests/\_utils/integrationRecordingTest.tsx 참조)
+
+몇가지 이슈가 있었는데 첫번째로 클릭 이벤트 전에 useFakeTimers()를 실행하는 과정에서 fakeTimers가 리액트의 렌더링 및 작동에 영향을 줘 제대로 상태 변화 및 UI가 반영되지 않는 문제가 있었습니다.
+그래서 유틸에서도 반드시 클릭 이벤트 이후에 useFakeTimers()를 실행하도록 했습니다.
+
+```ts
+// _tests/_utils/recordingTest.tsx
+
+const recordButton = await screen.getByTestId("record-button");
+await userEvent.click(recordButton);
+
+if (config.currentData) {
+  const audioContext = (window.AudioContext as unknown as jest.Mock).mock
+    .instances[0];
+  setupAnalyserNode(audioContext);
+}
+
+jest.useFakeTimers();
+```
+
+또 통합 테스트를 구성하는 과정에서 녹음 환경을 셋팅한 후에 클릭 이벤트를 발생하고, saga로직에서 제대로 진행이 되지않는 문제가 있었습니다.
+
+확인결과 useFakeTimers()를 실행하고 advanceTimersByTime()을 여유있게 진행 해도 saga로직 내에 있는 delay가 제대로 작동하지 않는 문제가 있었습니다. 원인은 useFakeTimers()가 setTimeout, setInterval등의 타이머 함수에 영향을 주지만 delay는 Promise내부에 setTimeout을 호출하는 형태로 Promise 자체에는 영향을 줄수 없는것이 원인이었습니다.
+
+그래서 해당 시간 설정이후에는 바로 jest.useRealTimers()를 호출하여 타이머 환경을 원래대로 복구하고, expect확인 부분에서는 timeout을 추가하여 문제를 해결했습니다.
+
+```ts
+// _tests/app/chat/page.spec.ts
+
+integrationSetup.simulateRecordingFlow();
+
+integrationSetup.cleanup(); // 메서드 내부에 jest.useRealTimers()를 호출하여 타이머 환경을 원래대로 복구
+
+await waitFor(
+  () => {
+    expect(screen.getByText("다시 시도하기")).toBeInTheDocument();
+    expect(screen.getByText("취소하기")).toBeInTheDocument();
+  },
+  { timeout: 2000 }
+);
+```
+
+위 과정들을 통해서 setup 구성, 반환값 설정, 타이머 실행 순서 등의 규칙을 반영하여 유틸리티를 구성했고, 결과 테스트코드의 재사용성과 설정의 일관성유지를 개선했습니다.
 
 ## Next.js 14 환경에서의 MSW 서비스 워커 등록 및 오류
 
