@@ -14,8 +14,8 @@ afterEach(() => {
   jest.clearAllMocks();
 });
 
-describe('사용자 답변 녹음 에러 처리', () => {
-  it('STT API 에러시 녹음 재요청 에러 토스트 메시지 표시', async () => {
+describe('사용자 답변 녹음, 비동기 통신 에러 처리 테스트', () => {
+  it('STT API 에러시 녹음 재요청 토스트 메시지를 표시한다.', async () => {
     const setAddToastSpy = jest.spyOn(useToastStore.getState(), 'addToast');
 
     server.use(
@@ -46,7 +46,7 @@ describe('사용자 답변 녹음 에러 처리', () => {
     expect(setAddToastSpy).toHaveBeenCalledWith(STT_ERROR_TOAST);
   });
 
-  it('STT API 에러 3회 까지는 녹음을 요청하고, 그 이후에는 네트워크 에러처리 하여 새로고침 유도', async () => {
+  it('재요청 3회 이후에는 새로고침 토스트 메시지를 표시한다.', async () => {
     const setAddToastSpy = jest.spyOn(useToastStore.getState(), 'addToast');
     let attemptCount = 3;
 
@@ -95,8 +95,8 @@ describe('사용자 답변 녹음 에러 처리', () => {
   });
 });
 
-describe('AI 응답 에러 처리', () => {
-  it('현재 AI 응답 메시지를 삭제하고 이전 사용자 메시지의 에러상태를 업데이트 한다.', async () => {
+describe('AI 응답 비동기 통신 에러 처리 테스트', () => {
+  it('에러가 발생하면, 현재 진행중인 메시지를 삭제하고 이전 메시지의 에러상태를 업데이트 한다.', async () => {
     server.use(
       http.post(`${baseURL}/interview/1/contents`, async ({ request }) => {
         return Response.json({ content: null });
@@ -124,7 +124,7 @@ describe('AI 응답 에러 처리', () => {
     ]);
   });
 
-  it('AI 응답 에러 후, 다시 시도하기 클릭하여 dispatch할 경우, 이전의 사용자 메시지를 이용하여 다시 녹음을 요청한다.', async () => {
+  it('다시 시도하기 요청이 오면, 이전 사용자 답변 메시지를 이용하여 다시 요청한다.', async () => {
     server.use(
       http.post(`${baseURL}/interview/1/contents`, async ({ request }) => {
         return Response.json({ content: null });
@@ -180,7 +180,7 @@ describe('AI 응답 에러 처리', () => {
     ]);
   });
 
-  it('AI 응답 에러 후, 취소하기 클릭하여 취소에 대한 액션을 dispatch할 경우, 이전 메시지의 상태를 초기화 한다.', async () => {
+  it('취소하기 요청이 오면, 이전 메시지의 상태를 초기화 한다.', async () => {
     server.use(
       http.post(`${baseURL}/interview/1/contents`, async ({ request }) => {
         return Response.json({ content: null });
