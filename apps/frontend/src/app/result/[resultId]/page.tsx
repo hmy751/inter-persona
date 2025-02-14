@@ -12,7 +12,9 @@ import ScoreSection from "@/_components/pages/result/ScoreSection";
 import TotalEvaluationSection from "@/_components/pages/result/TotalEvaluationSection";
 import QuestionEvaluationSection from "@/_components/pages/result/QuestionEvaluationSection";
 import ButtonGroupSection from "@/_components/pages/result/ButtonGroupSection";
-
+import { fetchGetResult } from "@/_apis/result";
+import { useParams, useRouter } from "next/navigation";
+import { useAlertDialogStore } from "@repo/store/useAlertDialogStore";
 interface Scores {
   standard: string;
   score: number;
@@ -20,33 +22,26 @@ interface Scores {
 }
 
 export default function Page() {
-  const interviewId = useSelector(selectInterviewId) ?? 2;
-  const { interviewer } = useInterviewerStore();
-
-  const { data, isLoading } = useQuery<{
-    scores: Scores[];
-    finalEvaluation: string;
-  }>({
-    queryKey: ["result", interviewId],
-    queryFn: () => {
-      return fetch(`http://localhost:3030/interview/${interviewId}/result`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }).then((res) => res.json());
-    },
+  const { resultId } = useParams();
+  const router = useRouter();
+  const { setAlert } = useAlertDialogStore();
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["result", resultId],
+    queryFn: () => fetchGetResult({ resultId: Number(resultId) }),
   });
 
-  const reviewerName = "엘론 머스크";
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
-  const totalScore: number = useMemo(() => {
-    if (!data?.scores) {
-      return 0;
-    }
-
-    return data.scores.reduce((acc, { score }) => acc + score, 0);
-  }, [data]);
+  if (!data || error) {
+    setAlert(
+      "인터뷰 결과 조회 실패",
+      "인터뷰 결과 조회에 실패했습니다. 다시 인터뷰를 시도해주세요."
+    );
+    router.push("/interviewer");
+    return null;
+  }
 
   return (
     <div className={styles.container}>
