@@ -11,7 +11,7 @@ import {
   initializeChatState,
 } from "@/_store/redux/features/chat/slice";
 import { useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import styles from "./chat.module.css";
 import { AI_NETWORK_ERROR_TOAST } from "@/_store/redux/features/chat/constants";
 import useToastStore from "@repo/store/useToastStore";
@@ -23,10 +23,8 @@ import { useQuery } from "@tanstack/react-query";
 
 export default function ChatSection() {
   const interviewId = useParams().interviewId;
-  const router = useRouter();
   const dispatch = useDispatch();
   const chatContents = useSelector(selectChatContents);
-  const chatLimit = useSelector(selectChatLimit);
   const addToast = useToastStore((state) => state.addToast);
 
   const { data: interviewerData } = useQuery({
@@ -39,12 +37,6 @@ export default function ChatSection() {
     queryKey: ["interview/user", interviewId],
     queryFn: () => fetchGetInterviewUser({ interviewId: Number(interviewId) }),
   });
-
-  useEffect(() => {
-    if (chatLimit) {
-      router.push("/result");
-    }
-  }, [router, chatLimit]);
 
   useEffect(() => {
     try {
