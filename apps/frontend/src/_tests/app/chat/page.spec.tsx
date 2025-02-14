@@ -52,7 +52,7 @@ describe("인터뷰 페이지 통합 테스트", () => {
   describe("인터뷰 시작 및 초기 상태", () => {
     it("인터뷰 시작시 초기 인사말이 표시된다", async () => {
       server.use(
-        http.post(`${baseURL}/interview/1/contents`, () => {
+        http.post(`${baseURL}/interview/1/contents/answer`, () => {
           return Response.json({
             content: "안녕하세요. 간단히 자기소개 부탁드립니다.",
           });
@@ -76,7 +76,7 @@ describe("인터뷰 페이지 통합 테스트", () => {
   describe("사용자 응답 프로세스", () => {
     it("녹음 후 STT 변환 및 AI 응답을 정상적으로 처리한다", async () => {
       server.use(
-        http.post(`${baseURL}/interview/1/contents`, () => {
+        http.post(`${baseURL}/interview/1/contents/answer`, () => {
           return Response.json({
             content: "안녕하세요. 간단히 자기소개 부탁드립니다.",
           });
@@ -152,7 +152,7 @@ describe("인터뷰 페이지 통합 테스트", () => {
         http.post("/api/interview", () => {
           return Response.json({ text: "안녕하세요, 저는 개발자입니다." });
         }),
-        http.post(`${baseURL}/interview/1/contents`, () => {
+        http.post(`${baseURL}/interview/1/contents/answer`, () => {
           return Response.json({
             content: "안녕하세요. 간단히 자기소개 부탁드립니다.",
           });
@@ -172,7 +172,7 @@ describe("인터뷰 페이지 통합 테스트", () => {
       });
 
       server.use(
-        http.post(`${baseURL}/interview/1/contents`, () => {
+        http.post(`${baseURL}/interview/1/contents/answer`, () => {
           return Response.json({ content: null });
         })
       );

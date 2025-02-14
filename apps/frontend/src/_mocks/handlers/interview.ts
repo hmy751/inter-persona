@@ -44,7 +44,7 @@ const defaultInterviewHandler = [
     }
   ),
   http.post<never, AnswerBody>(
-    `${baseURL}/interview/:chatId/contents`,
+    `${baseURL}/interview/:interviewId/contents/answer`,
     async ({ request }) => {
       const { interviewId, content } = await request.json();
       return HttpResponse.json({
@@ -56,7 +56,7 @@ const defaultInterviewHandler = [
 
 const interviewHandlerforInterviewerError = [
   http.post<never, AnswerBody>(
-    `${baseURL}/interview/:chatId/contents`,
+    `${baseURL}/interview/:interviewId/contents/answer`,
     async ({ request }) => {
       const { interviewId, content } = await request.json();
       console.log('pass')
