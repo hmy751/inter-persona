@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import ChatArticle from "@/_components/pages/chat/ChatArticle";
+import ChatArticle from "@/_components/pages/interview/ChatArticle";
 import {
   ChatContentSpeakerType,
   ChatContentStatusType,
@@ -16,7 +16,7 @@ const user = {
 };
 
 const meta = {
-  title: "Pages/Chat/ChatArticle",
+  title: "Pages/Interview/ChatArticle",
   component: ChatArticle,
   parameters: {
     layout: "Desktop",

@@ -27,11 +27,11 @@ import { errorContent } from "../slice";
 interface RequestInterviewAction {
   type: string;
   payload: {
-    chatId: number;
+    interviewId: number;
     content: string;
   };
 }
-const selectChatState = (state: RootState) => state.chat.id;
+const selectInterviewId = (state: RootState) => state.chat.interviewId;
 
 export function* retryInterviewSaga(action: RequestInterviewAction): Generator<any, void, any> {
   yield put(resetContentStatus());
@@ -41,9 +41,9 @@ export function* retryInterviewSaga(action: RequestInterviewAction): Generator<a
 export function* requestInterviewSaga(action: RequestInterviewAction): Generator<any, void, any> {
   try {
     if (action.type === START_CHAT) {
-      yield put(startChat({ id: action.payload.chatId }));
+      yield put(startChat({ interviewId: action.payload.interviewId }));
     }
-    const chatId: number = yield select(selectChatState);
+    const interviewId: number = yield select(selectInterviewId);
 
     yield call(delay, 200);
 
@@ -51,7 +51,7 @@ export function* requestInterviewSaga(action: RequestInterviewAction): Generator
     yield call(delay, 500);
 
     const data: AIChatData = yield call(fetchAIChat, {
-      chatId,
+      interviewId,
       content: action.payload.content,
     });
 

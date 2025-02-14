@@ -19,7 +19,7 @@ describe('사용자 답변 녹음, 비동기 통신 에러 처리 테스트', ()
     const setAddToastSpy = jest.spyOn(useToastStore.getState(), 'addToast');
 
     server.use(
-      http.post('/api/chat', async ({ request }) => {
+      http.post('/api/interview', async ({ request }) => {
         return Response.json({ text: '' });
       })
     );
@@ -35,7 +35,7 @@ describe('사용자 답변 녹음, 비동기 통신 에러 처리 테스트', ()
 
     await runSaga({
       dispatch: (action) => dispatched.push(action),
-      getState: () => ({ chat: { id: 1, trySpeechCount: 0 } })
+      getState: () => ({ chat: { interviewId: 1, trySpeechCount: 0 } })
     }, speechToTextSaga, action).toPromise();
 
     expect(dispatched).toEqual([
@@ -51,7 +51,7 @@ describe('사용자 답변 녹음, 비동기 통신 에러 처리 테스트', ()
     let attemptCount = 3;
 
     server.use(
-      http.post('/api/chat', async ({ request }) => {
+      http.post('/api/interview', async ({ request }) => {
         return Response.json({ text: '' });
       })
     );
@@ -68,7 +68,7 @@ describe('사용자 답변 녹음, 비동기 통신 에러 처리 테스트', ()
     for (let i = 0; i < 3; i++) {
       await runSaga({
         dispatch: (action) => dispatched.push(action),
-        getState: () => ({ chat: { id: 1, trySpeechCount: 0 } })
+        getState: () => ({ chat: { interviewId: 1, trySpeechCount: 0 } })
       }, speechToTextSaga, action).toPromise();
 
       expect(dispatched[i * 3]).toEqual(
@@ -88,7 +88,7 @@ describe('사용자 답변 녹음, 비동기 통신 에러 처리 테스트', ()
 
     await runSaga({
       dispatch: (action) => dispatched.push(action),
-      getState: () => ({ chat: { id: 1, trySpeechCount: attemptCount } })
+      getState: () => ({ chat: { interviewId: 1, trySpeechCount: attemptCount } })
     }, speechToTextSaga, action).toPromise();
 
     expect(setAddToastSpy).toHaveBeenCalledWith(STT_NETWORK_ERROR_TOAST);
@@ -107,14 +107,14 @@ describe('AI 응답 비동기 통신 에러 처리 테스트', () => {
     const action = {
       type: REQUEST_INTERVIEW,
       payload: {
-        chatId: 1,
+        interviewId: 1,
         content: 'test'
       }
     };
 
     await runSaga({
       dispatch: (action) => dispatched.push(action),
-      getState: () => ({ chat: { id: 1, trySpeechCount: 0 } })
+      getState: () => ({ chat: { interviewId: 1, trySpeechCount: 0 } })
     }, requestInterviewSaga, action).toPromise();
 
     expect(dispatched).toEqual([
@@ -135,14 +135,14 @@ describe('AI 응답 비동기 통신 에러 처리 테스트', () => {
     const action = {
       type: REQUEST_INTERVIEW,
       payload: {
-        chatId: 1,
+        interviewId: 1,
         content: 'test'
       }
     };
 
     await runSaga({
       dispatch: (action) => dispatched.push(action),
-      getState: () => ({ chat: { id: 1, trySpeechCount: 0 } })
+      getState: () => ({ chat: { interviewId: 1, trySpeechCount: 0 } })
     }, requestInterviewSaga, action).toPromise();
 
     const prevErrorDispatched = [
@@ -162,14 +162,14 @@ describe('AI 응답 비동기 통신 에러 처리 테스트', () => {
     const retryAction = {
       type: RETRY_INTERVIEW,
       payload: {
-        chatId: 1,
+        interviewId: 1,
         content: 'test',
       }
     };
 
     await runSaga({
       dispatch: (action) => dispatched.push(action),
-      getState: () => ({ chat: { id: 1, trySpeechCount: 0 } })
+      getState: () => ({ chat: { interviewId: 1, trySpeechCount: 0 } })
     }, retryInterviewSaga, retryAction).toPromise();
 
     expect(dispatched).toEqual([
@@ -192,14 +192,14 @@ describe('AI 응답 비동기 통신 에러 처리 테스트', () => {
     const action = {
       type: REQUEST_INTERVIEW,
       payload: {
-        chatId: 1,
+        interviewId: 1,
         content: 'test'
       }
     };
 
     await runSaga({
       dispatch: (action) => dispatched.push(action),
-      getState: () => ({ chat: { id: 1, trySpeechCount: 0 } })
+      getState: () => ({ chat: { interviewId: 1, trySpeechCount: 0 } })
     }, requestInterviewSaga, action).toPromise();
 
     const prevErrorDispatched = [
@@ -212,7 +212,7 @@ describe('AI 응답 비동기 통신 에러 처리 테스트', () => {
 
     await runSaga({
       dispatch: (action) => dispatched.push(action),
-      getState: () => ({ chat: { id: 1, trySpeechCount: 0 } })
+      getState: () => ({ chat: { interviewId: 1, trySpeechCount: 0 } })
     }, cancelCurrentRequestInterviewSaga).toPromise();
 
     expect(dispatched).toEqual([

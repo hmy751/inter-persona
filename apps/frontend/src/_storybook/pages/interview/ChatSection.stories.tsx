@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import ChatSection from "@/_components/pages/chat/ChatSection";
+import ChatSection from "@/_components/pages/interview/ChatSection";
 import {
   ChatContentSpeakerType,
   ChatContentStatusType,
@@ -69,7 +69,7 @@ const withMockStore = (
     },
     preloadedState: {
       chat: {
-        id: 1,
+        interviewId: 1,
         contents,
         trySpeechCount: 0,
         isAIResponseError: false,
@@ -88,7 +88,7 @@ const withMockStore = (
 };
 
 const meta = {
-  title: "Pages/Chat/ChatSection",
+  title: "Pages/Interview/ChatSection",
   component: ChatSection,
   parameters: {
     layout: "Desktop",
@@ -108,7 +108,7 @@ export const Primary: Story = {
     userImg: mockUser.imageSrc,
   },
   decorators: [
-    (Story) =>
+    (Story: Story) =>
       withMockStore(Story, [mockInterviewerChatContent, mockUserChatContent]),
   ],
 };
@@ -119,7 +119,7 @@ export const WithLoadingUserChat: Story = {
     userImg: mockUser.imageSrc,
   },
   decorators: [
-    (Story) =>
+    (Story: Story) =>
       withMockStore(Story, [
         mockInterviewerChatContent,
         mockLoadingUserChatContent,
@@ -133,7 +133,7 @@ export const WithLoadingInterviewer: Story = {
     userImg: mockUser.imageSrc,
   },
   decorators: [
-    (Story) =>
+    (Story: Story) =>
       withMockStore(Story, [
         mockInterviewerChatContent,
         mockUserChatContent,
@@ -148,12 +148,12 @@ export const WithInterviewerChatError: Story = {
     userImg: mockUser.imageSrc,
   },
   decorators: [
-    (Story) => (
+    (Story: Story) => (
       <div style={{ height: "200px" }}>
         <Story />
       </div>
     ),
-    (Story) =>
+    (Story: Story) =>
       withMockStore(Story, [
         mockInterviewerChatContent,
         mockUserChatContentWithInterviewerError,

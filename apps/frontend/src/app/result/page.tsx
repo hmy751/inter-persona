@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import styles from "./page.module.css";
 
 import { useQuery } from "@tanstack/react-query";
-import { selectChatId } from "@/_store/redux/features/chat/selector";
+import { selectInterviewId } from "@/_store/redux/features/chat/selector";
 import { useInterviewerStore } from "@/_store/useInterviewerStore";
 import Text from "@repo/ui/Text";
 import ScoreSection from "@/_components/pages/result/ScoreSection";
@@ -20,16 +20,16 @@ interface Scores {
 }
 
 export default function Page() {
-  const chatId = useSelector(selectChatId) ?? 2;
+  const interviewId = useSelector(selectInterviewId) ?? 2;
   const { interviewer } = useInterviewerStore();
 
   const { data, isLoading } = useQuery<{
     scores: Scores[];
     finalEvaluation: string;
   }>({
-    queryKey: ["result", chatId],
+    queryKey: ["result", interviewId],
     queryFn: () => {
-      return fetch(`http://localhost:3030/interview/${chatId}/result`, {
+      return fetch(`http://localhost:3030/interview/${interviewId}/result`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

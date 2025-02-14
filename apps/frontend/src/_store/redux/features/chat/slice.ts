@@ -13,13 +13,13 @@ export interface ChatContent {
 }
 
 export interface ChatState {
-  id: number | null;
+  interviewId: number | null;
   contents: ChatContent[];
   trySpeechCount: number;
 }
 
 const initialState: ChatState = {
-  id: null,
+  interviewId: null,
   contents: [],
   trySpeechCount: 0,
 };
@@ -38,10 +38,10 @@ const slice = createSlice({
         state.contents = [];
       }
 
-      state.id = null;
+      state.interviewId = null;
     },
-    startChat: (state, action: PayloadAction<{ id: number }>) => {
-      state.id = action.payload.id;
+    startChat: (state, action: PayloadAction<{ interviewId: number }>) => {
+      state.interviewId = action.payload.interviewId;
     },
     triggerContent: (
       state,

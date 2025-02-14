@@ -11,7 +11,7 @@ export type IntegrationRecordingConfig = {
 
 /**
  * 통합 테스트용 녹음 프로세스 시뮬레이션 유틸
- * - triggerRecording: 이미 렌더링된 ChatPage에서 녹음 버튼 클릭
+ * - triggerRecording: 이미 렌더링된 InterviewPage에서 녹음 버튼 클릭
  * - setupRequestAnimationFrame: requestAnimationFrame을 모킹하여 타이머 진행 제어
  * - advanceFramesAndTime: 지정한 프레임 수만큼 타이머를 전진시키고 frameCallback 실행
  * - simulateRecordingFlow: 타이머와 데이터 목킹으로, 녹음 상태와 STT 단계를 시뮬레이션
