@@ -1,26 +1,35 @@
+"use client";
+
 import styles from "./chat.module.css";
 import Avatar from "@repo/ui/Avatar";
 import Text from "@repo/ui/Text";
-interface InterviewerProfileSectionProps {
-  src: string;
-  name: string;
-  description: string;
-}
+import { useQuery } from "@tanstack/react-query";
+import { fetchGetInterviewInterviewer } from "@/_apis/interview";
+import { useParams } from "next/navigation";
 
-export default function InterviewerProfileSection({
-  src,
-  name,
-  description,
-}: InterviewerProfileSectionProps) {
+interface InterviewerProfileSectionProps {}
+
+export default function InterviewerProfileSection({}: InterviewerProfileSectionProps) {
+  const { interviewId } = useParams();
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["interview/interviewer", interviewId],
+    queryFn: () =>
+      fetchGetInterviewInterviewer({ interviewId: Number(interviewId) }),
+  });
+
+  if (isLoading) return <div>Loading...</div>;
+
+  if (!data || isError) return <div>No data</div>;
+
   return (
     <div className={styles.profileContainer}>
-      <Avatar src={src} size="md" />
+      <Avatar src={data?.interviewer.imgUrl ?? ""} size="md" />
       <div className={styles.profileInfo}>
         <Text as="p" size="md">
-          {name}
+          {data?.interviewer.name}
         </Text>
         <Text as="p" size="sm">
-          {description}
+          {data?.interviewer.description}
         </Text>
       </div>
     </div>

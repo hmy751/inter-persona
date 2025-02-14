@@ -1,6 +1,7 @@
 import { http, HttpResponse, RequestHandler } from "msw";
 import { baseURL } from "@/_apis/fetcher";
-import { Interviewer, InterviewerResponse } from "@/_apis/interviewer";
+import { InterviewerResponse } from "@/_apis/interviewer";
+import { Interviewer } from "@/_apis/model";
 
 const interviewerListMock: Interviewer[] = [
   {
