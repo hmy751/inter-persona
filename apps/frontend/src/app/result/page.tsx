@@ -6,7 +6,7 @@ import styles from "./page.module.css";
 
 import { useQuery } from "@tanstack/react-query";
 import { selectInterviewId } from "@/_store/redux/features/chat/selector";
-import { useInterviewerStore } from "@/_store/useInterviewerStore";
+import { useInterviewerStore } from "@/_store/zustand/useInterviewerStore";
 import Text from "@repo/ui/Text";
 import ScoreSection from "@/_components/pages/result/ScoreSection";
 import TotalEvaluationSection from "@/_components/pages/result/TotalEvaluationSection";

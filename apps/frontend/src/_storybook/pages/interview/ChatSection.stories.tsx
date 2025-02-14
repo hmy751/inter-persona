@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryFn, StoryObj } from "@storybook/react";
 import ChatSection from "@/_components/pages/interview/ChatSection";
 import {
   ChatContentSpeakerType,
@@ -108,7 +108,7 @@ export const Primary: Story = {
     userImg: mockUser.imageSrc,
   },
   decorators: [
-    (Story: Story) =>
+    (Story: StoryFn) =>
       withMockStore(Story, [mockInterviewerChatContent, mockUserChatContent]),
   ],
 };
@@ -119,7 +119,7 @@ export const WithLoadingUserChat: Story = {
     userImg: mockUser.imageSrc,
   },
   decorators: [
-    (Story: Story) =>
+    (Story: StoryFn) =>
       withMockStore(Story, [
         mockInterviewerChatContent,
         mockLoadingUserChatContent,
@@ -133,7 +133,7 @@ export const WithLoadingInterviewer: Story = {
     userImg: mockUser.imageSrc,
   },
   decorators: [
-    (Story: Story) =>
+    (Story: StoryFn) =>
       withMockStore(Story, [
         mockInterviewerChatContent,
         mockUserChatContent,
@@ -148,12 +148,12 @@ export const WithInterviewerChatError: Story = {
     userImg: mockUser.imageSrc,
   },
   decorators: [
-    (Story: Story) => (
+    (Story: StoryFn) => (
       <div style={{ height: "200px" }}>
         <Story />
       </div>
     ),
-    (Story: Story) =>
+    (Story: StoryFn) =>
       withMockStore(Story, [
         mockInterviewerChatContent,
         mockUserChatContentWithInterviewerError,
