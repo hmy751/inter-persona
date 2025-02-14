@@ -2,7 +2,7 @@
 
 import Button from "@repo/ui/Button";
 import { useRouter } from "next/navigation";
-import { fetchInterview } from "@/_apis/interview";
+import { fetchCreateInterview } from "@/_apis/interview";
 import useUserStore from "@/_store/zustand/useUserStore";
 import { useMutation } from "@tanstack/react-query";
 import useToastStore from "@repo/store/useToastStore";
@@ -25,7 +25,7 @@ export default function StartInterviewButton({
     mutationFn: async () => {
       await delay(500);
 
-      return fetchInterview({
+      return await fetchCreateInterview({
         interviewerId,
         userId: userId!,
       });

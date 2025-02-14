@@ -61,7 +61,7 @@ describe("인터뷰 페이지 통합 테스트", () => {
 
       renderWithProviders(
         <Layout>
-          <InterviewPage />
+          <InterviewPage params={{ interviewId: "1" }} />
         </Layout>
       );
 
@@ -88,7 +88,7 @@ describe("인터뷰 페이지 통합 테스트", () => {
 
       renderWithProviders(
         <Layout>
-          <InterviewPage />
+          <InterviewPage params={{ interviewId: "1" }} />
         </Layout>
       );
 
@@ -126,7 +126,7 @@ describe("인터뷰 페이지 통합 테스트", () => {
 
       const { store } = renderWithProviders(
         <Layout>
-          <InterviewPage />
+          <InterviewPage params={{ interviewId: "1" }} />
         </Layout>
       );
 
@@ -161,7 +161,7 @@ describe("인터뷰 페이지 통합 테스트", () => {
 
       renderWithProviders(
         <Layout>
-          <InterviewPage />
+          <InterviewPage params={{ interviewId: "1" }} />
         </Layout>
       );
 
@@ -211,7 +211,9 @@ describe("인터뷰 페이지 통합 테스트", () => {
         },
       };
 
-      renderWithProviders(<InterviewPage />, { preloadedState });
+      renderWithProviders(<InterviewPage params={{ interviewId: "1" }} />, {
+        preloadedState,
+      });
 
       await waitFor(() => {
         expect(mockPush).toHaveBeenCalledWith("/result");

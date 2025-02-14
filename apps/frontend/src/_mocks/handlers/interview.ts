@@ -1,14 +1,16 @@
 import { http, HttpResponse, RequestHandler } from "msw";
 import { baseURL } from "@/_apis/fetcher";
-import { InterviewBody, AnswerBody } from "@/_apis/interview";
+import { GetInterviewBody, AnswerBody } from "@/_apis/interview";
 
 const defaultInterviewHandler = [
-  http.post<never, InterviewBody>(
-    `${baseURL}/interview`,
+  http.get<never, GetInterviewBody>(
+    `${baseURL}/interview/:interviewId`,
     async ({ request }) => {
-      const { interviewerId, reviewerId } = await request.json();
+      const { interviewId } = await request.json();
       return HttpResponse.json({
-        id: 1,
+        interviewId,
+        interviewerId: 1,
+        userId: 1,
       });
     }
   ),
