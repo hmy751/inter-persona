@@ -1,14 +1,23 @@
 import { http, HttpResponse, RequestHandler } from "msw";
 import { baseURL } from "@/_apis/fetcher";
-import { GetInterviewBody, AnswerBody, GetInterviewInterviewerBody, GetInterviewUserBody } from "@/_apis/interview";
+import { GetInterviewBody, AnswerBody, GetInterviewInterviewerBody, GetInterviewUserBody, CreateInterviewBody } from "@/_apis/interview";
 
 const defaultInterviewHandler = [
+  http.post<never, CreateInterviewBody>(
+    `${baseURL}/interview`,
+    async ({ request }) => {
+      const { interviewerId, userId } = await request.json();
+      return HttpResponse.json({
+        id: 1,
+      });
+    }
+  ),
   http.get<never, GetInterviewBody>(
     `${baseURL}/interview/:interviewId`,
-    async ({ request }) => {
-      const { interviewId } = await request.json();
+    async ({ params }) => {
+      const { interviewId } = params;
       return HttpResponse.json({
-        interviewId,
+        id: Number(interviewId),
         interviewerId: 1,
         userId: 1,
       });
@@ -16,8 +25,8 @@ const defaultInterviewHandler = [
   ),
   http.get<never, GetInterviewInterviewerBody>(
     `${baseURL}/interview/:interviewId/interviewer`,
-    async ({ request }) => {
-      const { interviewId } = await request.json();
+    async ({ params }) => {
+      const { interviewId } = params;
       return HttpResponse.json({
         interviewer: {
           id: 1,
@@ -32,8 +41,8 @@ const defaultInterviewHandler = [
   ),
   http.get<never, GetInterviewUserBody>(
     `${baseURL}/interview/:interviewId/user`,
-    async ({ request }) => {
-      const { interviewId } = await request.json();
+    async ({ params }) => {
+      const { interviewId } = params;
       return HttpResponse.json({
         user: {
           id: 1,

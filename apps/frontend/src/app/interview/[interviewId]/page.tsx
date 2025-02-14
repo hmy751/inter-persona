@@ -14,13 +14,17 @@ export default function Page({ params }: { params: { interviewId: string } }) {
   const router = useRouter();
   const { setAlert } = useAlertDialogStore();
 
-  const { data } = useQuery({
+  const { data, error, isLoading } = useQuery({
     queryKey: ["interview", interviewId],
     queryFn: () => fetchGetInterview({ interviewId }),
     enabled: !!interviewId,
   });
 
-  if (!data?.interviewerId || !data?.userId) {
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!data?.interviewerId || !data?.userId || error) {
     setAlert(
       "인터뷰 조회 실패",
       "인터뷰 조회에 실패했습니다. 다시 시도해주세요."
