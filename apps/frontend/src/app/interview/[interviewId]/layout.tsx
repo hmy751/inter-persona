@@ -1,4 +1,4 @@
-import RecordButton from "@/_components/pages/chat/RecordButton/RecordButton";
+import RecordButton from "@/_components/pages/interview/RecordButton/RecordButton";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (

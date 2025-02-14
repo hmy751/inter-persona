@@ -5,7 +5,7 @@ import {
   select,
 } from "redux-saga/effects";
 import {
-  REQUEST_INTERVIEW,
+  REQUEST_ANSWER,
   triggerContent,
   updateContent,
   removeContent,
@@ -22,10 +22,10 @@ import { ChatContentSpeakerType } from "@/_store/redux/type";
 import { useToastStore } from "@repo/store/useToastStore";
 import { STT_ERROR_TOAST, STT_NETWORK_ERROR_TOAST } from "../constants";
 
-const selectChatState = (state: RootState) => state.chat.id;
+const selectInterviewId = (state: RootState) => state.chat.interviewId;
 const selectTrySpeechCount = (state: RootState) => state.chat.trySpeechCount;
 
-import { requestInterviewSaga } from "./requestInterviewSaga";
+import { requestAnswerSaga } from "./requestAnswerSaga";
 
 interface SendRecordAction {
   type: string;
@@ -45,14 +45,14 @@ export function* speechToTextSaga(action: SendRecordAction): Generator<any, void
     const data: SpeechToTextData = yield call(fetchSpeechToText, {
       formData: action.payload.formData,
     });
-    const chatId: number = yield select(selectChatState);
+    const interviewId: number = yield select(selectInterviewId);
     const trySpeechCount: number = yield select(selectTrySpeechCount);
 
     if (data?.text) {
       yield put(updateContent({ content: data.text }));
-      yield* requestInterviewSaga({
-        type: REQUEST_INTERVIEW,
-        payload: { content: data.text as unknown as string, chatId },
+      yield* requestAnswerSaga({
+        type: REQUEST_ANSWER,
+        payload: { content: data.text as unknown as string, interviewId },
       });
       yield put(resetTrySpeechCount());
       return;
