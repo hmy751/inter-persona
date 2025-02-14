@@ -1,23 +1,21 @@
 import fetcher from "./fetcher";
 
-interface InterviewData {
-  id: number;
-}
-
 export interface InterviewBody {
   interviewerId: number;
-  reviewerId: number;
+  userId: number;
+}
+interface InterviewResponse {
+  id: number;
 }
 
 export const fetchInterview = async ({
   interviewerId,
-  reviewerId,
+  userId,
 }: InterviewBody) => {
-  return fetcher.post<InterviewData>("interview",
-    {
-      interviewerId,
-      reviewerId,
-    }
+  return fetcher.post<InterviewResponse>("interview", {
+    interviewerId,
+    userId,
+  }
   );
 };
 
