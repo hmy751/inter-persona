@@ -3,6 +3,7 @@ import { baseURL } from "@/_apis/fetcher";
 import {
   CreateResultBody,
   GetResultBody,
+  GetResultEvaluationBody,
   GetResultScoreBody,
 } from "@/_apis/result";
 
@@ -35,6 +36,31 @@ const defaultResultHandler = [
       return HttpResponse.json({
         score: 80,
         questionCount: 12,
+      });
+    }
+  ),
+  http.get<never, GetResultEvaluationBody>(
+    `${baseURL}/result/:resultId/evaluation`,
+    async ({ params }) => {
+      const { resultId } = params;
+      return HttpResponse.json({
+        evaluation: [
+          {
+            title: "기술 이해도",
+            score: 80,
+            content: "기술 이해도가 높습니다.",
+          },
+          {
+            title: "문장 구성",
+            score: 85,
+            content: "문장 구성이 좋습니다.",
+          },
+          {
+            title: "커뮤니케이션",
+            score: 70,
+            content: "커뮤니케이션이 좋습니다.",
+          },
+        ],
       });
     }
   ),

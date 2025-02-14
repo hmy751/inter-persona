@@ -49,3 +49,23 @@ export interface GetResultScoreResponse {
 export const fetchGetResultScore = async ({ resultId }: GetResultScoreBody) => {
   return fetcher.get<GetResultScoreResponse>(`result/${resultId}/score`);
 };
+
+/**
+ * 인터뷰 결과 평가 조회
+ */
+
+interface Evaluation {
+  title: string;
+  score: number;
+  content: string;
+}
+export interface GetResultEvaluationBody {
+  resultId: number;
+}
+export interface GetResultEvaluationResponse {
+  evaluation: Evaluation[];
+}
+
+export const fetchGetResultEvaluation = async ({ resultId }: GetResultEvaluationBody) => {
+  return fetcher.get<GetResultEvaluationResponse>(`result/${resultId}/evaluation`);
+};
