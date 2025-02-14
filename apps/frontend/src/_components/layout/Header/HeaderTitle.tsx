@@ -15,7 +15,7 @@ export default function HeaderTitle({
   const mapPathnameToTitle = {
     main: "Inter Persona",
     interviewer: "Select Interviewer",
-    chat: "Interview",
+    interview: "Interview",
     result: "Result",
   };
 

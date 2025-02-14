@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect, useCallback, useMemo } from "react";
+import Button from "@repo/ui/Button";
 import { detectSilence } from "./utils";
 import Image from "next/image";
 import styles from "./RecordButton.module.css";
@@ -8,7 +9,10 @@ import Recorder from "recorder-js";
 import { useDispatch, useSelector } from "react-redux";
 import { SEND_RECORD } from "@/_store/redux/features/chat/slice";
 import { ChatContentStatusType } from "@/_store/redux/type";
-import { selectCurrentRecordingAnswer } from "@/_store/redux/features/chat/selector";
+import {
+  selectChatLimit,
+  selectCurrentRecordingAnswer,
+} from "@/_store/redux/features/chat/selector";
 import clsx from "clsx";
 import {
   IDLE_ICON_SRC,
@@ -20,6 +24,12 @@ import { createRecordError, RecordErrorType } from "./_error";
 import useAlertDialogStore from "@repo/store/useAlertDialogStore";
 import useConfirmDialogStore from "@repo/store/useConfirmDialogStore";
 import useToastStore from "@repo/store/useToastStore";
+import { useMutation } from "@tanstack/react-query";
+import { delay } from "@/_libs/utils";
+import { APIError } from "@/_apis/fetcher";
+import { fetchCreateResult } from "@/_apis/result";
+import { useParams, useRouter } from "next/navigation";
+
 export enum RecordingStatusType {
   idle = "idle",
   recording = "recording",
@@ -27,6 +37,8 @@ export enum RecordingStatusType {
 }
 
 export default function RecordButton() {
+  const router = useRouter();
+  const interviewId = useParams().interviewId;
   const recorderRef = useRef<Recorder | null>(null);
   const [recordingStatus, setRecordingStatus] = useState<RecordingStatusType>(
     RecordingStatusType.idle
@@ -34,6 +46,7 @@ export default function RecordButton() {
   const [buttonIconSrc, setButtonIconSrc] = useState<string>(
     "/assets/images/record-button.svg"
   );
+  const chatLimit = useSelector(selectChatLimit);
 
   const dispatch = useDispatch();
   const currentRecordingAnswer = useSelector(selectCurrentRecordingAnswer);
@@ -43,6 +56,40 @@ export default function RecordButton() {
   const { setAlert } = useAlertDialogStore();
   const { setConfirm } = useConfirmDialogStore();
   const { addToast } = useToastStore();
+  const { mutate, isPending } = useMutation({
+    mutationFn: async () => {
+      await delay(500);
+
+      return await fetchCreateResult({
+        interviewId: Number(interviewId),
+      });
+    },
+    onSuccess: (data) => {
+      if (!data?.id) {
+        addToast({
+          title: "인터뷰 결과 생성 실패",
+          description: "인터뷰 결과 생성에 실패했습니다. 다시 시도해주세요.",
+        });
+        return;
+      }
+
+      router.push(`/result/${data.id}`);
+    },
+    onError: (error) => {
+      if (error instanceof APIError) {
+        addToast({
+          title: "인터뷰 결과 생성 실패",
+          description: error.message,
+        });
+        return;
+      }
+
+      addToast({
+        title: "인터뷰 결과 생성 실패",
+        description: "인터뷰 결과 생성에 실패했습니다. 다시 시도해주세요.",
+      });
+    },
+  });
 
   const handleRecord = async () => {
     try {
@@ -285,20 +332,47 @@ export default function RecordButton() {
     };
   }, [isDisabledRecord, recordingStatus]);
 
+  const handleClickResultButton = async () => {
+    if (!chatLimit) {
+      addToast({
+        title: "인터뷰 아직 완료되지 않았습니다.",
+        description: "인터뷰가 완료되면 결과를 확인할 수 있습니다.",
+        duration: 3000,
+      });
+      return;
+    }
+
+    mutate();
+  };
+
   return (
-    <Image
-      data-testid="record-button"
-      width={60}
-      height={60}
-      src={buttonIconSrc}
-      alt="record-button"
-      sizes="60px"
-      onClick={handleRecord}
-      className={clsx([
-        styles.button,
-        isDisabledRecord && styles.disabled,
-        recordingStatus === RecordingStatusType.recording && styles.recording,
-      ])}
-    />
+    <>
+      {chatLimit ? (
+        <Button
+          onClick={handleClickResultButton}
+          variant="primary"
+          size="lg"
+          isLoading={isPending}
+        >
+          결과 보기
+        </Button>
+      ) : (
+        <Image
+          data-testid="record-button"
+          width={60}
+          height={60}
+          src={buttonIconSrc}
+          alt="record-button"
+          sizes="60px"
+          onClick={handleRecord}
+          className={clsx([
+            styles.button,
+            isDisabledRecord && styles.disabled,
+            recordingStatus === RecordingStatusType.recording &&
+              styles.recording,
+          ])}
+        />
+      )}
+    </>
   );
 }

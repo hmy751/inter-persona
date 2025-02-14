@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import ChatArticle from "@/_components/pages/chat/ChatArticle";
+import ChatArticle from "@/_components/pages/interview/ChatArticle";
 import {
   ChatContentSpeakerType,
   ChatContentStatusType,
@@ -16,7 +16,7 @@ const user = {
 };
 
 const meta = {
-  title: "Pages/Chat/ChatArticle",
+  title: "Pages/Interview/ChatArticle",
   component: ChatArticle,
   parameters: {
     layout: "Desktop",
@@ -42,9 +42,9 @@ export const InterviewerChat = {
     const { status, speaker, content } = mockInterviewerChatContent;
 
     return (
-      <ChatArticle type={speaker} status={status}>
+      <ChatArticle type={speaker} status={status} content={content}>
         <ChatArticle.Avatar src={interviewer?.imgUrl} />
-        <ChatArticle.Speech text={content} />
+        <ChatArticle.Speech />
       </ChatArticle>
     );
   },
@@ -62,9 +62,9 @@ export const InterviewerChatWithLoading = {
     const { status, speaker, content } = mockLoadingInterviewerChatContent;
 
     return (
-      <ChatArticle type={speaker} status={status}>
+      <ChatArticle type={speaker} status={status} content={content}>
         <ChatArticle.Avatar src={interviewer?.imgUrl} />
-        <ChatArticle.Speech text={content} />
+        <ChatArticle.Speech />
       </ChatArticle>
     );
   },
@@ -82,8 +82,8 @@ export const UserChat = {
     const { status, speaker, content } = mockUserChatContent;
 
     return (
-      <ChatArticle type={speaker} status={status}>
-        <ChatArticle.Speech text={content} />
+      <ChatArticle type={speaker} status={status} content={content}>
+        <ChatArticle.Speech />
         <ChatArticle.Avatar src={user?.imageSrc} />
       </ChatArticle>
     );
@@ -102,8 +102,8 @@ export const UserChatWithLoading = {
     const { status, speaker, content } = mockLoadingUserChatContent;
 
     return (
-      <ChatArticle type={speaker} status={status}>
-        <ChatArticle.Speech text={content} />
+      <ChatArticle type={speaker} status={status} content={content}>
+        <ChatArticle.Speech />
         <ChatArticle.Avatar src={user?.imageSrc} />
       </ChatArticle>
     );
@@ -130,8 +130,8 @@ export const UserChatWithInterviewerError = {
       mockUserChatContentWithInterviewerError;
 
     return (
-      <ChatArticle type={speaker} status={status}>
-        <ChatArticle.Speech text={content} />
+      <ChatArticle type={speaker} status={status} content={content}>
+        <ChatArticle.Speech />
         <ChatArticle.Avatar src={user?.imageSrc} />
         <ChatArticle.RetryCancelSelector />
       </ChatArticle>

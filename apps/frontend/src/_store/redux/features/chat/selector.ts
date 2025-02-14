@@ -22,8 +22,8 @@ export const selectCurrentRecordingAnswer = (state: RootState) => {
 
   return null;
 };
-export const selectChatId = (state: RootState) => {
-  return state.chat.id;
+export const selectInterviewId = (state: RootState) => {
+  return state.chat.interviewId;
 };
 export const selectChatLimit = (state: RootState) => {
   return state.chat.contents.length >= CHAT_LIMIT;

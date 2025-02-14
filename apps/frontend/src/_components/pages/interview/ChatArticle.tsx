@@ -4,13 +4,11 @@ import Avatar from "@repo/ui/Avatar";
 import clsx from "clsx";
 import Button from "@repo/ui/Button";
 import { ChatContentStatusType } from "@/_store/redux/type";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
-  REQUEST_INTERVIEW,
-  RETRY_INTERVIEW,
-  CANCEL_CURRENT_REQUEST_INTERVIEW,
+  RETRY_ANSWER,
+  CANCEL_CURRENT_REQUEST_ANSWER,
 } from "@/_store/redux/features/chat/slice";
-import { selectChatId } from "@/_store/redux/features/chat/selector";
 
 export type ChatType = "user" | "bot" | "";
 
@@ -30,15 +28,13 @@ const ChatArticleContext = createContext<{
 function ChatRetryCancelSelector() {
   const { status, content } = useContext(ChatArticleContext);
   const dispatch = useDispatch();
-  const chatId = useSelector(selectChatId);
 
   if (status !== ChatContentStatusType.fail) return null;
 
   const handleRetry = () => {
     dispatch({
-      type: RETRY_INTERVIEW,
+      type: RETRY_ANSWER,
       payload: {
-        id: chatId,
         content: content as unknown as string,
       },
     });
@@ -46,7 +42,7 @@ function ChatRetryCancelSelector() {
 
   const handleCancel = () => {
     dispatch({
-      type: CANCEL_CURRENT_REQUEST_INTERVIEW,
+      type: CANCEL_CURRENT_REQUEST_ANSWER,
     });
   };
 

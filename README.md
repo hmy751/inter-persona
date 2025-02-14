@@ -147,7 +147,7 @@ flowchart LR
 하지만 클라이언트 사이드에서 요청을 시도했으나 CORS 에러가 발생했고 클라이언트 사이드 요청을 지원하지 않는다고 판단해, Next js의 route handler를 통해 서버로 우회하여 요청을 했고 문제를 해결했습니다.
 
 ```tsx
-// app/api/chat/route.ts
+// app/api/interview/route.ts
 
 const CLIENT_SECRET = process.env.NEXT_PUBLIC_CLIENT_SECRET as string;
 const INVOKE_URL = process.env.NEXT_PUBLIC_INVOKE_URL as string;
@@ -379,7 +379,7 @@ export const WithInterviewerChatError: Story = {
 ## Jest와 MSW를 활용하여 인터뷰 및 녹음 기능의 테스트를 작성하여 안정성 확보하기
 
 인터뷰 프로세스에는 다양한 로직이 있어 안정성을 유지하고자 관련 로직들을 Jest, MSW를 활용해 유닛, 통합 테스트를 작성했습니다.
-(store/redux/chat/saga.spec.ts, components/pages/chat/RecordButton.spec.tsx, app/chat/page.spec.tsx 참조)
+(store/redux/chat/saga.spec.ts, components/pages/interview/RecordButton.spec.tsx, app/interview/page.spec.tsx 참조)
 
 그래서 실제 API가 없어도 MSW를 활용해서 테스트하도록 했고 또 주요기능들을 안정적으로 빠르게 검증할 수 있었습니다.
 
@@ -402,7 +402,7 @@ export const WithInterviewerChatError: Story = {
 import { mockRecorder } from "_tests/_utils/mockRecorder";
 ...
 
-import RecordButton from "@/components/pages/chat/RecordButton";
+import RecordButton from "@/components/pages/interview/RecordButton";
 ...
 ```
 
@@ -503,7 +503,7 @@ jest.useFakeTimers();
 그래서 해당 시간 설정이후에는 바로 jest.useRealTimers()를 호출하여 타이머 환경을 원래대로 복구하고, expect확인 부분에서는 timeout을 추가하여 문제를 해결했습니다.
 
 ```ts
-// _tests/app/chat/page.spec.ts
+// _tests/app/interview/page.spec.ts
 
 integrationSetup.simulateRecordingFlow();
 
