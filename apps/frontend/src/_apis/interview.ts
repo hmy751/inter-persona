@@ -1,5 +1,5 @@
 import fetcher from "./fetcher";
-import { Interviewer } from "./model";
+import { Interviewer, User } from "./model";
 /**
  * 인터뷰 조회
  */
@@ -55,6 +55,22 @@ export const fetchGetInterviewInterviewer = async ({
   return fetcher.get<GetInterviewInterviewerResponse>(
     `interview/${interviewId}/interviewer`
   );
+};
+
+/**
+ * 인터뷰, 유저 조회
+ */
+export interface GetInterviewUserBody {
+  interviewId: number;
+}
+export interface GetInterviewUserResponse {
+  user: User;
+}
+
+export const fetchGetInterviewUser = async ({
+  interviewId,
+}: GetInterviewUserBody) => {
+  return fetcher.get<GetInterviewUserResponse>(`interview/${interviewId}/user`);
 };
 
 /**

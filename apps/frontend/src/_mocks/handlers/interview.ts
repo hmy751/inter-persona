@@ -1,6 +1,6 @@
 import { http, HttpResponse, RequestHandler } from "msw";
 import { baseURL } from "@/_apis/fetcher";
-import { GetInterviewBody, AnswerBody, GetInterviewInterviewerBody } from "@/_apis/interview";
+import { GetInterviewBody, AnswerBody, GetInterviewInterviewerBody, GetInterviewUserBody } from "@/_apis/interview";
 
 const defaultInterviewHandler = [
   http.get<never, GetInterviewBody>(
@@ -26,6 +26,19 @@ const defaultInterviewHandler = [
           mbti: "ENFP",
           description:
             "이론 중심의 면접을 진행합니다. 컴퓨터 과학(CS) 개념과 프레임워크의 운영 원리에 관한 질문을 강조합니다.",
+        },
+      });
+    }
+  ),
+  http.get<never, GetInterviewUserBody>(
+    `${baseURL}/interview/:interviewId/user`,
+    async ({ request }) => {
+      const { interviewId } = await request.json();
+      return HttpResponse.json({
+        user: {
+          id: 1,
+          imgUrl: "/images/user.webp",
+          name: "민지",
         },
       });
     }
