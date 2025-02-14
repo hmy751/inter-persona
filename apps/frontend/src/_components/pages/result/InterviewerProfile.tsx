@@ -12,11 +12,7 @@ export default function InterviewerProfile({
 }) {
   return (
     <div className={styles.container}>
-      <Avatar
-        src={src || "/assets/images/elon_musk.png"}
-        width={"160px"}
-        height={"160px"}
-      />
+      <Avatar src={src || "/assets/images/elon_musk.png"} size="md" />
       <div className={styles.infoContainer}>
         <div className={styles.name}>{name}</div>
         <div className={styles.description}>{description}</div>
