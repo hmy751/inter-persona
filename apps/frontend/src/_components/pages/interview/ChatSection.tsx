@@ -51,7 +51,7 @@ export default function ChatSection({
         dispatch({
           type: START_CHAT,
           payload: {
-            chatId: data?.id,
+            interviewId: data?.id,
             content: "안녕하세요. 간단히 자기소개 부탁드립니다.",
           },
         });

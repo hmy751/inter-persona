@@ -1,6 +1,6 @@
 import { screen, waitFor } from "@testing-library/react";
-import ChatPage from "@/app/chat/page";
-import Layout from "@/app/chat/layout";
+import InterviewPage from "@/app/interview/page";
+import Layout from "@/app/interview/layout";
 
 import { renderWithProviders } from "@/_tests/_mocks/providers";
 import { server } from "@/_mocks/server";
@@ -61,7 +61,7 @@ describe("인터뷰 페이지 통합 테스트", () => {
 
       renderWithProviders(
         <Layout>
-          <ChatPage />
+          <InterviewPage />
         </Layout>
       );
 
@@ -81,14 +81,14 @@ describe("인터뷰 페이지 통합 테스트", () => {
             content: "안녕하세요. 간단히 자기소개 부탁드립니다.",
           });
         }),
-        http.post("/api/chat", () => {
+        http.post("/api/interview", () => {
           return Response.json({ text: "안녕하세요, 저는 개발자입니다." });
         })
       );
 
       renderWithProviders(
         <Layout>
-          <ChatPage />
+          <InterviewPage />
         </Layout>
       );
 
@@ -119,14 +119,14 @@ describe("인터뷰 페이지 통합 테스트", () => {
 
     it("STT 변환 실패시 재시도 기능이 동작한다", async () => {
       server.use(
-        http.post("/api/chat", () => {
+        http.post("/api/interview", () => {
           return Response.json({ text: "" });
         })
       );
 
       const { store } = renderWithProviders(
         <Layout>
-          <ChatPage />
+          <InterviewPage />
         </Layout>
       );
 
@@ -149,7 +149,7 @@ describe("인터뷰 페이지 통합 테스트", () => {
   describe("AI 응답 에러 처리", () => {
     it("AI 응답 실패시 재시도/취소 선택지를 표시한다", async () => {
       server.use(
-        http.post("/api/chat", () => {
+        http.post("/api/interview", () => {
           return Response.json({ text: "안녕하세요, 저는 개발자입니다." });
         }),
         http.post(`${baseURL}/interview/1/contents`, () => {
@@ -161,7 +161,7 @@ describe("인터뷰 페이지 통합 테스트", () => {
 
       renderWithProviders(
         <Layout>
-          <ChatPage />
+          <InterviewPage />
         </Layout>
       );
 
@@ -200,7 +200,7 @@ describe("인터뷰 페이지 통합 테스트", () => {
     it("채팅이 제한 횟수에 도달하면 결과 페이지로 이동한다", async () => {
       const preloadedState = {
         chat: {
-          id: 1,
+          interviewId: 1,
           contents: Array(20).fill({
             status: ChatContentStatusType.success,
             speaker: ChatContentSpeakerType.user,
@@ -211,7 +211,7 @@ describe("인터뷰 페이지 통합 테스트", () => {
         },
       };
 
-      renderWithProviders(<ChatPage />, { preloadedState });
+      renderWithProviders(<InterviewPage />, { preloadedState });
 
       await waitFor(() => {
         expect(mockPush).toHaveBeenCalledWith("/result");

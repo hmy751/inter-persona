@@ -28,7 +28,7 @@ const interviewHandler = [
   http.post<never, AIChatBody>(
     `${baseURL}/interview/:chatId/contents`,
     async ({ request }) => {
-      const { chatId, content } = await request.json();
+      const { interviewId, content } = await request.json();
       return HttpResponse.json({
         content: "자바스크립트의 클로저에 대해 설명해주세요",
       });
@@ -40,7 +40,7 @@ const interviewHandlerforInterviewerError = [
   http.post<never, AIChatBody>(
     `${baseURL}/interview/:chatId/contents`,
     async ({ request }) => {
-      const { chatId, content } = await request.json();
+      const { interviewId, content } = await request.json();
       console.log('pass')
 
       const random = Math.random();
@@ -56,7 +56,7 @@ const interviewHandlerforInterviewerError = [
       });
     }
   ),
-  http.post('/chat', async ({ request }) => {
+  http.post('/interview', async ({ request }) => {
     try {
       const formData = await request.formData();
       return HttpResponse.json({

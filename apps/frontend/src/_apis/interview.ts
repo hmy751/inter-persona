@@ -32,7 +32,7 @@ export const fetchSpeechToText = async ({
   formData,
 }: SpeechToTextProps): Promise<SpeechToTextData | undefined> => {
   try {
-    const result = await fetch("/api/chat", {
+    const result = await fetch("/api/interview", {
       method: "POST",
       body: formData,
     });
@@ -49,7 +49,7 @@ export const fetchSpeechToText = async ({
 };
 
 export interface AIChatBody {
-  chatId: number;
+  interviewId: number;
   content: string;
 }
 
@@ -57,8 +57,9 @@ export interface AIChatData {
   content: string;
 }
 
-export const fetchAIChat = async ({ chatId, content }: AIChatBody) => {
-  return fetcher.post<AIChatData>(`interview/${chatId}/contents`, {
+export const fetchAIChat = async ({ interviewId, content }: AIChatBody) => {
+  return fetcher.post<AIChatData>(`interview/${interviewId}/contents`, {
     content,
   });
 };
+

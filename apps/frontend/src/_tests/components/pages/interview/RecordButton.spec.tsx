@@ -1,9 +1,9 @@
-import RecordButton from "@/_components/pages/chat/RecordButton/RecordButton";
+import RecordButton from "@/_components/pages/interview/RecordButton/RecordButton";
 import {
   IDLE_ICON_SRC,
   RECORDING_ICON_SRC,
   DISABLED_ICON_SRC,
-} from "@/_components/pages/chat/RecordButton/constants";
+} from "@/_components/pages/interview/RecordButton/constants";
 import { screen, waitFor, cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { SEND_RECORD } from "@/_store/redux/features/chat/slice";
@@ -47,7 +47,7 @@ describe("녹음 버튼 UI 상태 테스트", () => {
   it("응답에 실패하면, 비활성 상태로 변경된다.", async () => {
     const preloadedState = {
       chat: {
-        id: 1,
+        interviewId: 1,
         contents: [
           {
             status: ChatContentStatusType.fail,

@@ -1,7 +1,7 @@
 import { renderWithProviders } from "@/_tests/_mocks/providers";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import RecordButton from "@/_components/pages/chat/RecordButton/RecordButton";
+import RecordButton from "@/_components/pages/interview/RecordButton/RecordButton";
 import { AppStore } from "@/_store/redux/rootStore";
 
 export type TestSetupConfig = {
