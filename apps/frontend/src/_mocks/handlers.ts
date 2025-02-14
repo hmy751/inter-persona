@@ -2,7 +2,7 @@ import { http, HttpResponse, RequestHandler } from "msw";
 import { baseURL } from "@/_apis/fetcher";
 import { LoginBody } from "@/_apis/user";
 
-import { InterviewBody, AIChatBody } from "@/_apis/interview";
+import { InterviewBody, AnswerBody } from "@/_apis/interview";
 
 const userHandler = [
   http.post<never, LoginBody>(`${baseURL}/login`, async ({ request }) => {
@@ -25,7 +25,7 @@ const interviewHandler = [
       });
     }
   ),
-  http.post<never, AIChatBody>(
+  http.post<never, AnswerBody>(
     `${baseURL}/interview/:chatId/contents`,
     async ({ request }) => {
       const { interviewId, content } = await request.json();
@@ -37,7 +37,7 @@ const interviewHandler = [
 ];
 
 const interviewHandlerforInterviewerError = [
-  http.post<never, AIChatBody>(
+  http.post<never, AnswerBody>(
     `${baseURL}/interview/:chatId/contents`,
     async ({ request }) => {
       const { interviewId, content } = await request.json();

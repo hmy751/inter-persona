@@ -48,17 +48,17 @@ export const fetchSpeechToText = async ({
   }
 };
 
-export interface AIChatBody {
+export interface AnswerBody {
   interviewId: number;
   content: string;
 }
 
-export interface AIChatData {
+export interface AnswerData {
   content: string;
 }
 
-export const fetchAIChat = async ({ interviewId, content }: AIChatBody) => {
-  return fetcher.post<AIChatData>(`interview/${interviewId}/contents`, {
+export const fetchAnswer = async ({ interviewId, content }: AnswerBody) => {
+  return fetcher.post<AnswerData>(`interview/${interviewId}/contents`, {
     content,
   });
 };

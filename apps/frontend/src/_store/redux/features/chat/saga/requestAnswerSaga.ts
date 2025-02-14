@@ -11,20 +11,20 @@ import {
   removeContent,
   startChat,
   resetTrySpeechCount,
-  CANCEL_CURRENT_REQUEST_INTERVIEW,
+  CANCEL_CURRENT_REQUEST_ANSWER,
   resetContentStatus,
 } from "../slice";
 import { delay } from "../../../utils";
 import { RootState } from "@/_store/redux/rootStore";
 import {
-  fetchAIChat,
-  AIChatData,
+  fetchAnswer,
+  AnswerData,
 } from "@/_apis/interview";
 import { ChatContentSpeakerType } from "@/_store/redux/type";
 import { useToastStore } from "@repo/store/useToastStore";
 import { AI_ERROR_TOAST, AI_NETWORK_ERROR_TOAST } from "../constants";
 import { errorContent } from "../slice";
-interface RequestInterviewAction {
+interface RequestAnswerAction {
   type: string;
   payload: {
     interviewId: number;
@@ -33,12 +33,12 @@ interface RequestInterviewAction {
 }
 const selectInterviewId = (state: RootState) => state.chat.interviewId;
 
-export function* retryInterviewSaga(action: RequestInterviewAction): Generator<any, void, any> {
+export function* retryAnswerSaga(action: RequestAnswerAction): Generator<any, void, any> {
   yield put(resetContentStatus());
-  yield* requestInterviewSaga(action);
+  yield* requestAnswerSaga(action);
 }
 
-export function* requestInterviewSaga(action: RequestInterviewAction): Generator<any, void, any> {
+export function* requestAnswerSaga(action: RequestAnswerAction): Generator<any, void, any> {
   try {
     if (action.type === START_CHAT) {
       yield put(startChat({ interviewId: action.payload.interviewId }));
@@ -50,7 +50,7 @@ export function* requestInterviewSaga(action: RequestInterviewAction): Generator
     yield put(triggerContent({ speaker: ChatContentSpeakerType.bot }));
     yield call(delay, 500);
 
-    const data: AIChatData = yield call(fetchAIChat, {
+    const data: AnswerData = yield call(fetchAnswer, {
       interviewId,
       content: action.payload.content,
     });
@@ -69,7 +69,7 @@ export function* requestInterviewSaga(action: RequestInterviewAction): Generator
   }
 }
 
-export function* cancelCurrentRequestInterviewSaga(): Generator<any, void, any> {
+export function* cancelCurrentRequestAnswerSaga(): Generator<any, void, any> {
   yield put(removeContent());
   yield put(resetTrySpeechCount());
 }

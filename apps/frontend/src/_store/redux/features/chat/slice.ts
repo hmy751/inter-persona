@@ -107,8 +107,8 @@ export const {
 
 export const SEND_RECORD = "SEND_RECORD" as const;
 export const START_CHAT = "START_CHAT" as const;
-export const REQUEST_INTERVIEW = "REQUEST_INTERVIEW" as const;
-export const RETRY_INTERVIEW = "RETRY_INTERVIEW" as const;
-export const CANCEL_CURRENT_REQUEST_INTERVIEW = "CANCEL_CURRENT_REQUEST_INTERVIEW" as const;
+export const REQUEST_ANSWER = "REQUEST_ANSWER" as const;
+export const RETRY_ANSWER = "RETRY_ANSWER" as const;
+export const CANCEL_CURRENT_REQUEST_ANSWER = "CANCEL_CURRENT_REQUEST_ANSWER" as const;
 
 export default slice.reducer;

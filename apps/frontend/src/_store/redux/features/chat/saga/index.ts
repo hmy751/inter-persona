@@ -1,7 +1,7 @@
 import { takeLatest } from "redux-saga/effects";
-import { SEND_RECORD, START_CHAT, REQUEST_INTERVIEW, CANCEL_CURRENT_REQUEST_INTERVIEW, RETRY_INTERVIEW } from "../slice";
+import { SEND_RECORD, START_CHAT, CANCEL_CURRENT_REQUEST_ANSWER, RETRY_ANSWER } from "../slice";
 
-import { requestInterviewSaga, cancelCurrentRequestInterviewSaga, retryInterviewSaga } from "./requestInterviewSaga";
+import { requestAnswerSaga, cancelCurrentRequestAnswerSaga, retryAnswerSaga } from "./requestAnswerSaga";
 import { speechToTextSaga } from "./speechToTextSaga";
 
 export function* watchRecord() {
@@ -9,13 +9,13 @@ export function* watchRecord() {
 }
 
 export function* watchStartChat() {
-  yield takeLatest(START_CHAT, requestInterviewSaga);
+  yield takeLatest(START_CHAT, requestAnswerSaga);
 }
 
-export function* watchRetry() {
-  yield takeLatest(RETRY_INTERVIEW, retryInterviewSaga);
+export function* watchRetryAnswer() {
+  yield takeLatest(RETRY_ANSWER, retryAnswerSaga);
 }
 
-export function* watchCancelCurrentRequestInterview() {
-  yield takeLatest(CANCEL_CURRENT_REQUEST_INTERVIEW, cancelCurrentRequestInterviewSaga);
+export function* watchCancelCurrentRequestAnswer() {
+  yield takeLatest(CANCEL_CURRENT_REQUEST_ANSWER, cancelCurrentRequestAnswerSaga);
 }
