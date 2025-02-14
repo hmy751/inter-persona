@@ -8,7 +8,7 @@ import { useMutation } from "@tanstack/react-query";
 import useToastStore from "@repo/store/useToastStore";
 import { APIError } from "@/_apis/fetcher";
 import useConfirmDialogStore from "@repo/store/useConfirmDialogStore";
-
+import { delay } from "@/_libs/utils";
 interface StartInterviewButtonProps {
   id: number;
 }
@@ -22,11 +22,14 @@ export default function StartInterviewButton({
   const setConfirm = useConfirmDialogStore((state) => state.setConfirm);
 
   const { mutate, isPending } = useMutation({
-    mutationFn: () =>
-      fetchInterview({
+    mutationFn: async () => {
+      await delay(500);
+
+      return fetchInterview({
         interviewerId,
         userId: userId!,
-      }),
+      });
+    },
     onSuccess: (data) => {
       if (!data?.id) {
         addToast({
