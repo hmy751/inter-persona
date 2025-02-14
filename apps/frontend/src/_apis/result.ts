@@ -59,15 +59,19 @@ interface Evaluation {
   score: number;
   content: string;
 }
-export interface GetResultEvaluationBody {
+export interface GetResultTotalEvaluationBody {
   resultId: number;
 }
-export interface GetResultEvaluationResponse {
+export interface GetResultTotalEvaluationResponse {
   evaluation: Evaluation[];
 }
 
-export const fetchGetResultEvaluation = async ({ resultId }: GetResultEvaluationBody) => {
-  return fetcher.get<GetResultEvaluationResponse>(`result/${resultId}/evaluation`);
+export const fetchGetResultTotalEvaluation = async ({
+  resultId,
+}: GetResultTotalEvaluationBody) => {
+  return fetcher.get<GetResultTotalEvaluationResponse>(
+    `result/${resultId}/total`
+  );
 };
 
 /**
@@ -90,6 +94,6 @@ export const fetchGetResultQuestionEvaluation = async ({
   resultId,
 }: GetResultQuestionEvaluationBody) => {
   return fetcher.get<GetResultQuestionEvaluationResponse>(
-    `result/${resultId}/question/evaluation`
+    `result/${resultId}/question`
   );
 };

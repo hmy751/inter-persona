@@ -3,7 +3,7 @@ import { baseURL } from "@/_apis/fetcher";
 import {
   CreateResultBody,
   GetResultBody,
-  GetResultEvaluationBody,
+  GetResultTotalEvaluationBody,
   GetResultQuestionEvaluationBody,
   GetResultScoreBody,
 } from "@/_apis/result";
@@ -73,8 +73,8 @@ const defaultResultHandler = [
       });
     }
   ),
-  http.get<never, GetResultEvaluationBody>(
-    `${baseURL}/result/:resultId/evaluation`,
+  http.get<never, GetResultTotalEvaluationBody>(
+    `${baseURL}/result/:resultId/total`,
     async ({ params }) => {
       const { resultId } = params;
       return HttpResponse.json({
@@ -99,7 +99,7 @@ const defaultResultHandler = [
     }
   ),
   http.get<never, GetResultQuestionEvaluationBody>(
-    `${baseURL}/result/:resultId/question/evaluation`,
+    `${baseURL}/result/:resultId/question`,
     async ({ params }) => {
       const { resultId } = params;
       return HttpResponse.json({

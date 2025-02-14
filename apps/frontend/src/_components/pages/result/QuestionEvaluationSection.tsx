@@ -9,7 +9,7 @@ interface QuestionEvaluationSectionProps {}
 export default function QuestionEvaluationSection({}: QuestionEvaluationSectionProps): React.ReactElement {
   const { resultId } = useParams();
   const { data, isLoading, error } = useQuery({
-    queryKey: ["result", resultId, "questionEvaluation"],
+    queryKey: ["result", resultId, "question"],
     queryFn: () =>
       fetchGetResultQuestionEvaluation({ resultId: Number(resultId) }),
   });
