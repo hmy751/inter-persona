@@ -1,24 +1,47 @@
 import fetcher from "./fetcher";
 
-export interface InterviewBody {
+/**
+ * 인터뷰 조회
+ */
+export interface GetInterviewBody {
+  interviewId: number;
+}
+export interface GetInterviewResponse {
+  id: number;
   interviewerId: number;
   userId: number;
 }
-interface InterviewResponse {
+
+export const fetchGetInterview = async ({
+  interviewId,
+}: GetInterviewBody) => {
+  return fetcher.get<GetInterviewResponse>(`interview/${interviewId}`);
+};
+
+/**
+ * 인터뷰 생성
+ */
+export interface CreateInterviewBody {
+  interviewerId: number;
+  userId: number;
+}
+export interface CreateInterviewResponse {
   id: number;
 }
 
-export const fetchInterview = async ({
+export const fetchCreateInterview = async ({
   interviewerId,
   userId,
-}: InterviewBody) => {
-  return fetcher.post<InterviewResponse>("interview", {
+}: CreateInterviewBody) => {
+  return fetcher.post<CreateInterviewResponse>("interview", {
     interviewerId,
     userId,
-  }
-  );
+  });
 };
 
+/**
+ * 음성 텍스트 변환
+ */
 interface SpeechToTextProps {
   formData: FormData;
 }
@@ -46,6 +69,9 @@ export const fetchSpeechToText = async ({
   }
 };
 
+/**
+ * 인터뷰 답변
+ */
 export interface AnswerBody {
   interviewId: number;
   content: string;

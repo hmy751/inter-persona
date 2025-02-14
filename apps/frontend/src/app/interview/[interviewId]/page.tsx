@@ -4,18 +4,28 @@ import InterviewerProfileSection from "@/_components/pages/interview/Interviewer
 import styles from "./page.module.css";
 import Text from "@repo/ui/Text";
 import ChatSection from "@/_components/pages/interview/ChatSection";
-import useUserStore from "@/_store/zustand/useUserStore";
-import { useInterviewerStore } from "@/_store/zustand/useInterviewerStore";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import { fetchGetInterview } from "@/_apis/interview";
+import { useAlertDialogStore } from "@repo/store/useAlertDialogStore";
 
-export default function Page() {
+export default function Page({ params }: { params: { interviewId: string } }) {
+  const interviewId = Number(params.interviewId);
   const router = useRouter();
+  const { setAlert } = useAlertDialogStore();
 
-  const { interviewer } = useInterviewerStore();
-  const { user } = useUserStore();
+  const { data } = useQuery({
+    queryKey: ["interview", interviewId],
+    queryFn: () => fetchGetInterview({ interviewId }),
+    enabled: !!interviewId,
+  });
 
-  if (!user || !interviewer) {
-    router.back();
+  if (!data?.interviewerId || !data?.userId) {
+    setAlert(
+      "인터뷰 조회 실패",
+      "인터뷰 조회에 실패했습니다. 다시 시도해주세요."
+    );
+    router.push("/");
     return null;
   }
 
@@ -24,15 +34,8 @@ export default function Page() {
       <Text as="h2" size="lg" className={styles.title}>
         Interview
       </Text>
-      <InterviewerProfileSection
-        src={interviewer?.imgUrl}
-        name={interviewer?.name}
-        description={interviewer?.description}
-      />
-      <ChatSection
-        interviewerImg={interviewer?.imgUrl || ""}
-        userImg={user?.imageSrc || ""}
-      />
+      <InterviewerProfileSection />
+      <ChatSection />
     </div>
   );
 }
