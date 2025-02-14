@@ -1,12 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import styles from "./page.module.css";
 
 import { useQuery } from "@tanstack/react-query";
-import { selectInterviewId } from "@/_store/redux/features/chat/selector";
-import { useInterviewerStore } from "@/_store/zustand/useInterviewerStore";
 import Text from "@repo/ui/Text";
 import ScoreSection from "@/_components/pages/result/ScoreSection";
 import TotalEvaluationSection from "@/_components/pages/result/TotalEvaluationSection";
@@ -15,11 +11,6 @@ import ButtonGroupSection from "@/_components/pages/result/ButtonGroupSection";
 import { fetchGetResult } from "@/_apis/result";
 import { useParams, useRouter } from "next/navigation";
 import { useAlertDialogStore } from "@repo/store/useAlertDialogStore";
-interface Scores {
-  standard: string;
-  score: number;
-  summary: string;
-}
 
 export default function Page() {
   const { resultId } = useParams();

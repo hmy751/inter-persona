@@ -6,7 +6,6 @@ import {
 } from "@/_store/redux/type";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
-import { useInterviewerStore } from "@/_store/zustand/useInterviewerStore";
 import useUserStore from "@/_store/zustand/useUserStore";
 import chatReducer from "@/_store/redux/features/chat/slice";
 
@@ -77,7 +76,6 @@ const withMockStore = (
     },
   });
 
-  useInterviewerStore.setState({ interviewer: mockInterviewer });
   useUserStore.setState({ user: mockUser });
 
   return (
