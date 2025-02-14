@@ -2,15 +2,16 @@ import styles from "./TotalEvaluationSection.module.css";
 import Text from "@repo/ui/Text";
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { fetchGetResultEvaluation } from "@/_apis/result";
+import { fetchGetResultTotalEvaluation } from "@/_apis/result";
 
 interface TotalEvaluationSectionProps {}
 
 export default function TotalEvaluationSection({}: TotalEvaluationSectionProps): React.ReactElement {
   const { resultId } = useParams();
   const { data, isLoading, error } = useQuery({
-    queryKey: ["result", resultId, "evaluation"],
-    queryFn: () => fetchGetResultEvaluation({ resultId: Number(resultId) }),
+    queryKey: ["result", resultId, "total"],
+    queryFn: () =>
+      fetchGetResultTotalEvaluation({ resultId: Number(resultId) }),
   });
 
   if (isLoading) {
