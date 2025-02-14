@@ -1,12 +1,5 @@
 import fetcher from "./fetcher";
-
-export interface Interviewer {
-  id: number;
-  imgUrl: string;
-  name: string;
-  mbti: string;
-  description: string;
-}
+import { Interviewer } from "./model";
 
 export interface InterviewerResponse {
   list: Interviewer[];
