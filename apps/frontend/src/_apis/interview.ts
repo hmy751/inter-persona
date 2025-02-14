@@ -116,7 +116,7 @@ export interface AnswerData {
 }
 
 export const fetchAnswer = async ({ interviewId, content }: AnswerBody) => {
-  return fetcher.post<AnswerData>(`interview/${interviewId}/contents`, {
+  return fetcher.post<AnswerData>(`interview/${interviewId}/contents/answer`, {
     content,
   });
 };
