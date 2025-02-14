@@ -34,3 +34,18 @@ export interface GetResultResponse {
 export const fetchGetResult = async ({ resultId }: GetResultBody) => {
   return fetcher.get<GetResultResponse>(`result/${resultId}`);
 };
+
+/**
+ * 인터뷰 결과 점수 조회
+ */
+export interface GetResultScoreBody {
+  resultId: number;
+}
+export interface GetResultScoreResponse {
+  score: number;
+  questionCount: number;
+}
+
+export const fetchGetResultScore = async ({ resultId }: GetResultScoreBody) => {
+  return fetcher.get<GetResultScoreResponse>(`result/${resultId}/score`);
+};
