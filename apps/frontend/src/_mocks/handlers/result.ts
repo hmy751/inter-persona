@@ -4,8 +4,42 @@ import {
   CreateResultBody,
   GetResultBody,
   GetResultEvaluationBody,
+  GetResultQuestionEvaluationBody,
   GetResultScoreBody,
 } from "@/_apis/result";
+
+const mockQuestionEvaluation = [
+  {
+    title: "자바스크립트 클로저 문제",
+    score: 80,
+    content: "기술적 클로저 부분에 이해도가 부족합니다.",
+  },
+  {
+    title: "자바스크립트 클로저 문제",
+    score: 80,
+    content: "기술적 클로저 부분에 이해도가 부족합니다.",
+  },
+  {
+    title: "자바스크립트 클로저 문제",
+    score: 80,
+    content: "기술적 클로저 부분에 이해도가 부족합니다.",
+  },
+  {
+    title: "자바스크립트 클로저 문제",
+    score: 80,
+    content: "기술적 클로저 부분에 이해도가 부족합니다.",
+  },
+  {
+    title: "자바스크립트 클로저 문제",
+    score: 80,
+    content: "기술적 클로저 부분에 이해도가 부족합니다.",
+  },
+  {
+    title: "자바스크립트 클로저 문제",
+    score: 80,
+    content: "기술적 클로저 부분에 이해도가 부족합니다.",
+  },
+];
 
 const defaultResultHandler = [
   http.post<never, CreateResultBody>(
@@ -61,6 +95,15 @@ const defaultResultHandler = [
             content: "커뮤니케이션이 좋습니다.",
           },
         ],
+      });
+    }
+  ),
+  http.get<never, GetResultQuestionEvaluationBody>(
+    `${baseURL}/result/:resultId/question/evaluation`,
+    async ({ params }) => {
+      const { resultId } = params;
+      return HttpResponse.json({
+        questionEvaluation: mockQuestionEvaluation,
       });
     }
   ),

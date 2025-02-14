@@ -1,47 +1,33 @@
 import Text from "@repo/ui/Text";
 import styles from "./QuestionEvaluationSection.module.css";
+import { useParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import { fetchGetResultQuestionEvaluation } from "@/_apis/result";
+
 interface QuestionEvaluationSectionProps {}
 
-const list = [
-  {
-    title: "자바스크립트 클로저 문제",
-    score: 80,
-    evaluation: "기술적 클로저 부분에 이해도가 부족합니다.",
-  },
-  {
-    title: "자바스크립트 클로저 문제",
-    score: 80,
-    evaluation: "기술적 클로저 부분에 이해도가 부족합니다.",
-  },
-  {
-    title: "자바스크립트 클로저 문제",
-    score: 80,
-    evaluation: "기술적 클로저 부분에 이해도가 부족합니다.",
-  },
-  {
-    title: "자바스크립트 클로저 문제",
-    score: 80,
-    evaluation: "기술적 클로저 부분에 이해도가 부족합니다.",
-  },
-  {
-    title: "자바스크립트 클로저 문제",
-    score: 80,
-    evaluation: "기술적 클로저 부분에 이해도가 부족합니다.",
-  },
-  {
-    title: "자바스크립트 클로저 문제",
-    score: 80,
-    evaluation: "기술적 클로저 부분에 이해도가 부족합니다.",
-  },
-];
-
 export default function QuestionEvaluationSection({}: QuestionEvaluationSectionProps): React.ReactElement {
+  const { resultId } = useParams();
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["result", resultId, "questionEvaluation"],
+    queryFn: () =>
+      fetchGetResultQuestionEvaluation({ resultId: Number(resultId) }),
+  });
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!data || error) {
+    return <div>no data</div>;
+  }
+
   return (
     <div className={styles.wrapper}>
       <Text as="h3" size="md">
         Question Evaluation
       </Text>
-      {list.map(({ title, score, evaluation }, index) => (
+      {data?.questionEvaluation.map(({ title, score, content }, index) => (
         <div className={styles.question}>
           <div className={styles.questionHeader}>
             <Text size="sm" weight="bold">
@@ -51,7 +37,7 @@ export default function QuestionEvaluationSection({}: QuestionEvaluationSectionP
               {score}%
             </Text>
           </div>
-          <Text size="sm">{evaluation}</Text>
+          <Text size="sm">{content}</Text>
         </div>
       ))}
     </div>
