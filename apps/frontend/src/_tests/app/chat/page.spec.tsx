@@ -1,6 +1,6 @@
 import { screen, waitFor } from "@testing-library/react";
-import InterviewPage from "@/app/interview/page";
-import Layout from "@/app/interview/layout";
+import InterviewPage from "@/app/interview/[interviewId]/page";
+import Layout from "@/app/interview/[interviewId]/layout";
 
 import { renderWithProviders } from "@/_tests/_mocks/providers";
 import { server } from "@/_mocks/server";
