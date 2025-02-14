@@ -17,3 +17,20 @@ export const fetchCreateResult = async ({
     interviewId,
   });
 };
+
+/**
+ * 인터뷰 결과 조회 
+ */
+export interface GetResultBody {
+  resultId: number;
+}
+export interface GetResultResponse {
+  id: number;
+  interviewId: number;
+  interviewerId: number;
+  userId: number;
+}
+
+export const fetchGetResult = async ({ resultId }: GetResultBody) => {
+  return fetcher.get<GetResultResponse>(`result/${resultId}`);
+};
