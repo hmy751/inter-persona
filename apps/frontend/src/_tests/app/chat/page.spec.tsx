@@ -20,22 +20,10 @@ jest.mock("next/navigation", () => ({
   }),
 }));
 
-const mockInterviewer = {
-  id: 1,
-  imgUrl: "/assets/images/elon_musk.png",
-  name: "Elon Musk",
-};
-
 const mockUser = {
   id: 1,
   imageSrc: "/assets/images/dev_profile.png",
 };
-
-jest.mock("@/_store/zustand/useInterviewerStore", () => ({
-  useInterviewerStore: () => ({
-    interviewer: mockInterviewer,
-  }),
-}));
 
 jest.mock("@/_store/zustand/useUserStore", () => ({
   __esModule: true,
