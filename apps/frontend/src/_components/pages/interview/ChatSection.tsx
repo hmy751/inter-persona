@@ -6,29 +6,39 @@ import {
   selectChatLimit,
 } from "@/_store/redux/features/chat/selector";
 import ChatArticle from "./ChatArticle";
-import { useInterviewerStore } from "@/_store/zustand/useInterviewerStore";
-import useUserStore from "@/_store/zustand/useUserStore";
-import { fetchInterview } from "@/_apis/interview";
 import {
   START_CHAT,
   initializeChatState,
 } from "@/_store/redux/features/chat/slice";
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import styles from "./chat.module.css";
-export default function ChatSection({
-  interviewerImg,
-  userImg,
-}: {
-  interviewerImg: string;
-  userImg: string;
-}) {
-  const chatContents = useSelector(selectChatContents);
-  const dispatch = useDispatch();
-  const { interviewer } = useInterviewerStore();
-  const { user } = useUserStore();
-  const chatLimit = useSelector(selectChatLimit);
+import { AI_NETWORK_ERROR_TOAST } from "@/_store/redux/features/chat/constants";
+import useToastStore from "@repo/store/useToastStore";
+import {
+  fetchGetInterviewInterviewer,
+  fetchGetInterviewUser,
+} from "@/_apis/interview";
+import { useQuery } from "@tanstack/react-query";
+
+export default function ChatSection() {
+  const interviewId = useParams().interviewId;
   const router = useRouter();
+  const dispatch = useDispatch();
+  const chatContents = useSelector(selectChatContents);
+  const chatLimit = useSelector(selectChatLimit);
+  const addToast = useToastStore((state) => state.addToast);
+
+  const { data: interviewerData } = useQuery({
+    queryKey: ["interview/interviewer", interviewId],
+    queryFn: () =>
+      fetchGetInterviewInterviewer({ interviewId: Number(interviewId) }),
+  });
+
+  const { data: userData } = useQuery({
+    queryKey: ["interview/user", interviewId],
+    queryFn: () => fetchGetInterviewUser({ interviewId: Number(interviewId) }),
+  });
 
   useEffect(() => {
     if (chatLimit) {
@@ -37,30 +47,24 @@ export default function ChatSection({
   }, [router, chatLimit]);
 
   useEffect(() => {
-    if (!user || !interviewer) return;
-
     try {
       (async function init() {
-        const data = await fetchInterview({
-          interviewerId: interviewer?.id,
-          reviewerId: user.id,
-        });
-
-        if (!data?.id) return;
-
         dispatch({
           type: START_CHAT,
           payload: {
-            interviewId: data?.id,
+            interviewId: interviewId,
             content: "안녕하세요. 간단히 자기소개 부탁드립니다.",
           },
         });
       })();
-    } catch (err) {}
+    } catch (err) {
+      addToast(AI_NETWORK_ERROR_TOAST);
+    }
+
     return () => {
       dispatch(initializeChatState(null));
     };
-  }, [user, interviewer, dispatch]);
+  }, [interviewId]);
 
   return (
     <div className={styles.chatSectionContainer}>
@@ -74,13 +78,15 @@ export default function ChatSection({
           >
             {speaker === "bot" ? (
               <>
-                <ChatArticle.Avatar src={interviewerImg} />
+                <ChatArticle.Avatar
+                  src={interviewerData?.interviewer.imgUrl ?? ""}
+                />
                 <ChatArticle.Speech />
               </>
             ) : (
               <>
                 <ChatArticle.Speech />
-                <ChatArticle.Avatar src={userImg} />
+                <ChatArticle.Avatar src={userData?.user.imgUrl ?? ""} />
                 <ChatArticle.RetryCancelSelector />
               </>
             )}
