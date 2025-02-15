@@ -7,7 +7,7 @@ ChatGPT의 프롬프트를 활용하여 가상의 면접관과 모의 면접을 
 
 # Tech Stack
 
-Next.js (v.14) | React (v.18) | TypeScript | Turborepo | Storybook | CSS Modules | MSW | Redux Toolkit | Redux-Saga | Zustand | Jest | React Testing Library
+Next.js (v.14) | React (v.18) | TypeScript | Turborepo | Storybook | CSS Modules | MSW | Redux Toolkit | Redux-Saga | Tanstack Query | Zustand | Jest | React Testing Library
 
 # Project Structure
 
@@ -20,6 +20,7 @@ Next.js (v.14) | React (v.18) | TypeScript | Turborepo | Storybook | CSS Modules
 │           ├── _components            # 레이아웃/페이지별 컴포넌트
 │           │   ├── layout
 │           │   └── pages
+│           ├── _data                  # 데이터 관련 로직, react-query 훅
 │           ├── _hooks                 # 커스텀 훅
 │           ├── _mocks                 # Mock 데이터(테스트/개발 환경)
 │           ├── _store                 # 프론트엔드 상태(Redux, Zustand)
