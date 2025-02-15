@@ -1,6 +1,6 @@
 import { http, HttpResponse, RequestHandler } from "msw";
 import { baseURL } from "@/_apis/fetcher";
-import { InterviewerResponse } from "@/_apis/interviewer";
+import { InterviewerListResponse } from "@/_apis/interviewer";
 import { Interviewer } from "@/_apis/model";
 
 const interviewerListMock: Interviewer[] = [
@@ -31,7 +31,7 @@ const interviewerListMock: Interviewer[] = [
 ];
 
 const defaultInterviewerHandler = [
-  http.get<never, InterviewerResponse>(`${baseURL}/interviewer`, async ({ request }) => {
+  http.get<never, InterviewerListResponse>(`${baseURL}/interviewer`, async ({ request }) => {
     return HttpResponse.json({
       list: interviewerListMock
     });
