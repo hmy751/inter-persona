@@ -5,8 +5,7 @@ import styles from "./page.module.css";
 import Text from "@repo/ui/Text";
 import ChatSection from "@/_components/pages/interview/ChatSection";
 import { useParams, useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
-import { fetchGetInterview } from "@/_apis/interview";
+import { useGetInterview } from "@/_data/interview";
 import { useAlertDialogStore } from "@repo/store/useAlertDialogStore";
 
 export default function Page({ params }: { params: { interviewId: string } }) {
@@ -14,11 +13,7 @@ export default function Page({ params }: { params: { interviewId: string } }) {
   const router = useRouter();
   const { setAlert } = useAlertDialogStore();
 
-  const { data, error, isLoading } = useQuery({
-    queryKey: ["interview", interviewId],
-    queryFn: () => fetchGetInterview({ interviewId }),
-    enabled: !!interviewId,
-  });
+  const { data, error, isLoading } = useGetInterview(interviewId);
 
   if (isLoading) {
     return <div>Loading...</div>;
