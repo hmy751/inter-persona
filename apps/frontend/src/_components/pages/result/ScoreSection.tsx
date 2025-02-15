@@ -1,18 +1,12 @@
 import Text from "@repo/ui/Text";
 import styles from "./ScoreSection.module.css";
 import ProgressBar from "./ProgressBar";
-import { useParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
-import { fetchGetResultScore } from "@/_apis/result";
+import { useGetResultScore } from "@/_data/result";
 
 interface ScoreSectionProps {}
 
 export default function ScoreSection({}: ScoreSectionProps): React.ReactElement {
-  const { resultId } = useParams();
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["result", resultId, "score"],
-    queryFn: () => fetchGetResultScore({ resultId: Number(resultId) }),
-  });
+  const { data, isLoading, error } = useGetResultScore();
 
   if (isLoading) {
     return <div>Loading...</div>;
