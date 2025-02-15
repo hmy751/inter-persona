@@ -15,11 +15,11 @@ import { useParams } from "next/navigation";
 import styles from "./chat.module.css";
 import { AI_NETWORK_ERROR_TOAST } from "@/_store/redux/features/chat/constants";
 import useToastStore from "@repo/store/useToastStore";
+
 import {
-  fetchGetInterviewInterviewer,
-  fetchGetInterviewUser,
-} from "@/_apis/interview";
-import { useQuery } from "@tanstack/react-query";
+  useGetInterviewInterviewer,
+  useGetInterviewUser,
+} from "@/_data/interview";
 
 export default function ChatSection() {
   const interviewId = useParams().interviewId;
@@ -27,16 +27,10 @@ export default function ChatSection() {
   const chatContents = useSelector(selectChatContents);
   const addToast = useToastStore((state) => state.addToast);
 
-  const { data: interviewerData } = useQuery({
-    queryKey: ["interview/interviewer", interviewId],
-    queryFn: () =>
-      fetchGetInterviewInterviewer({ interviewId: Number(interviewId) }),
-  });
-
-  const { data: userData } = useQuery({
-    queryKey: ["interview/user", interviewId],
-    queryFn: () => fetchGetInterviewUser({ interviewId: Number(interviewId) }),
-  });
+  const { data: interviewerData } = useGetInterviewInterviewer(
+    Number(interviewId)
+  );
+  const { data: userData } = useGetInterviewUser(Number(interviewId));
 
   useEffect(() => {
     try {
