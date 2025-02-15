@@ -3,19 +3,17 @@
 import styles from "./chat.module.css";
 import Avatar from "@repo/ui/Avatar";
 import Text from "@repo/ui/Text";
-import { useQuery } from "@tanstack/react-query";
-import { fetchGetInterviewInterviewer } from "@/_apis/interview";
 import { useParams } from "next/navigation";
+import { useGetInterviewInterviewer } from "@/_data/interview";
 
 interface InterviewerProfileSectionProps {}
 
 export default function InterviewerProfileSection({}: InterviewerProfileSectionProps) {
   const { interviewId } = useParams();
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["interview/interviewer", interviewId],
-    queryFn: () =>
-      fetchGetInterviewInterviewer({ interviewId: Number(interviewId) }),
-  });
+
+  const { data, isLoading, isError } = useGetInterviewInterviewer(
+    Number(interviewId)
+  );
 
   if (isLoading) return <div>Loading...</div>;
 

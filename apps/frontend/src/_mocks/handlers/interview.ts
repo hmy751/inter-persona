@@ -46,7 +46,7 @@ const defaultInterviewHandler = [
       return HttpResponse.json({
         user: {
           id: 1,
-          imgUrl: "/images/user.webp",
+          imgUrl: "/assets/images/dev_profile.png",
           name: "민지",
         },
       });
