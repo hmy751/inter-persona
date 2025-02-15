@@ -3,14 +3,10 @@
 import InterviewerCard from "@/_components/pages/interviewer/InterviewerCard";
 import styles from "./page.module.css";
 import Text from "@repo/ui/Text";
-import { fetchInterviewer } from "@/_apis/interviewer";
-import { useQuery } from "@tanstack/react-query";
+import { useGetInterviewerList } from "@/_data/interviewer";
 
 export default function InterviewerChoicePage() {
-  const { data } = useQuery({
-    queryKey: ["interviewer"],
-    queryFn: fetchInterviewer,
-  });
+  const { data } = useGetInterviewerList();
 
   return (
     <div className={styles.container}>

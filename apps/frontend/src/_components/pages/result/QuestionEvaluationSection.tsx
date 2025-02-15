@@ -1,18 +1,11 @@
 import Text from "@repo/ui/Text";
 import styles from "./QuestionEvaluationSection.module.css";
-import { useParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
-import { fetchGetResultQuestionEvaluation } from "@/_apis/result";
+import { useGetResultQuestionEvaluation } from "@/_data/result";
 
 interface QuestionEvaluationSectionProps {}
 
 export default function QuestionEvaluationSection({}: QuestionEvaluationSectionProps): React.ReactElement {
-  const { resultId } = useParams();
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["result", resultId, "question"],
-    queryFn: () =>
-      fetchGetResultQuestionEvaluation({ resultId: Number(resultId) }),
-  });
+  const { data, isLoading, error } = useGetResultQuestionEvaluation();
 
   if (isLoading) {
     return <div>Loading...</div>;
