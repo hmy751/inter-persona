@@ -2,24 +2,19 @@
 
 import styles from "./page.module.css";
 
-import { useQuery } from "@tanstack/react-query";
 import Text from "@repo/ui/Text";
 import ScoreSection from "@/_components/pages/result/ScoreSection";
 import TotalEvaluationSection from "@/_components/pages/result/TotalEvaluationSection";
 import QuestionEvaluationSection from "@/_components/pages/result/QuestionEvaluationSection";
 import ButtonGroupSection from "@/_components/pages/result/ButtonGroupSection";
-import { fetchGetResult } from "@/_apis/result";
-import { useParams, useRouter } from "next/navigation";
+import { useGetResult } from "@/_data/result";
+import { useRouter } from "next/navigation";
 import { useAlertDialogStore } from "@repo/store/useAlertDialogStore";
 
 export default function Page() {
-  const { resultId } = useParams();
   const router = useRouter();
   const { setAlert } = useAlertDialogStore();
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["result", resultId],
-    queryFn: () => fetchGetResult({ resultId: Number(resultId) }),
-  });
+  const { data, isLoading, error } = useGetResult();
 
   if (isLoading) {
     return <div>Loading...</div>;

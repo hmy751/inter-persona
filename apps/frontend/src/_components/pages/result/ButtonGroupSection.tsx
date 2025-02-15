@@ -3,19 +3,14 @@
 import Button from "@repo/ui/Button";
 import styles from "./ButtonGroupSection.module.css";
 import { useRouter, useParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
-import { fetchGetResult } from "@/_apis/result";
+import { useGetResult } from "@/_data/result";
 import { useCreateInterview } from "@/_data/interview";
 
 interface ButtonGroupSectionProps {}
 
 export default function ButtonGroupSection({}: ButtonGroupSectionProps): React.ReactElement {
   const router = useRouter();
-  const { resultId } = useParams();
-  const { data } = useQuery({
-    queryKey: ["result", resultId],
-    queryFn: () => fetchGetResult({ resultId: Number(resultId) }),
-  });
+  const { data } = useGetResult();
 
   const { mutate, isPending } = useCreateInterview(
     data?.userId!,
