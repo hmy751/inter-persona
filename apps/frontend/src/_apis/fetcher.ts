@@ -15,7 +15,8 @@ export class APIError extends Error {
     message: string,
     public status: number,
     public code: string,
-    public data?: unknown
+    public data?: unknown,
+    public reset?: () => void
   ) {
     super(message);
     this.name = 'APIError';
