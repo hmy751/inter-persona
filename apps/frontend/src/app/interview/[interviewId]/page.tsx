@@ -4,14 +4,13 @@ import InterviewerProfileSection from "@/_components/pages/interview/Interviewer
 import styles from "./page.module.css";
 import Text from "@repo/ui/Text";
 import ChatSection from "@/_components/pages/interview/ChatSection";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useGetInterview } from "@/_data/interview";
-import { useAlertDialogStore } from "@repo/store/useAlertDialogStore";
+import { APIError } from "@/_apis/fetcher";
 
 export default function Page({ params }: { params: { interviewId: string } }) {
   const interviewId = Number(params.interviewId);
   const router = useRouter();
-  const { setAlert } = useAlertDialogStore();
 
   const { data, error, isLoading } = useGetInterview(interviewId);
 
@@ -19,13 +18,40 @@ export default function Page({ params }: { params: { interviewId: string } }) {
     return <div>Loading...</div>;
   }
 
-  if (!data?.interviewerId || !data?.userId || error) {
-    setAlert(
-      "인터뷰 조회 실패",
-      "인터뷰 조회에 실패했습니다. 다시 시도해주세요."
+  if (!data?.interviewerId && data?.userId) {
+    throw new APIError(
+      "인터뷰어를 찾지 못했습니다. 다시 선택해주세요.",
+      404,
+      "NOT_FOUND",
+      error,
+      () => {
+        router.replace("/interviewer");
+      }
     );
-    router.push("/");
-    return null;
+  }
+
+  if (!data?.userId && data?.interviewerId) {
+    throw new APIError(
+      "유저정보를 찾지 못했습니다. 다시 로그인해주세요.",
+      404,
+      "NOT_FOUND",
+      error,
+      () => {
+        router.replace("/");
+      }
+    );
+  }
+
+  if (error) {
+    throw new APIError(
+      "인터뷰 조회에 실패했습니다. 다시 시도해주세요.",
+      404,
+      "NOT_FOUND",
+      error,
+      () => {
+        router.replace("/");
+      }
+    );
   }
 
   return (

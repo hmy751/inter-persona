@@ -9,24 +9,26 @@ import QuestionEvaluationSection from "@/_components/pages/result/QuestionEvalua
 import ButtonGroupSection from "@/_components/pages/result/ButtonGroupSection";
 import { useGetResult } from "@/_data/result";
 import { useRouter } from "next/navigation";
-import { useAlertDialogStore } from "@repo/store/useAlertDialogStore";
+import { APIError } from "@/_apis/fetcher";
 
 export default function Page() {
   const router = useRouter();
-  const { setAlert } = useAlertDialogStore();
   const { data, isLoading, error } = useGetResult();
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
-  if (!data || error) {
-    setAlert(
-      "인터뷰 결과 조회 실패",
-      "인터뷰 결과 조회에 실패했습니다. 다시 인터뷰를 시도해주세요."
+  if (error) {
+    throw new APIError(
+      "인터뷰 결과 조회에 실패했습니다. 다시 시도해주세요.",
+      404,
+      "NOT_FOUND",
+      error,
+      () => {
+        router.replace("/interviewer");
+      }
     );
-    router.push("/interviewer");
-    return null;
   }
 
   return (
