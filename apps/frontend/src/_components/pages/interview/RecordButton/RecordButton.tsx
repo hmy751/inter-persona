@@ -19,10 +19,8 @@ import {
   RECORDING_ICON_SRC,
   DISABLED_ICON_SRC,
 } from "./constants";
-import { RecordError } from "./_error";
+import { RecordError, handleRecordError } from "./_error";
 import { createRecordError, RecordErrorType } from "./_error";
-import useAlertDialogStore from "@repo/store/useAlertDialogStore";
-import useConfirmDialogStore from "@repo/store/useConfirmDialogStore";
 import useToastStore from "@repo/store/useToastStore";
 import { useCreateResult } from "@/_data/result";
 
@@ -47,8 +45,6 @@ export default function RecordButton() {
   const isDisabledRecord =
     currentRecordingAnswer?.status === ChatContentStatusType.fail;
   const cleanupRef = useRef<() => void>(() => {});
-  const { setAlert } = useAlertDialogStore();
-  const { setConfirm } = useConfirmDialogStore();
   const { addToast } = useToastStore();
   const { mutate, isPending } = useCreateResult();
 
@@ -73,12 +69,7 @@ export default function RecordButton() {
       } catch (error: any) {
         switch (error.name) {
           case "NotAllowedError":
-            throw createRecordError(
-              error.message.includes("denied")
-                ? RecordErrorType.PERMISSION_DENIED
-                : RecordErrorType.PERMISSION_DISMISSED,
-              error
-            );
+            throw createRecordError(RecordErrorType.PERMISSION_DENIED, error);
           case "NotFoundError":
             throw createRecordError(RecordErrorType.DEVICE_NOT_FOUND, error);
           case "NotReadableError":
@@ -138,23 +129,7 @@ export default function RecordButton() {
       );
     } catch (error) {
       if (error instanceof RecordError) {
-        const { manage, title, message } = error.detail;
-        switch (manage) {
-          case "alertDialog":
-            setAlert(title, message);
-            break;
-          case "confirmDialog":
-            setConfirm(title, message, () => {});
-            break;
-          case "toast":
-            addToast({
-              title,
-              description: message,
-              duration: 3000,
-            });
-            break;
-        }
-
+        handleRecordError(error);
         return;
       }
 
@@ -201,23 +176,7 @@ export default function RecordButton() {
       dispatch({ type: SEND_RECORD, payload: { formData } });
     } catch (error) {
       if (error instanceof RecordError) {
-        const { manage, title, message } = error.detail;
-        switch (manage) {
-          case "alertDialog":
-            setAlert(title, message);
-            break;
-          case "confirmDialog":
-            setConfirm(title, message, () => {});
-            break;
-          case "toast":
-            addToast({
-              title,
-              description: message,
-              duration: 3000,
-            });
-            break;
-        }
-
+        handleRecordError(error);
         return;
       }
 
