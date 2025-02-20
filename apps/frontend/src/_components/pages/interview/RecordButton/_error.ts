@@ -1,7 +1,68 @@
+import useAlertDialogStore from "@repo/store/useAlertDialogStore";
+import useConfirmDialogStore from "@repo/store/useConfirmDialogStore";
+import useToastStore from "@repo/store/useToastStore";
+
+export const handleRecordError = (error: RecordError) => {
+  const { manage, title, message, callback } = error.detail;
+
+  switch (manage) {
+    case "alertDialog":
+      useAlertDialogStore.getState().setAlert(title, message);
+      break;
+    case "confirmDialog":
+      useConfirmDialogStore.getState().setConfirm(title, message, () => {
+        if (callback) callback();
+      });
+      break;
+    case "toast":
+      useToastStore.getState().addToast({
+        title,
+        description: message,
+        duration: 3000,
+      });
+      break;
+
+    default:
+      useToastStore.getState().addToast({
+        title: "알 수 없는 오류",
+        description: "알 수 없는 오류가 발생했습니다. 다시 시도해주세요.",
+        duration: 3000,
+      });
+  }
+};
+
+const getMicrophonePermissionSetting = async () => {
+  const isChrome = /chrome/i.test(navigator.userAgent) && !/edg/i.test(navigator.userAgent);
+  const isFirefox = /firefox/i.test(navigator.userAgent);
+  const isEdge = /edg/i.test(navigator.userAgent);
+  const isSafari = /safari/i.test(navigator.userAgent) && !/chrome/i.test(navigator.userAgent);
+
+  let url = '';
+
+  if (isChrome) {
+    url = 'chrome://settings/content/microphone';
+  } else if (isFirefox) {
+    url = 'about:preferences#privacy';
+  } else if (isEdge) {
+    url = 'edge://settings/content/microphone';
+  } else if (isSafari) {
+    url = 'x-apple.systempreferences:com.apple.preference.security?Privacy_Microphone';
+  }
+
+  window?.navigator?.clipboard?.writeText(url)
+    .then(() => {
+      useToastStore.getState().addToast({
+        title: "클립 보드 복사",
+        description: "클립 보드에 복사되었습니다. 설정 페이지에서 마이크 접근 권한을 허용해주세요.",
+        duration: 3000,
+      });
+    })
+}
+
+
 export enum RecordErrorType {
   // Permission - corresponds to NotAllowedError
   PERMISSION_DENIED = "PERMISSION_DENIED",
-  PERMISSION_DISMISSED = "PERMISSION_DISMISSED",
   PERMISSION_BLOCKED = "PERMISSION_BLOCKED",
   // Device - corresponds to NotFoundError, NotReadableError, OverconstrainedError
   DEVICE_NOT_FOUND = "DEVICE_NOT_FOUND",
@@ -22,6 +83,7 @@ export interface RecordErrorDetail {
   title: string;
   message: string;
   manage: 'alertDialog' | 'confirmDialog' | 'toast';
+  callback?: () => void;
 }
 
 export class RecordError extends Error {
@@ -34,13 +96,9 @@ export class RecordError extends Error {
 const ERROR_MAPPINGS: Record<RecordErrorType, Omit<RecordErrorDetail, 'type'>> = {
   [RecordErrorType.PERMISSION_DENIED]: {
     title: "Permission Denied",
-    message: "마이크 사용 권한이 거부되었습니다. 브라우저 설정에서 권한을 허용해주세요.",
-    manage: 'alertDialog'
-  },
-  [RecordErrorType.PERMISSION_DISMISSED]: {
-    title: "Permission Request Dismissed",
-    message: "마이크 권한 요청에 응답하지 않았습니다. 다시 시도해주세요.",
-    manage: 'alertDialog'
+    message: "마이크 사용 권한이 필요합니다. 설정 페이지 주소를 복사하시겠어요?",
+    manage: 'confirmDialog',
+    callback: getMicrophonePermissionSetting
   },
   [RecordErrorType.PERMISSION_BLOCKED]: {
     title: "Permission Blocked",
