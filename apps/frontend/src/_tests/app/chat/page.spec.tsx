@@ -11,14 +11,7 @@ import {
   ChatContentStatusType,
 } from "@/_store/redux/type";
 import { createIntegrationRecordingSetup } from "@/_tests/_utils/integrationRecordingTest";
-
-const mockPush = jest.fn();
-jest.mock("next/navigation", () => ({
-  useRouter: () => ({
-    push: mockPush,
-    back: jest.fn(),
-  }),
-}));
+import { setNextParamsMock } from "@/_tests/_mocks/nextjs";
 
 const mockUser = {
   id: 1,
@@ -33,6 +26,10 @@ jest.mock("@/_store/zustand/useUserStore", () => ({
 }));
 
 describe("인터뷰 페이지 통합 테스트", () => {
+  beforeEach(() => {
+    setNextParamsMock({ interviewId: "1" });
+  });
+
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -185,7 +182,7 @@ describe("인터뷰 페이지 통합 테스트", () => {
   });
 
   describe("채팅 제한 처리", () => {
-    it("채팅이 제한 횟수에 도달하면 결과 페이지로 이동한다", async () => {
+    it("채팅이 제한 횟수에 도달하면 결과 페이지로 이동하는 버튼이 생성된다.", async () => {
       const preloadedState = {
         chat: {
           interviewId: 1,
@@ -199,12 +196,17 @@ describe("인터뷰 페이지 통합 테스트", () => {
         },
       };
 
-      renderWithProviders(<InterviewPage params={{ interviewId: "1" }} />, {
-        preloadedState,
-      });
+      renderWithProviders(
+        <Layout>
+          <InterviewPage params={{ interviewId: "1" }} />
+        </Layout>,
+        {
+          preloadedState,
+        }
+      );
 
       await waitFor(() => {
-        expect(mockPush).toHaveBeenCalledWith("/result");
+        expect(screen.getByText("결과 보기")).toBeInTheDocument();
       });
     });
   });
