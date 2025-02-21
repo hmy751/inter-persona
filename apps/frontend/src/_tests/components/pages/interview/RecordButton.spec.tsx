@@ -249,25 +249,46 @@ describe("녹음 프로세스 테스트", () => {
 });
 
 const setAlertMock = jest.fn();
+
 jest.mock("@repo/store/useAlertDialogStore", () => {
-  return jest.fn().mockImplementation(() => ({
+  const store = jest.fn(() => ({
     setAlert: setAlertMock,
-    setOpen: jest.fn(),
-    clearAlert: jest.fn(),
   }));
+  (store as any).getState = jest.fn(() => ({
+    setAlert: setAlertMock,
+  }));
+  return store;
 });
 
+const confirmCallbackMock = jest.fn();
+const setConfirmMock = jest
+  .fn()
+  .mockImplementation((title, description, callback) => {
+    if (callback) {
+      confirmCallbackMock();
+    }
+  });
+
 jest.mock("@repo/store/useConfirmDialogStore", () => {
-  return jest.fn().mockImplementation(() => ({
-    setConfirm: jest.fn(),
+  const store = jest.fn(() => ({
+    setConfirm: setConfirmMock,
   }));
+  (store as any).getState = jest.fn(() => ({
+    setConfirm: setConfirmMock,
+  }));
+  return store;
 });
 
 const addToastMock = jest.fn();
+
 jest.mock("@repo/store/useToastStore", () => {
-  return jest.fn().mockImplementation(() => ({
+  const store = jest.fn(() => ({
     addToast: addToastMock,
   }));
+  (store as any).getState = jest.fn(() => ({
+    addToast: addToastMock,
+  }));
+  return store;
 });
 
 describe("녹음 프로세스 에러 처리 테스트", () => {
@@ -288,11 +309,8 @@ describe("녹음 프로세스 에러 처리 테스트", () => {
       await userEvent.click(recordButton);
 
       await waitFor(() => {
-        expect(setAlertMock).toHaveBeenCalledTimes(1);
-        expect(setAlertMock).toHaveBeenCalledWith(
-          "Permission Denied",
-          expect.stringContaining("마이크 사용 권한이 거부되었습니다")
-        );
+        expect(setConfirmMock).toHaveBeenCalledTimes(1);
+        expect(confirmCallbackMock).toHaveBeenCalledTimes(1);
       });
     });
 
