@@ -49,6 +49,14 @@ export const Outline: Story = {
   },
 };
 
+export const Text: Story = {
+  args: {
+    children: "Button",
+    variant: "text",
+    size: "md",
+  },
+};
+
 export const Loading: Story = {
   args: {
     children: "Loading",
