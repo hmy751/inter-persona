@@ -53,8 +53,8 @@ export default function LoginForm() {
     if (!emailField.isTouched) emailField.setTouched(true);
     if (!passwordField.isTouched) passwordField.setTouched(true);
 
-    const emailError = validateEmail(emailField.value);
-    const passwordError = validatePassword(passwordField.value);
+    const emailError = emailField.error;
+    const passwordError = passwordField.error;
 
     if (emailError) {
       emailField.setError(emailError);
