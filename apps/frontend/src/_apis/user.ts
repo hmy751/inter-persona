@@ -1,19 +1,18 @@
 import fetcher from "./fetcher";
 
-interface UserData {
-  id: number;
+export interface LoginBody {
+  email: string;
+  password: string;
+}
+interface LoginResponse {
   name: string;
+  email: string;
   imageSrc: string;
 }
 
-export interface LoginBody {
-  name: string;
-  developmentCategory: string;
-}
-
-export const fetchLogin = async ({ name, developmentCategory }: LoginBody) => {
-  return fetcher.post<UserData>("login", {
-    name,
-    developmentCategory,
+export const fetchLogin = async ({ email, password }: LoginBody) => {
+  return fetcher.post<LoginResponse>("login", {
+    email,
+    password,
   });
 };

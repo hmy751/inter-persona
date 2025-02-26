@@ -26,6 +26,11 @@ export default function Input({
 
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     onFocusChange?.(true);
+
+    if (!isTouched) {
+      onTouchChange?.(true);
+    }
+
     restProps.onFocus?.(e);
   };
 

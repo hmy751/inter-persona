@@ -4,10 +4,10 @@ import { LoginBody } from "@/_apis/user";
 
 const defaultUserHandler = [
   http.post<never, LoginBody>(`${baseURL}/login`, async ({ request }) => {
-    const { name } = await request.json();
+    const { email, password } = await request.json();
     return HttpResponse.json({
-      id: 1,
-      name,
+      email,
+      name: "명연",
       imageSrc: "/assets/images/dev_profile.png",
     });
   }),
