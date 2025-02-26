@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { fetchLogin } from "@/_apis/user";
 import { useRouter } from "next/navigation";
@@ -9,6 +8,7 @@ import Input from "@repo/ui/Input";
 import Button from "@repo/ui/Button";
 import styles from "./FormSection.module.css";
 import useUserStore from "@/_store/zustand/useUserStore";
+import { useFormField } from "@/_hooks/useFormField";
 
 const validateEmail = (email: string) => {
   if (!email) return "이메일을 입력해주세요.";
@@ -35,28 +35,8 @@ const validatePassword = (password: string) => {
 export default function FormSection() {
   const router = useRouter();
   const { setUser } = useUserStore();
-
-  const [email, setEmail] = useState("");
-  const [emailFocused, setEmailFocused] = useState(false);
-  const [emailTouched, setEmailTouched] = useState(false);
-  const [emailError, setEmailError] = useState("");
-
-  useEffect(() => {
-    if (emailTouched) {
-      setEmailError(validateEmail(email));
-    }
-  }, [email, emailTouched]);
-
-  const [password, setPassword] = useState("");
-  const [passwordFocused, setPasswordFocused] = useState(false);
-  const [passwordTouched, setPasswordTouched] = useState(false);
-  const [passwordError, setPasswordError] = useState("");
-
-  useEffect(() => {
-    if (passwordTouched) {
-      setPasswordError(validatePassword(password));
-    }
-  }, [password, passwordTouched]);
+  const emailField = useFormField({ validator: validateEmail });
+  const passwordField = useFormField({ validator: validatePassword });
 
   const loginMutation = useMutation({
     mutationFn: fetchLogin,
@@ -70,52 +50,55 @@ export default function FormSection() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!emailTouched) setEmailTouched(true);
-    if (!passwordTouched) setPasswordTouched(true);
+    if (!emailField.isTouched) emailField.setTouched(true);
+    if (!passwordField.isTouched) passwordField.setTouched(true);
 
-    const emailError = validateEmail(email);
-    const passwordError = validatePassword(password);
+    const emailError = validateEmail(emailField.value);
+    const passwordError = validatePassword(passwordField.value);
 
     if (emailError) {
-      setEmailError(emailError);
+      emailField.setError(emailError);
     }
 
     if (passwordError) {
-      setPasswordError(passwordError);
+      passwordField.setError(passwordError);
     }
 
     if (emailError || passwordError) return;
 
-    loginMutation.mutate({ email, password });
+    loginMutation.mutate({
+      email: emailField.value,
+      password: passwordField.value,
+    });
   };
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
-      <InputField label="이메일" message={emailError}>
+      <InputField label="이메일" message={emailField.error}>
         <Input
           type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={emailField.value}
+          onChange={(e) => emailField.setValue(e.target.value)}
           placeholder="Enter Text..."
-          isFocused={emailFocused}
-          isTouched={emailTouched}
-          isError={emailError}
-          onFocusChange={setEmailFocused}
-          onTouchChange={setEmailTouched}
+          isFocused={emailField.isFocused}
+          isTouched={emailField.isTouched}
+          isError={emailField.error}
+          onFocusChange={emailField.setFocused}
+          onTouchChange={emailField.setTouched}
         />
       </InputField>
 
-      <InputField label="비밀번호" message={passwordError}>
+      <InputField label="비밀번호" message={passwordField.error}>
         <Input
           type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={passwordField.value}
+          onChange={(e) => passwordField.setValue(e.target.value)}
           placeholder="Enter Text..."
-          isFocused={passwordFocused}
-          isTouched={passwordTouched}
-          isError={passwordError}
-          onFocusChange={setPasswordFocused}
-          onTouchChange={setPasswordTouched}
+          isFocused={passwordField.isFocused}
+          isTouched={passwordField.isTouched}
+          isError={passwordField.error}
+          onFocusChange={passwordField.setFocused}
+          onTouchChange={passwordField.setTouched}
         />
       </InputField>
 
