@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 
-type ValidatorFn = (value: string) => string;
+type ValidatorFn = (value: string, ...args: any[]) => string;
 
 interface UseFormFieldProps {
   initialValue?: string;
   validator?: ValidatorFn;
+  dependencies?: any[];
 }
 
 interface FormFieldState {
@@ -31,6 +32,7 @@ interface FormFieldState {
 export function useFormField({
   initialValue = "",
   validator,
+  dependencies = [],
 }: UseFormFieldProps = {}): FormFieldState {
   const [value, setValue] = useState(initialValue);
   const [isFocused, setFocused] = useState(false);
@@ -39,9 +41,9 @@ export function useFormField({
 
   useEffect(() => {
     if (isTouched && validator) {
-      setError(validator(value));
+      setError(validator(value, ...dependencies));
     }
-  }, [value, isTouched, validator]);
+  }, [value, isTouched, validator, ...dependencies]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
