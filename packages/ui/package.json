@@ -12,8 +12,7 @@
     "./Spinner": "./src/Spinner.tsx",
     "./Text": "./src/Text.tsx",
     "./Input": "./src/Input.tsx",
-    "./Field": "./src/Field.tsx",
-    "./ImageInput": "./src/ImageInput.tsx"
+    "./Field": "./src/Field.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",

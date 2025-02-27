@@ -1,20 +1,10 @@
 "use client";
 
 import { useState, useRef, ChangeEvent, DragEvent, useEffect } from "react";
-import Avatar from "./Avatar";
-import styles from "./ImageInput.module.css";
-import Text from "./Text";
-
-export const urlToFile = async (
-  url: string,
-  filename: string,
-  mimeType: string
-) => {
-  const response = await fetch(url);
-  const blob = await response.blob();
-
-  return new File([blob], filename, { type: mimeType });
-};
+import Avatar from "@repo/ui/Avatar";
+import styles from "./ProfileInput.module.css";
+import Text from "@repo/ui/Text";
+import { urlToFile } from "@/_libs/utils";
 
 export const UploadIcon = () => (
   <svg
@@ -48,7 +38,7 @@ export const UploadIcon = () => (
   </svg>
 );
 
-interface ImageInputProps {
+interface ProfileInputProps {
   setImage: React.Dispatch<React.SetStateAction<File | null>>;
   defaultImageUrl?: string;
   size?: "lg" | "xl";
@@ -59,7 +49,7 @@ interface ImageInputProps {
   error?: string;
 }
 
-export default function ImageInput({
+export default function ProfileInput({
   setImage,
   error,
   defaultImageUrl = "/assets/images/dev_profile.png",
@@ -68,7 +58,7 @@ export default function ImageInput({
   acceptedFormats = "image/jpeg, image/png, image/jpg",
   className,
   onValidate,
-}: ImageInputProps) {
+}: ProfileInputProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(
     defaultImageUrl || null
   );
