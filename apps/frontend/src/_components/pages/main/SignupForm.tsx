@@ -8,6 +8,8 @@ import Button from "@repo/ui/Button";
 import styles from "./FormSection.module.css";
 import useUserStore from "@/_store/zustand/useUserStore";
 import { useFormField } from "@/_hooks/useFormField";
+import ImageInput from "@repo/ui/ImageInput";
+import { useState } from "react";
 
 const validateEmail = (email: string) => {
   if (!email) return "이메일을 입력해주세요.";
@@ -60,6 +62,19 @@ const validateName = (name: string) => {
   return "";
 };
 
+const validateProfileImage = (file: File | null) => {
+  if (!file) return;
+
+  const fileSizeInMB = file.size / (1024 * 1024);
+  if (fileSizeInMB > 5) return "이미지 크기는 5MB 이하여야 합니다.";
+
+  const acceptedTypes = ["image/jpeg", "image/png", "image/jpg"];
+  if (!acceptedTypes.includes(file.type))
+    return "JPG, PNG 형식의 이미지만 업로드 가능합니다.";
+
+  return;
+};
+
 export default function SignupForm() {
   const router = useRouter();
   const { setUser } = useUserStore();
@@ -70,6 +85,11 @@ export default function SignupForm() {
     validator: validatePasswordConfirm,
     dependencies: [passwordField.value],
   });
+
+  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [profileImageError, setProfileImageError] = useState<
+    string | undefined
+  >();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,6 +103,9 @@ export default function SignupForm() {
     const nameError = nameField.error;
     const passwordError = passwordField.error;
     const passwordConfirmError = passwordConfirmField.error;
+
+    const imageError = validateProfileImage(profileImage);
+    setProfileImageError(imageError);
 
     if (emailError) {
       emailField.setError(emailError);
@@ -104,6 +127,7 @@ export default function SignupForm() {
       return;
 
     console.log(
+      profileImage,
       emailField.value,
       nameField.value,
       passwordField.value,
@@ -113,6 +137,18 @@ export default function SignupForm() {
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
+      <Field
+        label="프로필 이미지"
+        elementHeight="var(--space-12)"
+        message={profileImageError}
+      >
+        <ImageInput
+          size="xl"
+          setImage={(file) => setProfileImage(file)}
+          onValidate={validateProfileImage}
+        />
+      </Field>
+
       <Field label="이메일" message={emailField.error}>
         <Input
           type="email"
