@@ -2,7 +2,7 @@
 
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import InputField from "@repo/ui/InputField";
+import Field from "@repo/ui/Field";
 import Input from "@repo/ui/Input";
 import Button from "@repo/ui/Button";
 import styles from "./FormSection.module.css";
@@ -113,7 +113,7 @@ export default function SignupForm() {
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
-      <InputField label="이메일" message={emailField.error}>
+      <Field label="이메일" message={emailField.error}>
         <Input
           type="email"
           value={emailField.value}
@@ -125,9 +125,9 @@ export default function SignupForm() {
           onFocusChange={emailField.setFocused}
           onTouchChange={emailField.setTouched}
         />
-      </InputField>
+      </Field>
 
-      <InputField label="이름" message={nameField.error}>
+      <Field label="이름" message={nameField.error}>
         <Input
           type="text"
           placeholder="Enter Text..."
@@ -139,9 +139,9 @@ export default function SignupForm() {
           onFocusChange={nameField.setFocused}
           onTouchChange={nameField.setTouched}
         />
-      </InputField>
+      </Field>
 
-      <InputField label="비밀번호" message={passwordField.error}>
+      <Field label="비밀번호" message={passwordField.error}>
         <Input
           type="password"
           placeholder="Enter Text..."
@@ -153,8 +153,8 @@ export default function SignupForm() {
           onFocusChange={passwordField.setFocused}
           onTouchChange={passwordField.setTouched}
         />
-      </InputField>
-      <InputField label="비밀번호 확인" message={passwordConfirmField.error}>
+      </Field>
+      <Field label="비밀번호 확인" message={passwordConfirmField.error}>
         <Input
           type="password"
           placeholder="Enter Text..."
@@ -166,7 +166,7 @@ export default function SignupForm() {
           onFocusChange={passwordConfirmField.setFocused}
           onTouchChange={passwordConfirmField.setTouched}
         />
-      </InputField>
+      </Field>
 
       <Button variant="primary" fullWidth type="submit">
         회원가입

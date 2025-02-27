@@ -1,20 +1,20 @@
-import styles from "./InputField.module.css";
+import styles from "./Field.module.css";
 
-interface InputFieldProps {
+interface FieldProps {
   children: React.ReactNode;
   label: string;
   elementHeight?: string;
   message?: string;
 }
 
-export default function InputField({
+export default function Field({
   children,
   label,
   message,
   elementHeight = "var(--space-10)",
-}: InputFieldProps): React.ReactElement {
+}: FieldProps): React.ReactElement {
   return (
-    <div className={styles.inputField}>
+    <div className={styles.field}>
       {label && <label className={styles.label}>{label}</label>}
       <div className={styles.elementBox} style={{ height: elementHeight }}>
         {children}
