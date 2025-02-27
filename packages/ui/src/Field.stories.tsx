@@ -1,15 +1,15 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import InputField from "./InputField";
+import Field from "./Field";
 import Input from "./Input";
 import { useState } from "react";
 const meta = {
-  title: "Common/InputField",
-  component: InputField,
+  title: "Common/Field",
+  component: Field,
   parameters: {
     layout: "centered",
   },
   tags: ["autodocs"],
-} satisfies Meta<typeof InputField>;
+} satisfies Meta<typeof Field>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -24,7 +24,7 @@ export const Primary: Story = {
     const [isTouched, setIsTouched] = useState(false);
     return (
       <div>
-        <InputField {...Primary.args} elementHeight="var(--space-10)">
+        <Field {...Primary.args} elementHeight="var(--space-10)">
           <Input
             placeholder="Enter Text..."
             isFocused={isFocused}
@@ -32,7 +32,7 @@ export const Primary: Story = {
             onFocusChange={setIsFocused}
             onTouchChange={setIsTouched}
           />
-        </InputField>
+        </Field>
       </div>
     );
   },
@@ -53,7 +53,7 @@ export const Error: Story = {
 
     return (
       <div>
-        <InputField {...Error.args} elementHeight="var(--space-10)">
+        <Field {...Error.args} elementHeight="var(--space-10)">
           <Input
             placeholder="Enter Text..."
             isFocused={isFocused}
@@ -62,7 +62,7 @@ export const Error: Story = {
             onTouchChange={setIsTouched}
             isError={errorMessage}
           />
-        </InputField>
+        </Field>
       </div>
     );
   },

@@ -3,7 +3,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { fetchLogin } from "@/_apis/user";
 import { useRouter } from "next/navigation";
-import InputField from "@repo/ui/InputField";
+import Field from "@repo/ui/Field";
 import Input from "@repo/ui/Input";
 import Button from "@repo/ui/Button";
 import styles from "./FormSection.module.css";
@@ -74,7 +74,7 @@ export default function LoginForm() {
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
-      <InputField label="이메일" message={emailField.error}>
+      <Field label="이메일" message={emailField.error}>
         <Input
           type="email"
           value={emailField.value}
@@ -86,9 +86,9 @@ export default function LoginForm() {
           onFocusChange={emailField.setFocused}
           onTouchChange={emailField.setTouched}
         />
-      </InputField>
+      </Field>
 
-      <InputField label="비밀번호" message={passwordField.error}>
+      <Field label="비밀번호" message={passwordField.error}>
         <Input
           type="password"
           value={passwordField.value}
@@ -100,7 +100,7 @@ export default function LoginForm() {
           onFocusChange={passwordField.setFocused}
           onTouchChange={passwordField.setTouched}
         />
-      </InputField>
+      </Field>
 
       <Button variant="primary" fullWidth type="submit">
         시작하기

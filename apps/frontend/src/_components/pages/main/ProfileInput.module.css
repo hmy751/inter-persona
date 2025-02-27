@@ -1,0 +1,101 @@
+.imageInputContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  padding: 8px 0;
+}
+
+.imageInputContainer.size-xs {
+  padding: 2px 0;
+}
+
+.imageInputContainer.size-sm {
+  padding: 3px 0;
+}
+
+.imageInputContainer.size-md {
+  padding: 4px 0;
+}
+
+.imageInputContainer.size-lg {
+  padding: 5px 0;
+}
+
+.imageInputContainer.size-xl {
+  padding: 12px 0;
+}
+
+.imageInputContainer.dragging .avatarContainer {
+  box-shadow: 0 0 0 2px var(--color-secondary);
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.avatarContainer {
+  position: relative;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.avatarContainer:hover .uploadOverlay {
+  opacity: 1;
+}
+
+.avatar {
+  display: block;
+}
+
+.draggingAvatar {
+  opacity: 0.7;
+}
+
+.uploadOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--color-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  border-radius: 50%;
+}
+
+.uploadIcon {
+  color: var(--color-base-white);
+}
+
+.size-xs .uploadIcon svg,
+.size-sm .uploadIcon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.size-md .uploadIcon svg,
+.size-lg .uploadIcon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.size-xl .uploadIcon svg {
+  width: 32px;
+  height: 32px;
+}
+
+.helpText {
+  margin-top: 8px;
+  font-size: 14px;
+  height: 20px;
+  color: var(--color-primary);
+  font-weight: 500;
+  text-align: center;
+}
