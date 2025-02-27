@@ -8,7 +8,7 @@ import Button from "@repo/ui/Button";
 import styles from "./FormSection.module.css";
 import useUserStore from "@/_store/zustand/useUserStore";
 import { useFormField } from "@/_hooks/useFormField";
-import ImageInput from "@repo/ui/ImageInput";
+import ProfileInput from "./ProfileInput";
 import { useState } from "react";
 
 const validateEmail = (email: string) => {
@@ -142,7 +142,7 @@ export default function SignupForm() {
         elementHeight="var(--space-12)"
         message={profileImageError}
       >
-        <ImageInput
+        <ProfileInput
           size="xl"
           setImage={(file) => setProfileImage(file)}
           onValidate={validateProfileImage}

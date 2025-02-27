@@ -1,14 +1,14 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import ImageInput from "./ImageInput";
+import ProfileInput from "@/_components/pages/main/ProfileInput";
 
 const meta = {
-  title: "Common/ImageInput",
-  component: ImageInput,
+  title: "Pages/Main/ProfileInput",
+  component: ProfileInput,
   parameters: {
     layout: "centered",
   },
   tags: ["autodocs"],
-} satisfies Meta<typeof ImageInput>;
+} satisfies Meta<typeof ProfileInput>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -17,7 +17,7 @@ export const Primary = {
   render() {
     return (
       <div>
-        <ImageInput size="xl" value={null} onChange={() => {}} />
+        <ProfileInput size="xl" setImage={() => {}} />
       </div>
     );
   },
