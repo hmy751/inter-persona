@@ -5,6 +5,17 @@ import Avatar from "./Avatar";
 import styles from "./ImageInput.module.css";
 import Text from "./Text";
 
+export const urlToFile = async (
+  url: string,
+  filename: string,
+  mimeType: string
+) => {
+  const response = await fetch(url);
+  const blob = await response.blob();
+
+  return new File([blob], filename, { type: mimeType });
+};
+
 export const UploadIcon = () => (
   <svg
     width="24"
@@ -38,35 +49,43 @@ export const UploadIcon = () => (
 );
 
 interface ImageInputProps {
-  onChange: (file: File | null) => void;
-  value: File | null;
+  setImage: React.Dispatch<React.SetStateAction<File | null>>;
   defaultImageUrl?: string;
   size?: "lg" | "xl";
   maxSizeInMB?: number;
   acceptedFormats?: string;
   className?: string;
+  onValidate?: (file: File | null) => string | undefined;
+  error?: string;
 }
 
 export default function ImageInput({
-  onChange,
-  value,
+  setImage,
+  error,
   defaultImageUrl = "/assets/images/dev_profile.png",
   size = "xl",
   maxSizeInMB = 5,
   acceptedFormats = "image/jpeg, image/png, image/jpg",
   className,
+  onValidate,
 }: ImageInputProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(
     defaultImageUrl || null
   );
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [internalError, setInternalError] = useState<string | undefined>(error);
 
   useEffect(() => {
-    if (value) {
-      setPreviewUrl(URL.createObjectURL(value));
-    } else if (defaultImageUrl) {
+    setInternalError(error);
+  }, [error]);
+
+  useEffect(() => {
+    if (defaultImageUrl) {
       setPreviewUrl(defaultImageUrl);
+      urlToFile(defaultImageUrl, "default", "image/png").then((file) => {
+        setImage(file);
+      });
     }
 
     return () => {
@@ -74,7 +93,7 @@ export default function ImageInput({
         URL.revokeObjectURL(previewUrl);
       }
     };
-  }, [value, defaultImageUrl]);
+  }, [defaultImageUrl]);
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null;
@@ -82,15 +101,20 @@ export default function ImageInput({
   };
 
   const handleFile = (file: File | null) => {
+    if (file && onValidate) {
+      const validationError = onValidate(file);
+      setInternalError(validationError);
+    }
+
     if (!file) {
-      onChange(null);
+      setImage(null);
       setPreviewUrl(defaultImageUrl || null);
       return;
     }
 
     const fileSizeInMB = file.size / (1024 * 1024);
     if (fileSizeInMB > (maxSizeInMB || 5)) {
-      onChange(file);
+      setImage(file);
       return;
     }
 
@@ -100,7 +124,7 @@ export default function ImageInput({
 
     const newPreviewUrl = URL.createObjectURL(file);
     setPreviewUrl(newPreviewUrl);
-    onChange(file);
+    setImage(file);
   };
 
   const handleDragEnter = (e: DragEvent<HTMLDivElement>) => {
