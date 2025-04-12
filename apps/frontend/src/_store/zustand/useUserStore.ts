@@ -3,6 +3,7 @@ import { persist } from "zustand/middleware";
 
 interface UserData {
   id: number;
+  email: string;
   name: string;
   imageSrc: string;
 }
