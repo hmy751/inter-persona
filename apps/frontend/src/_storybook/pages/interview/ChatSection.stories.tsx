@@ -19,6 +19,7 @@ const mockInterviewer = {
 
 const mockUser = {
   id: 1,
+  email: "teset@gmail.com",
   imageSrc: "/assets/images/dev_profile.png",
   name: "User",
 };
