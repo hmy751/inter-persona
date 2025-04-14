@@ -10,9 +10,21 @@
       "import": "./dist/index.js",
       "require": "./dist/index.js"
     },
-    "./useToastStore": "./useToastStore.ts",
-    "./useAlertDialogStore": "./useAlertDialogStore.ts",
-    "./useConfirmDialogStore": "./useConfirmDialogStore.ts"
+    "./useToastStore": {
+      "types": "./dist/useToastStore.d.ts",
+      "import": "./dist/useToastStore.js",
+      "require": "./dist/useToastStore.js"
+    },
+    "./useAlertDialogStore": {
+      "types": "./dist/useAlertDialogStore.d.ts",
+      "import": "./dist/useAlertDialogStore.js",
+      "require": "./dist/useAlertDialogStore.js"
+    },
+    "./useConfirmDialogStore": {
+      "types": "./dist/useConfirmDialogStore.d.ts",
+      "import": "./dist/useConfirmDialogStore.js",
+      "require": "./dist/useConfirmDialogStore.js"
+    }
   },
   "scripts": {
     "build": "tsc",
