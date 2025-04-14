@@ -1,0 +1,52 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 20
+    commands:
+      - echo "Installing pnpm..."
+      - npm install -g pnpm
+      - echo "Installing dependencies..."
+      - pnpm install --frozen-lockfile
+      - echo "[DEBUG] Checking root node_modules/@repo structure:"
+      - ls -la node_modules/@repo/ || echo "[DEBUG] Root node_modules/@repo/ not found."
+      - echo "[DEBUG] Checking root node_modules/.pnpm structure:"
+      - ls -la node_modules/.pnpm || echo "[DEBUG] Root node_modules/.pnpm not found."
+  pre_build:
+    commands:
+      - echo "Logging in to Amazon ECR..."
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login
+        --username AWS --password-stdin
+        $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY_NAME
+      - IMAGE_TAG=${CODEBUILD_RESOLVED_SOURCE_VERSION:-latest}
+  build:
+    commands:
+      - echo "Running debug script..."
+      - chmod +x debug_build.sh
+      - ./debug_build.sh
+      - echo "Starting Turborepo build (will use remote cache if configured)..."
+      - pnpm turbo build --filter=@apps/frontend
+      - echo "Turborepo build finished."
+      - echo "Running tests..."
+      - pnpm turbo test --filter=@apps/frontend
+      - echo "Tests finished."
+      - echo "Building the Docker image..."
+      - cd apps/frontend
+      - docker build -t $REPOSITORY_URI:$IMAGE_TAG -f Dockerfile .
+      - cd ../..
+  post_build:
+    commands:
+      - echo "Pushing the Docker image to ECR..."
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo "Writing image definitions file..."
+      - printf '[{"name":"frontend-container","imageUri":"%s"}]'
+        $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+artifacts:
+  files:
+    - imagedefinitions.json
+cache:
+  paths:
+    - node_modules/**/*
+    - .turbo/**/*
