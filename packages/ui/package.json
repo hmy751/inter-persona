@@ -22,8 +22,8 @@
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.2",
-    "@repo/eslint-config": "*",
-    "@repo/typescript-config": "*",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
     "@storybook/addon-essentials": "^8.4.3",
     "@storybook/addon-interactions": "^8.4.3",
     "@storybook/addon-onboarding": "^8.4.3",
@@ -43,7 +43,7 @@
     "typescript": "5.5.4"
   },
   "dependencies": {
-    "@repo/store": "*",
+    "@repo/store": "workspace:*",
     "clsx": "^2.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
