@@ -38,6 +38,9 @@ importers:
       '@repo/store':
         specifier: workspace:*
         version: link:../../packages/store
+      '@repo/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       '@tanstack/react-query':
         specifier: ^5.56.2
         version: 5.74.0(react@18.3.1)
@@ -87,6 +90,9 @@ importers:
       '@repo/testing-config':
         specifier: workspace:*
         version: link:../../packages/testing-config
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
       '@storybook/addon-essentials':
         specifier: ^8.4.3
         version: 8.6.12(@types/react@18.3.20)(storybook@8.6.12(prettier@3.5.3))
