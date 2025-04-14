@@ -1,0 +1,12 @@
+node_modules
+.next
+.turbo
+dist
+out
+build
+coverage
+.git
+.github
+.vscode
+README.md
+.env* 
