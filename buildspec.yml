@@ -9,10 +9,6 @@ phases:
       - npm install -g pnpm
       - echo "Installing dependencies..."
       - pnpm install --frozen-lockfile
-      - echo "[DEBUG] Checking root node_modules/@repo structure:"
-      - ls -la node_modules/@repo/ || echo "[DEBUG] Root node_modules/@repo/ not found."
-      - echo "[DEBUG] Checking root node_modules/.pnpm structure:"
-      - ls -la node_modules/.pnpm || echo "[DEBUG] Root node_modules/.pnpm not found."
   pre_build:
     commands:
       - echo "Logging in to Amazon ECR..."
@@ -23,9 +19,6 @@ phases:
       - IMAGE_TAG=${CODEBUILD_RESOLVED_SOURCE_VERSION:-latest}
   build:
     commands:
-      - echo "Running debug script..."
-      - chmod +x debug_build.sh
-      - ./debug_build.sh
       - echo "Starting Turborepo build (will use remote cache if configured)..."
       - pnpm turbo build --filter=@apps/frontend
       - echo "Turborepo build finished."
