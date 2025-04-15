@@ -8,8 +8,7 @@
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
     "build:storybook-config": {
-      "dependsOn": ["^build:storybook-config"],
-      "cache": false
+      "cache": true
     },
     "ui-storybook": {
       "dependsOn": ["^build:storybook-config"]
