@@ -5,41 +5,16 @@
   "type": "module",
   "exports": {
     "./styles/globals.css": "./src/styles/globals.css",
-    "./Dialog": {
-      "types": "./dist/Dialog.d.ts",
-      "import": "./dist/Dialog.js"
-    },
-    "./Button": {
-      "types": "./dist/Button.d.ts",
-      "import": "./dist/Button.js"
-    },
-    "./Avatar": {
-      "types": "./dist/Avatar.d.ts",
-      "import": "./dist/Avatar.js"
-    },
-    "./Toast": {
-      "types": "./dist/Toast.d.ts",
-      "import": "./dist/Toast.js"
-    },
-    "./Spinner": {
-      "types": "./dist/Spinner.d.ts",
-      "import": "./dist/Spinner.js"
-    },
-    "./Text": {
-      "types": "./dist/Text.d.ts",
-      "import": "./dist/Text.js"
-    },
-    "./Input": {
-      "types": "./dist/Input.d.ts",
-      "import": "./dist/Input.js"
-    },
-    "./Field": {
-      "types": "./dist/Field.d.ts",
-      "import": "./dist/Field.js"
-    }
+    "./Dialog": "./src/Dialog.tsx",
+    "./Button": "./src/Button.tsx",
+    "./Avatar": "./src/Avatar.tsx",
+    "./Toast": "./src/Toast.tsx",
+    "./Spinner": "./src/Spinner.tsx",
+    "./Text": "./src/Text.tsx",
+    "./Input": "./src/Input.tsx",
+    "./Field": "./src/Field.tsx"
   },
   "scripts": {
-    "build": "tsc",
     "lint": "eslint . --max-warnings 0",
     "generate:component": "turbo gen react-component",
     "ui-storybook": "storybook dev -p 6006",
@@ -72,9 +47,5 @@
     "clsx": "^2.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
-  },
-  "files": [
-    "dist",
-    "src/styles"
-  ]
+  }
 }
