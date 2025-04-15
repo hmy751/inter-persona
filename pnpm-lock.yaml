@@ -60,6 +60,9 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.56.2
         version: 5.74.0(react@18.2.0)
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
       framer-motion:
         specifier: ^11.5.4
         version: 11.18.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -119,7 +122,7 @@ importers:
         specifier: ^8.4.3
         version: 8.6.12(storybook@8.4.3(prettier@3.5.3))
       '@storybook/addon-viewport':
-        specifier: ^8.4.7
+        specifier: ^8.6.12
         version: 8.6.12(storybook@8.4.3(prettier@3.5.3))
       '@storybook/blocks':
         specifier: ^8.4.3
@@ -133,6 +136,12 @@ importers:
       '@storybook/test':
         specifier: ^8.4.3
         version: 8.6.12(storybook@8.4.3(prettier@3.5.3))
+      '@testing-library/react':
+        specifier: 16.1.0
+        version: 16.1.0(@testing-library/dom@10.4.0)(@types/react-dom@18.3.6(@types/react@18.3.20))(@types/react@18.3.20)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@testing-library/user-event':
+        specifier: ^14.6.1
+        version: 14.6.1(@testing-library/dom@10.4.0)
       '@types/jest':
         specifier: ^29.5.14
         version: 29.5.14
@@ -207,7 +216,11 @@ importers:
         specifier: 5.5.4
         version: 5.5.4
 
-  packages/storybook-config: {}
+  packages/storybook-config:
+    devDependencies:
+      '@storybook/addon-viewport':
+        specifier: ^8.6.12
+        version: 8.6.12(storybook@8.4.3(prettier@3.5.3))
 
   packages/testing-config:
     devDependencies:
@@ -2383,6 +2396,12 @@ packages:
 
   '@testing-library/user-event@14.5.2':
     resolution: {integrity: sha512-YAh82Wh4TIrxYLmfGcixwD18oIjyC1pFQC2Y01F2lzV2HTMiYrI0nze0FD0ocB//CKS/7jIUgae+adPqxK5yCQ==}
+    engines: {node: '>=12', npm: '>=6'}
+    peerDependencies:
+      '@testing-library/dom': '>=7.21.4'
+
+  '@testing-library/user-event@14.6.1':
+    resolution: {integrity: sha512-vq7fv0rnt+QTXgPxr5Hjc210p6YKq2kmdziLgnsZGgLJ9e6VAShx1pACLuRjd/AS/sr7phAR58OIIpf0LlmQNw==}
     engines: {node: '>=12', npm: '>=6'}
     peerDependencies:
       '@testing-library/dom': '>=7.21.4'
@@ -10360,6 +10379,16 @@ snapshots:
       lodash: 4.17.21
       redent: 3.0.0
 
+  '@testing-library/react@16.1.0(@testing-library/dom@10.4.0)(@types/react-dom@18.3.6(@types/react@18.3.20))(@types/react@18.3.20)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+    dependencies:
+      '@babel/runtime': 7.27.0
+      '@testing-library/dom': 10.4.0
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    optionalDependencies:
+      '@types/react': 18.3.20
+      '@types/react-dom': 18.3.6(@types/react@18.3.20)
+
   '@testing-library/react@16.1.0(@testing-library/dom@10.4.0)(@types/react-dom@18.3.6(@types/react@18.3.20))(@types/react@18.3.20)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@babel/runtime': 7.27.0
@@ -10371,6 +10400,10 @@ snapshots:
       '@types/react-dom': 18.3.6(@types/react@18.3.20)
 
   '@testing-library/user-event@14.5.2(@testing-library/dom@10.4.0)':
+    dependencies:
+      '@testing-library/dom': 10.4.0
+
+  '@testing-library/user-event@14.6.1(@testing-library/dom@10.4.0)':
     dependencies:
       '@testing-library/dom': 10.4.0
 
