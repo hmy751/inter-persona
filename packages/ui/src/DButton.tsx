@@ -1,4 +1,4 @@
-import Spinner from "@repo/ui/Spinner";
+import Spinner from "./Spinner";
 import styles from "./Button.module.css";
 
 type ButtonVariant = "primary" | "secondary" | "outline" | "text";
