@@ -6,8 +6,9 @@
     "declarationMap": true,
     "sourceMap": true,
     "noEmit": false,
-    "module": "ESNext"
+    "module": "CommonJS",
+    "moduleResolution": "node"
   },
-  "include": ["index.ts", "src/**/*"],
+  "include": ["index.ts", "use*.ts"],
   "exclude": ["node_modules", "dist", "**/*.test.ts"]
 }
