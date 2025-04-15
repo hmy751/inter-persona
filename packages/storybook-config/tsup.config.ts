@@ -3,7 +3,7 @@ import { defineConfig } from 'tsup'
 export default defineConfig({
   entry: ["main.ts", "preview.tsx", "util.ts"],
   format: ["cjs", "esm"],
-  dts: false,
+  dts: true,
   clean: true,
   outDir: "dist",
 });
