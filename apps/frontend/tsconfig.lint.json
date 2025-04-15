@@ -3,6 +3,12 @@
   "compilerOptions": {
     "outDir": "dist"
   },
-  "include": ["src", "turbo", "jest.config.ts", "jest.setup.ts", ".storybook"],
+  "include": [
+    "src",
+    "turbo",
+    "jest.config.ts",
+    "jest.setup.ts",
+    "next.config.mjs"
+  ],
   "exclude": ["node_modules", "dist"]
 }
