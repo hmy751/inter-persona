@@ -22,6 +22,10 @@ const nextConfig = {
     ];
   },
   reactStrictMode: true,
+  transpilePackages: [
+    "@repo/ui",
+    // '@repo/store',
+  ],
 };
 
 export default nextConfig;
