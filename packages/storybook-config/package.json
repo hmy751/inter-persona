@@ -9,5 +9,8 @@
   ],
   "scripts": {
     "build:storybook-config": "tsup"
+  },
+  "devDependencies": {
+    "@storybook/addon-viewport": "^8.6.12"
   }
 }
