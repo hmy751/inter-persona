@@ -6,4 +6,7 @@ export default defineConfig({
   dts: true,
   clean: true,
   outDir: "dist",
+  external: [
+    "@repo/ui/styles/globals.css"
+  ],
 });
