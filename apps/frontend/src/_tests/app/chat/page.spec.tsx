@@ -1,4 +1,4 @@
-import { screen, waitFor } from "@testing-library/react";
+import { act, screen, waitFor } from "@testing-library/react";
 import InterviewPage from "@/app/interview/[interviewId]/page";
 import Layout from "@/app/interview/[interviewId]/layout";
 
@@ -17,6 +17,15 @@ const mockUser = {
   id: 1,
   imageSrc: "/assets/images/dev_profile.png",
 };
+
+const addToastMock = jest.fn();
+
+jest.mock("@repo/store/useToastStore", () => ({
+  __esModule: true,
+  default: () => ({
+    addToast: addToastMock,
+  }),
+}));
 
 jest.mock("@/_store/zustand/useUserStore", () => ({
   __esModule: true,
@@ -91,7 +100,9 @@ describe("인터뷰 페이지 통합 테스트", () => {
 
       await integrationSetup.triggerRecording();
 
-      integrationSetup.simulateRecordingFlow();
+      act(() => {
+        integrationSetup.simulateRecordingFlow();
+      });
 
       integrationSetup.cleanup();
 
@@ -120,7 +131,9 @@ describe("인터뷰 페이지 통합 테스트", () => {
 
       await integrationSetup.triggerRecording();
 
-      integrationSetup.simulateRecordingFlow();
+      act(() => {
+        integrationSetup.simulateRecordingFlow();
+      });
 
       integrationSetup.cleanup();
 
@@ -167,7 +180,9 @@ describe("인터뷰 페이지 통합 테스트", () => {
 
       await integrationSetup.triggerRecording();
 
-      integrationSetup.simulateRecordingFlow();
+      act(() => {
+        integrationSetup.simulateRecordingFlow();
+      });
 
       integrationSetup.cleanup();
 
