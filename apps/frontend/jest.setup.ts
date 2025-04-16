@@ -1,3 +1,5 @@
+import "@testing-library/jest-dom";
+
 import "@repo/testing-config/jest.setup.base";
 import { server } from "./src/_mocks/server";
 
