@@ -1,4 +1,4 @@
-import baseConfig from "@repo/storybook-config";
+import baseConfig from "@repo/storybook-config/main";
 
 /** @type { import('@storybook/nextjs').StorybookConfig } */
 const config = {
