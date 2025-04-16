@@ -100,6 +100,12 @@ importers:
         specifier: ^4.5.5
         version: 4.5.6(@types/react@18.3.20)(immer@10.1.1)(react@18.2.0)
     devDependencies:
+      '@babel/core':
+        specifier: ^7.26.0
+        version: 7.26.10
+      '@babel/preset-env':
+        specifier: ^7.26.0
+        version: 7.26.9(@babel/core@7.26.10)
       '@chromatic-com/storybook':
         specifier: ^3.2.3
         version: 3.2.6(react@18.2.0)(storybook@8.4.3(prettier@3.5.3))
@@ -136,6 +142,9 @@ importers:
       '@storybook/test':
         specifier: ^8.4.3
         version: 8.6.12(storybook@8.4.3(prettier@3.5.3))
+      '@testing-library/jest-dom':
+        specifier: ^6.6.3
+        version: 6.6.3
       '@testing-library/react':
         specifier: 16.1.0
         version: 16.1.0(@testing-library/dom@10.4.0)(@types/react-dom@18.3.6(@types/react@18.3.20))(@types/react@18.3.20)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -160,6 +169,9 @@ importers:
       '@types/three':
         specifier: ^0.168.0
         version: 0.168.0
+      babel-jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@babel/core@7.26.10)
       eslint:
         specifier: ^8
         version: 8.57.1
@@ -169,6 +181,18 @@ importers:
       eslint-plugin-storybook:
         specifier: ^0.8.0
         version: 0.8.0(eslint@8.57.1)(typescript@5.5.4)
+      identity-obj-proxy:
+        specifier: ^3.0.0
+        version: 3.0.0
+      jest:
+        specifier: 29.7.0
+        version: 29.7.0(@types/node@20.17.30)(ts-node@10.9.2(@types/node@20.17.30)(typescript@5.5.4))
+      jest-environment-jsdom:
+        specifier: ^29.7.0
+        version: 29.7.0
+      jest-fixed-jsdom:
+        specifier: ^0.0.9
+        version: 0.0.9(jest-environment-jsdom@29.7.0)
       storybook:
         specifier: 8.4.3
         version: 8.4.3(prettier@3.5.3)
@@ -236,6 +260,9 @@ importers:
       '@babel/preset-env':
         specifier: ^7.26.0
         version: 7.26.9(@babel/core@7.26.10)
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
       '@testing-library/jest-dom':
         specifier: ^6.6.3
         version: 6.6.3
@@ -245,6 +272,9 @@ importers:
       '@types/jest':
         specifier: ^29.5.14
         version: 29.5.14
+      '@types/node':
+        specifier: ^20.11.24
+        version: 20.17.30
       babel-jest:
         specifier: ^29.7.0
         version: 29.7.0(@babel/core@7.26.10)
