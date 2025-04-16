@@ -5,9 +5,10 @@
     "rootDir": "."
   },
   "include": [
-    "jest.config.base.ts",
-    "jest.setup.base.ts",
-    "jest.transform.base.ts"
+    "src/jest.config.base.ts",
+    "src/jest.setup.base.ts",
+    "src/jest.transform.base.ts",
+    "src/util.ts"
   ],
   "exclude": ["node_modules", "dist"]
 }
