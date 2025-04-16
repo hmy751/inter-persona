@@ -1,7 +1,32 @@
-import { MINIMAL_VIEWPORTS } from "@storybook/addon-viewport";
-
 /** @type { import('@storybook/react').Preview } */
 import "@repo/ui/styles/globals.css";
+
+const minimalViewports = {
+  mobile1: {
+    name: "Small mobile",
+    styles: {
+      height: "568px",
+      width: "320px",
+    },
+    type: "mobile",
+  },
+  mobile2: {
+    name: "Large mobile",
+    styles: {
+      height: "896px",
+      width: "414px",
+    },
+    type: "mobile",
+  },
+  tablet: {
+    name: "Tablet",
+    styles: {
+      height: "1112px",
+      width: "834px",
+    },
+    type: "tablet",
+  },
+};
 
 const customViewports = {
   mobile: {
@@ -31,7 +56,7 @@ const basicPreview = {
     viewport: {
       defaultViewport: "responsive",
       viewports: {
-        ...MINIMAL_VIEWPORTS,
+        ...minimalViewports,
         ...customViewports,
       },
     },
