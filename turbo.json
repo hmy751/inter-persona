@@ -30,10 +30,12 @@
       "persistent": true
     },
     "test": {
+      "dependsOn": ["@repo/testing-config#build"],
       "cache": false,
       "persistent": true
     },
     "test:watch": {
+      "dependsOn": ["@repo/testing-config#build"],
       "cache": false,
       "persistent": true
     }
