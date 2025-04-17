@@ -18,14 +18,23 @@ const mockUser = {
   imageSrc: "/assets/images/dev_profile.png",
 };
 
-const addToastMock = jest.fn();
+jest.mock("@repo/store/useToastStore", () => {
+  const addToastMock = jest.fn();
 
-jest.mock("@repo/store/useToastStore", () => ({
-  __esModule: true,
-  default: () => ({
+  const mockStore = {
     addToast: addToastMock,
-  }),
-}));
+  };
+
+  const mockUseToastStore = () => mockStore;
+
+  mockUseToastStore.getState = jest.fn(() => mockStore);
+
+  return {
+    __esModule: true,
+    useToastStore: mockUseToastStore,
+    default: mockUseToastStore,
+  };
+});
 
 jest.mock("@/_store/zustand/useUserStore", () => ({
   __esModule: true,
