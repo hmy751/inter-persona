@@ -1,0 +1,14 @@
+{
+  "extends": "@repo/typescript-config/base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "."
+  },
+  "include": [
+    "src/jest.config.base.ts",
+    "src/jest.setup.base.ts",
+    "src/jest.transform.base.ts",
+    "src/util.ts"
+  ],
+  "exclude": ["node_modules", "dist"]
+}

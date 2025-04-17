@@ -18,12 +18,14 @@
     "lint": "eslint . --max-warnings 0",
     "generate:component": "turbo gen react-component",
     "ui-storybook": "storybook dev -p 6006",
-    "build:ui-storybook": "storybook build"
+    "build:ui-storybook": "storybook build",
+    "build": "vite build"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.2",
-    "@repo/eslint-config": "*",
-    "@repo/typescript-config": "*",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/storybook-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
     "@storybook/addon-essentials": "^8.4.3",
     "@storybook/addon-interactions": "^8.4.3",
     "@storybook/addon-onboarding": "^8.4.3",
@@ -37,15 +39,22 @@
     "@types/node": "^20.11.24",
     "@types/react": "^18.2.61",
     "@types/react-dom": "^18.2.19",
+    "@vitejs/plugin-react": "^4.4.0",
     "eslint": "^8.57.0",
     "eslint-plugin-storybook": "^0.11.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "storybook": "^8.4.3",
-    "typescript": "5.5.4"
+    "typescript": "^5.5.4",
+    "vite": "^6.2.6",
+    "vite-plugin-dts": "^4.5.3"
   },
   "dependencies": {
-    "@repo/store": "*",
-    "clsx": "^2.1.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "clsx": "^2.1.1"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18",
+    "@repo/store": "workspace:*"
   }
 }

@@ -7,6 +7,10 @@
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
   "devDependencies": {
     "path": "^0.12.7",
     "prettier": "^3.2.5",
@@ -17,9 +21,20 @@
   "engines": {
     "node": ">=18"
   },
-  "packageManager": "npm@9.6.7",
+  "packageManager": "pnpm@9.6.0",
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "pnpm": {
+    "overrides": {
+      "react": "18.2.0",
+      "react-dom": "18.2.0",
+      "typescript": "5.5.4",
+      "jest": "29.7.0",
+      "@testing-library/react": "16.1.0",
+      "storybook": "8.4.3",
+      "@storybook/addon-essentials": "8.4.3"
+    }
+  }
 }

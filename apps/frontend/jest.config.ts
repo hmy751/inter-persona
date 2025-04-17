@@ -14,9 +14,8 @@ const customConfig: Config = {
     "^@/(.*)$": "<rootDir>/src/$1",
   },
   transformIgnorePatterns: [
-    "^.+\\.module\\.(css|sass|scss)$",
-    /* 라이브러리 제거 예시 */
-    "node_modules/(?!swiper)",
+    '/node_modules/(?!@repo/testing-config/)',
+    '^.+\\.module\\.(css|sass|scss)$',
   ],
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
 };
