@@ -4,12 +4,15 @@ RUN npm install -g pnpm
 
 WORKDIR /app
 
-COPY package.json ./
-COPY ../../pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
+
+COPY apps/frontend/package.json ./apps/frontend/package.json
+
+COPY packages/ ./packages/
+COPY apps/frontend/ ./apps/frontend/
 
 RUN pnpm install --frozen-lockfile
 
-COPY . .
 
 RUN pnpm turbo build --filter=@apps/frontend
 
@@ -27,5 +30,4 @@ COPY --from=builder /app/package.json ./package.json
 
 EXPOSE 3000
 
-# Run the application start command
-CMD ["pnpm", "--filter", "@apps/frontend", "start"] 
+CMD ["pnpm", "--filter", "@apps/frontend", "start"]
