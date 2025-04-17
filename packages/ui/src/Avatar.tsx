@@ -1,10 +1,10 @@
-import Image from "next/image";
+import React from "react";
 import styles from "./Avatar.module.css";
 
 type AvatarSize = "xs" | "sm" | "md" | "lg" | "xl";
 
 interface AvatarProps {
-  src: string;
+  src?: string;
   size?: AvatarSize;
   alt?: string;
   className?: string;
@@ -24,22 +24,26 @@ export default function Avatar({
   alt = "avatar",
   className,
   ...props
-}: AvatarProps) {
+}: AvatarProps): JSX.Element {
+  const containerClasses = [
+    styles.container,
+    styles[`size-${size}`],
+    className || "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const imageSrc = src || "/assets/images/default-avatar.svg";
+
   return (
-    <div
-      className={`
-        ${styles.container}
-        ${styles[`size-${size}`]}
-        ${className || ""}
-      `}
-      {...props}
-    >
-      <Image
-        src={src || "/assets/images/default-avatar.svg"}
+    <div className={containerClasses} {...props}>
+      <img
+        src={imageSrc}
         alt={alt}
         width={sizeMap[size]}
         height={sizeMap[size]}
         className={styles.image}
+        loading="lazy"
       />
     </div>
   );

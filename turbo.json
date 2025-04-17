@@ -5,11 +5,10 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*", "!**/*.stories.{tsx,jsx,mdx}"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
     "build:storybook-config": {
-      "dependsOn": ["^build:storybook-config"],
-      "cache": false
+      "cache": true
     },
     "ui-storybook": {
       "dependsOn": ["^build:storybook-config"]
@@ -31,10 +30,12 @@
       "persistent": true
     },
     "test": {
+      "dependsOn": ["@repo/testing-config#build", "^build"],
       "cache": false,
       "persistent": true
     },
     "test:watch": {
+      "dependsOn": ["@repo/testing-config#build", "^build"],
       "cache": false,
       "persistent": true
     }

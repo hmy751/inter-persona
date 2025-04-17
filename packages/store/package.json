@@ -1,17 +1,40 @@
 {
   "name": "@repo/store",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./index.ts",
-    "./useToastStore": "./useToastStore.ts",
-    "./useAlertDialogStore": "./useAlertDialogStore.ts",
-    "./useConfirmDialogStore": "./useConfirmDialogStore.ts"
+    "./useToastStore": {
+      "types": "./dist/useToastStore.d.ts",
+      "import": "./dist/useToastStore.js",
+      "require": "./dist/useToastStore.js"
+    },
+    "./useAlertDialogStore": {
+      "types": "./dist/useAlertDialogStore.d.ts",
+      "import": "./dist/useAlertDialogStore.js",
+      "require": "./dist/useAlertDialogStore.js"
+    },
+    "./useConfirmDialogStore": {
+      "types": "./dist/useConfirmDialogStore.d.ts",
+      "import": "./dist/useConfirmDialogStore.js",
+      "require": "./dist/useConfirmDialogStore.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint . --max-warnings 0"
   },
   "dependencies": {
     "zustand": "^4.5.0"
   },
   "devDependencies": {
-    "@repo/typescript-config": "*"
-  }
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "eslint": "^8.57.0",
+    "typescript": "5.5.4"
+  },
+  "files": [
+    "dist"
+  ]
 }

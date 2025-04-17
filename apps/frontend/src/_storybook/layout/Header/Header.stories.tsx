@@ -5,6 +5,7 @@ import useUserStore from "@/_store/zustand/useUserStore";
 const mockUser = {
   id: 1,
   name: "user",
+  email: "teset@gmail.com",
   imageSrc: "/assets/images/dev_profile.png",
 };
 

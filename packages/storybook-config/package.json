@@ -2,12 +2,47 @@
   "name": "@repo/storybook-config",
   "version": "0.1.0",
   "private": true,
-  "main": "./dist/main.js",
-  "types": "./dist/main.d.ts",
+  "exports": {
+    "./main": {
+      "import": {
+        "types": "./dist/main.d.ts",
+        "default": "./dist/main.mjs"
+      },
+      "require": {
+        "types": "./dist/main.d.ts",
+        "default": "./dist/main.js"
+      }
+    },
+    "./preview": {
+      "import": {
+        "types": "./dist/preview.d.ts",
+        "default": "./dist/preview.mjs"
+      },
+      "require": {
+        "types": "./dist/preview.d.ts",
+        "default": "./dist/preview.js"
+      }
+    },
+    "./util": {
+      "import": {
+        "types": "./dist/util.d.ts",
+        "default": "./dist/util.mjs"
+      },
+      "require": {
+        "types": "./dist/util.d.ts",
+        "default": "./dist/util.js"
+      }
+    }
+  },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build:storybook-config": "tsup"
+    "build": "tsup"
+  },
+  "devDependencies": {
+    "@storybook/addon-viewport": "^8.6.12",
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "^18.0.0"
   }
 }
