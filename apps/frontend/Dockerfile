@@ -20,6 +20,8 @@ FROM node:20-alpine AS runner
 
 WORKDIR /app
 
+RUN npm install -g pnpm
+
 ENV NODE_ENV=production
 
 COPY --from=builder /app/apps/frontend/.next ./apps/frontend/.next/
