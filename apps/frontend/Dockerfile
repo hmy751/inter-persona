@@ -40,8 +40,10 @@ COPY --from=builder /app/pnpm-workspace.yaml .
 
 RUN pnpm install --prod --frozen-lockfile
 
+# node_modules/.bin 경로를 PATH에 추가
+ENV PATH /app/node_modules/.bin:$PATH
+
 EXPOSE 3030
 
-# ENV DATABASE_URL=...
-
-CMD ["pnpm", "--dir=apps/frontend", "exec", "next", "start"]
+WORKDIR /app/apps/frontend
+CMD ["node", "../../node_modules/next/dist/bin/next", "start", "."] 
