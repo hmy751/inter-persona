@@ -37,8 +37,9 @@ COPY --from=builder /app/apps/frontend/package.json ./apps/frontend/package.json
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/pnpm-lock.yaml .
 COPY --from=builder /app/pnpm-workspace.yaml .
+
 RUN pnpm install --prod --frozen-lockfile
 
 EXPOSE 3030
 
-CMD ["pnpm", "--filter", "@apps/frontend", "start"]
+CMD ["pnpm", "--dir=apps/frontend", "start"]
