@@ -19,11 +19,8 @@ phases:
       - IMAGE_TAG=${CODEBUILD_RESOLVED_SOURCE_VERSION:-latest}
   build:
     commands:
-      - echo "Starting Turborepo build (will use remote cache if configured)..."
-      - pnpm turbo build --filter=@apps/frontend
-      - echo "Turborepo build finished."
       - echo "Building the Docker image from root context..."
-      - docker build --cache-from $REPOSITORY_URI:cache -t $REPOSITORY_URI:$IMAGE_TAG -f apps/frontend/Dockerfile .
+      - docker build --build-arg TURBO_TOKEN=${TURBO_TOKEN} --build-arg TURBO_TEAM=${TURBO_TEAM} --cache-from $REPOSITORY_URI:cache -t $REPOSITORY_URI:$IMAGE_TAG -f apps/frontend/Dockerfile .
   post_build:
     commands:
       - echo "Pushing the Docker image to ECR..."
