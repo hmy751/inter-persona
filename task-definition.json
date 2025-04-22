@@ -1,0 +1,55 @@
+{
+  "family": "inter-persona-new",
+  "executionRoleArn": "arn:aws:iam::580910323870:role/ecsTaskExecutionRole",
+  "networkMode": "awsvpc",
+  "containerDefinitions": [
+    {
+      "name": "frontend-container",
+      "image": "placeholder-image",
+      "cpu": 0,
+      "portMappings": [
+        {
+          "name": "frontend-container",
+          "containerPort": 3000,
+          "hostPort": 3000,
+          "protocol": "tcp",
+          "appProtocol": "http"
+        }
+      ],
+      "essential": true,
+      "secrets": [
+        {
+          "name": "NEXT_PUBLIC_CLIENT_SECRET",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:580910323870:secret:inter-persona/env-lRQqix:NEXT_PUBLIC_CLIENT_SECRET::"
+        },
+        {
+          "name": "NEXT_PUBLIC_INVOKE_URL",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:580910323870:secret:inter-persona/env-lRQqix:NEXT_PUBLIC_INVOKE_URL::"
+        },
+        {
+          "name": "NEXT_PUBLIC_API_HOST",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:580910323870:secret:inter-persona/env-lRQqix:NEXT_PUBLIC_API_HOST::"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/inter-persona-client",
+          "mode": "non-blocking",
+          "awslogs-create-group": "true",
+          "max-buffer-size": "25m",
+          "awslogs-region": "ap-northeast-2",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ],
+  "volumes": [],
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "1024",
+  "memory": "3072",
+  "runtimePlatform": {
+    "cpuArchitecture": "X86_64",
+    "operatingSystemFamily": "LINUX"
+  }
+}
