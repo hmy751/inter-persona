@@ -44,6 +44,6 @@ RUN pnpm --filter @apps/frontend exec next --version || echo "next 패키지 설
 
 ENV PATH /app/node_modules/.bin:$PATH
 
-EXPOSE 3030
+EXPOSE 3000
 
 CMD ["pnpm", "--filter", "@apps/frontend", "start"]
