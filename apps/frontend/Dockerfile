@@ -32,18 +32,18 @@ ENV NODE_ENV=production
 
 COPY --from=builder /app/apps/frontend/.next ./apps/frontend/.next/
 COPY --from=builder /app/apps/frontend/public ./apps/frontend/public/
-COPY --from=builder /app/node_modules ./node_modules/
 COPY --from=builder /app/apps/frontend/package.json ./apps/frontend/package.json
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/pnpm-lock.yaml .
 COPY --from=builder /app/pnpm-workspace.yaml .
 
-RUN pnpm install --prod --frozen-lockfile
+RUN pnpm install --frozen-lockfile
+RUN pnpm --filter @apps/frontend install --prod
 
-# node_modules/.bin 경로를 PATH에 추가
+RUN pnpm --filter @apps/frontend exec next --version || echo "next 패키지 설치 실패"
+
 ENV PATH /app/node_modules/.bin:$PATH
 
 EXPOSE 3030
 
-WORKDIR /app/apps/frontend
-CMD ["node", "../../node_modules/next/dist/bin/next", "start", "."] 
+CMD ["pnpm", "--filter", "@apps/frontend", "start"]
