@@ -1,5 +1,5 @@
 {
-  "family": "inter-persona",
+  "family": "inter-persona-new",
   "executionRoleArn": "arn:aws:iam::580910323870:role/ecsTaskExecutionRole",
   "networkMode": "awsvpc",
   "containerDefinitions": [
