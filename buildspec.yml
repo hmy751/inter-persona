@@ -30,6 +30,8 @@ phases:
       - echo "Registering task definition..."
       - sed -i "s|placeholder-image|$REPOSITORY_URI:$IMAGE_TAG|" task-definition.json
       - aws ecs register-task-definition --cli-input-json file://task-definition.json --region ap-northeast-2
+      - echo "Updating ECS service to use the latest task definition..."
+      - aws ecs update-service --cluster inter-persona-test-fargate --service frontend-ecr-service --task-definition inter-persona --force-new-deployment --region ap-northeast-2
 artifacts:
   files:
     - imagedefinitions.json
