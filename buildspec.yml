@@ -12,9 +12,7 @@ phases:
   pre_build:
     commands:
       - echo "Logging in to Amazon ECR..."
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login
-        --username AWS --password-stdin
-        $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
       - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY_NAME
       - IMAGE_TAG=${CODEBUILD_RESOLVED_SOURCE_VERSION:-latest}
   build:
@@ -28,8 +26,10 @@ phases:
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - docker push $REPOSITORY_URI:cache
       - echo "Writing image definitions file..."
-      - printf '[{"name":"frontend-container","imageUri":"%s"}]'
-        $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+      - printf '[{"name":"frontend-container","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+      - echo "Registering task definition..."
+      - sed -i "s|placeholder-image|$REPOSITORY_URI:$IMAGE_TAG|" task-definition.json
+      - aws ecs register-task-definition --cli-input-json file://task-definition.json --region ap-northeast-2
 artifacts:
   files:
     - imagedefinitions.json
