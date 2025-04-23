@@ -46,4 +46,4 @@ ENV PATH /app/node_modules/.bin:$PATH
 
 EXPOSE 3000
 
-CMD ["pnpm", "--filter", "@apps/frontend", "start"]
+CMD ["pnpm", "--filter", "@apps/frontend", "start", "--", "--hostname", "0.0.0.0"]
