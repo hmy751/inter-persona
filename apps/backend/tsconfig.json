@@ -1,6 +1,8 @@
 {
   "extends": "@repo/typescript-config/base.json",
   "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "Node",
     "target": "ESNext",
     "lib": ["ES2020"],
     "outDir": "./dist",
