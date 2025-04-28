@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Application } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { withAccelerate } from '@prisma/extension-accelerate'
 import dotenv from 'dotenv';
@@ -7,7 +7,7 @@ dotenv.config();
 
 const prisma = new PrismaClient().$extends(withAccelerate())
 
-const app = express();
+const app: Application = express();
 const port = process.env.PORT || 8080;
 
 app.use(express.json());
