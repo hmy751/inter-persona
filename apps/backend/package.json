@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "main": "dist/app.js",
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "start": "node dist/app.js",
