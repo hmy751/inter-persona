@@ -4,7 +4,13 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*", "!**/*.stories.{tsx,jsx,mdx}"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "!**/*.stories.{tsx,jsx,mdx}",
+        "!Dockerfile",
+        "!buildspec.yml",
+        "!task-definition.json"
+      ],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
     "build:storybook-config": {
@@ -39,5 +45,8 @@
       "cache": false,
       "persistent": true
     }
+  },
+  "remoteCache": {
+    "enabled": true
   }
 }

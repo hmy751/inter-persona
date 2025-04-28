@@ -23,7 +23,7 @@ const nextConfig = {
   },
   reactStrictMode: true,
   transpilePackages: [
-    "@repo/ui",
+    // "@repo/ui",
     // '@repo/store',
   ],
 };
