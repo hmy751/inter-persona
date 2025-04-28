@@ -27,11 +27,11 @@
     "lint": {
       "dependsOn": ["^lint"]
     },
-    "dev": {
+    "dev:frontend": {
       "cache": false,
       "persistent": true
     },
-    "dev:msw": {
+    "dev:frontend:msw": {
       "cache": false,
       "persistent": true
     },
