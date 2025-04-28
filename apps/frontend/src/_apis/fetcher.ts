@@ -117,5 +117,4 @@ const fetcher = createHttpClient({
   },
 });
 
-
 export default fetcher;
