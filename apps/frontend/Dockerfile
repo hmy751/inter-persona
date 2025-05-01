@@ -20,7 +20,7 @@ ARG TURBO_TEAM
 ENV TURBO_TOKEN=$TURBO_TOKEN
 ENV TURBO_TEAM=$TURBO_TEAM
 
-RUN pnpm turbo build --filter=@apps/frontend
+RUN pnpm turbo build --filter=@apps/frontend --no-cache --parallel=1
 
 FROM node:20-alpine AS runner
 
