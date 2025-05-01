@@ -11,6 +11,7 @@
         "!buildspec.yml",
         "!task-definition.json"
       ],
+      "concurrency": "1",
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
     "build:storybook-config": {
