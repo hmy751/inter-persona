@@ -1,5 +1,5 @@
-import fetcher from "./fetcher";
-import { Interviewer, User } from "./model";
+import fetcher from './fetcher';
+import { Interviewer, User } from './model';
 /**
  * 인터뷰 조회
  */
@@ -12,9 +12,7 @@ export interface GetInterviewResponse {
   userId: number;
 }
 
-export const fetchGetInterview = async ({
-  interviewId,
-}: GetInterviewBody) => {
+export const fetchGetInterview = async ({ interviewId }: GetInterviewBody) => {
   return fetcher.get<GetInterviewResponse>(`interview/${interviewId}`);
 };
 
@@ -29,11 +27,8 @@ export interface CreateInterviewResponse {
   id: number;
 }
 
-export const fetchCreateInterview = async ({
-  interviewerId,
-  userId,
-}: CreateInterviewBody) => {
-  return fetcher.post<CreateInterviewResponse>("interview", {
+export const fetchCreateInterview = async ({ interviewerId, userId }: CreateInterviewBody) => {
+  return fetcher.post<CreateInterviewResponse>('interview', {
     interviewerId,
     userId,
   });
@@ -49,12 +44,8 @@ export interface GetInterviewInterviewerResponse {
   interviewer: Interviewer;
 }
 
-export const fetchGetInterviewInterviewer = async ({
-  interviewId,
-}: GetInterviewInterviewerBody) => {
-  return fetcher.get<GetInterviewInterviewerResponse>(
-    `interview/${interviewId}/interviewer`
-  );
+export const fetchGetInterviewInterviewer = async ({ interviewId }: GetInterviewInterviewerBody) => {
+  return fetcher.get<GetInterviewInterviewerResponse>(`interview/${interviewId}/interviewer`);
 };
 
 /**
@@ -67,9 +58,7 @@ export interface GetInterviewUserResponse {
   user: User;
 }
 
-export const fetchGetInterviewUser = async ({
-  interviewId,
-}: GetInterviewUserBody) => {
+export const fetchGetInterviewUser = async ({ interviewId }: GetInterviewUserBody) => {
   return fetcher.get<GetInterviewUserResponse>(`interview/${interviewId}/user`);
 };
 
@@ -83,18 +72,16 @@ export interface SpeechToTextData {
   text: string;
 }
 
-export const fetchSpeechToText = async ({
-  formData,
-}: SpeechToTextProps): Promise<SpeechToTextData | undefined> => {
+export const fetchSpeechToText = async ({ formData }: SpeechToTextProps): Promise<SpeechToTextData | undefined> => {
   try {
-    const result = await fetch("/api/interview", {
-      method: "POST",
+    const result = await fetch('/api/interview', {
+      method: 'POST',
       body: formData,
     });
 
     const data: SpeechToTextData = await result.json();
     if (!result.ok) {
-      throw Error("Http Error");
+      throw Error('Http Error');
     }
 
     return data;
@@ -120,4 +107,3 @@ export const fetchAnswer = async ({ interviewId, content }: AnswerBody) => {
     content,
   });
 };
-

@@ -1,4 +1,4 @@
-import { getAbsolutePath } from "./util";
+import { getAbsolutePath } from './util';
 
 /**
  * This function is used to resolve the absolute path of a package.
@@ -7,18 +7,18 @@ import { getAbsolutePath } from "./util";
 
 /** @type { import('@storybook/nextjs').StorybookConfig } */
 const baseConfig = {
-  stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
+  stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
   addons: [
-    getAbsolutePath("@storybook/addon-onboarding"),
-    getAbsolutePath("@storybook/addon-essentials"),
-    getAbsolutePath("@chromatic-com/storybook"),
-    getAbsolutePath("@storybook/addon-interactions"),
+    getAbsolutePath('@storybook/addon-onboarding'),
+    getAbsolutePath('@storybook/addon-essentials'),
+    getAbsolutePath('@chromatic-com/storybook'),
+    getAbsolutePath('@storybook/addon-interactions'),
   ],
   framework: {
-    name: getAbsolutePath("@storybook/nextjs"),
+    name: getAbsolutePath('@storybook/nextjs'),
     options: {},
   },
-  staticDirs: ["../public"],
+  staticDirs: ['../public'],
 };
 
 export default baseConfig;

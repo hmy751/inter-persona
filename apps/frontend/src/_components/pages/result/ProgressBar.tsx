@@ -1,15 +1,12 @@
-import React, { useState, useEffect } from "react";
-import styles from "./ProgressBar.module.css";
+import React, { useState, useEffect } from 'react';
+import styles from './ProgressBar.module.css';
 
 interface ProgressBarProps {
   score: number;
   duration: number;
 }
 
-export default function ProgressBar({
-  score = 80,
-  duration = 1500,
-}: ProgressBarProps) {
+export default function ProgressBar({ score = 80, duration = 1500 }: ProgressBarProps) {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -24,10 +21,7 @@ export default function ProgressBar({
 
       const eased = 1 - (1 - progress) * (1 - progress);
 
-      const currentScore = Math.min(
-        Math.floor(targetScore * eased),
-        targetScore
-      );
+      const currentScore = Math.min(Math.floor(targetScore * eased), targetScore);
 
       setProgress(currentScore);
 
@@ -46,10 +40,7 @@ export default function ProgressBar({
         <span className={styles.label}>{score}%</span>
       </div>
       <div className={styles.progressBarBg}>
-        <div
-          className={styles.progressBarFill}
-          style={{ width: `${progress}%` }}
-        />
+        <div className={styles.progressBarFill} style={{ width: `${progress}%` }} />
       </div>
     </div>
   );

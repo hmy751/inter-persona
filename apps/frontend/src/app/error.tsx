@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import NotFoundError from "@/_components/layout/error/NotFoundError";
-import ServerError from "@/_components/layout/error/ServerError";
-import { APIError } from "@/_apis/fetcher";
+import { useEffect } from 'react';
+import NotFoundError from '@/_components/layout/error/NotFoundError';
+import ServerError from '@/_components/layout/error/ServerError';
+import { APIError } from '@/_apis/fetcher';
 
 export default function Error({
   error,
@@ -13,7 +13,7 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error("page", error);
+    console.error('page', error);
   }, [error]);
 
   if (error?.status === 404) {

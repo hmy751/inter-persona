@@ -1,12 +1,12 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import Header from "@/_components/layout/Header/Header";
-import useUserStore from "@/_store/zustand/useUserStore";
+import type { Meta, StoryObj } from '@storybook/react';
+import Header from '@/_components/layout/Header/Header';
+import useUserStore from '@/_store/zustand/useUserStore';
 
 const mockUser = {
   id: 1,
-  name: "user",
-  email: "teset@gmail.com",
-  imageSrc: "/assets/images/dev_profile.png",
+  name: 'user',
+  email: 'teset@gmail.com',
+  imageSrc: '/assets/images/dev_profile.png',
 };
 
 const withMockStore = (Story: React.ComponentType) => {
@@ -16,19 +16,19 @@ const withMockStore = (Story: React.ComponentType) => {
 };
 
 const meta = {
-  title: "Pages/layout/Header",
+  title: 'Pages/layout/Header',
   component: Header,
   parameters: {
-    layout: "centered",
+    layout: 'centered',
     nextjs: {
       appDirectory: true,
       navigation: {
-        back: () => console.log("Back button clicked"),
-        push: () => console.log("Router push called"),
+        back: () => console.log('Back button clicked'),
+        push: () => console.log('Router push called'),
       },
     },
   },
-  tags: ["autodocs"],
+  tags: ['autodocs'],
 } satisfies Meta<typeof Header>;
 
 export default meta;
@@ -54,7 +54,7 @@ export const Mobile: Story = {
   args: {},
   parameters: {
     viewport: {
-      defaultViewport: "mobile",
+      defaultViewport: 'mobile',
     },
   },
   decorators: [withMockStore],
@@ -65,11 +65,11 @@ export const InterviewerPageInMobile: Story = {
   parameters: {
     nextjs: {
       navigation: {
-        pathname: "/interviewer",
+        pathname: '/interviewer',
       },
     },
     viewport: {
-      defaultViewport: "mobile",
+      defaultViewport: 'mobile',
     },
   },
   decorators: [withMockStore],

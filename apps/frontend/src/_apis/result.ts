@@ -1,7 +1,7 @@
-import fetcher from "./fetcher";
+import fetcher from './fetcher';
 
 /**
- * 인터뷰 결과 생성 
+ * 인터뷰 결과 생성
  */
 export interface CreateResultBody {
   interviewId: number;
@@ -10,16 +10,14 @@ export interface CreateResultResponse {
   id: number;
 }
 
-export const fetchCreateResult = async ({
-  interviewId,
-}: CreateResultBody) => {
-  return fetcher.post<CreateResultResponse>("result", {
+export const fetchCreateResult = async ({ interviewId }: CreateResultBody) => {
+  return fetcher.post<CreateResultResponse>('result', {
     interviewId,
   });
 };
 
 /**
- * 인터뷰 결과 조회 
+ * 인터뷰 결과 조회
  */
 export interface GetResultBody {
   resultId: number;
@@ -66,12 +64,8 @@ export interface GetResultTotalEvaluationResponse {
   evaluation: Evaluation[];
 }
 
-export const fetchGetResultTotalEvaluation = async ({
-  resultId,
-}: GetResultTotalEvaluationBody) => {
-  return fetcher.get<GetResultTotalEvaluationResponse>(
-    `result/${resultId}/total`
-  );
+export const fetchGetResultTotalEvaluation = async ({ resultId }: GetResultTotalEvaluationBody) => {
+  return fetcher.get<GetResultTotalEvaluationResponse>(`result/${resultId}/total`);
 };
 
 /**
@@ -90,10 +84,6 @@ export interface GetResultQuestionEvaluationResponse {
   questionEvaluation: QuestionEvaluation[];
 }
 
-export const fetchGetResultQuestionEvaluation = async ({
-  resultId,
-}: GetResultQuestionEvaluationBody) => {
-  return fetcher.get<GetResultQuestionEvaluationResponse>(
-    `result/${resultId}/question`
-  );
+export const fetchGetResultQuestionEvaluation = async ({ resultId }: GetResultQuestionEvaluationBody) => {
+  return fetcher.get<GetResultQuestionEvaluationResponse>(`result/${resultId}/question`);
 };

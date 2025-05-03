@@ -1,5 +1,5 @@
-import { screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 /**
  * 통합 테스트 환경에서 녹음/STT 프로세스를 시뮬레이션하기 위한 구성 객체
@@ -23,7 +23,6 @@ export const createIntegrationRecordingSetup = () => {
     frameCallback: null,
   };
 
-
   /**
    * requestAnimationFrame을 모킹하여 테스트에서 타이머 콜백을 직접 제어합니다.
    */
@@ -40,25 +39,21 @@ export const createIntegrationRecordingSetup = () => {
   const triggerRecording = async () => {
     const setupAnalyserNode = (audioContext: AudioContext) => {
       const analyserNode = audioContext.createAnalyser();
-      (analyserNode.getByteTimeDomainData as jest.Mock).mockImplementation(
-        (arr: Uint8Array) => {
-          if (arr instanceof Uint8Array && config.currentData) {
-            arr.set(config.currentData);
-          }
+      (analyserNode.getByteTimeDomainData as jest.Mock).mockImplementation((arr: Uint8Array) => {
+        if (arr instanceof Uint8Array && config.currentData) {
+          arr.set(config.currentData);
         }
-      );
+      });
       return analyserNode;
     };
 
-    const recordButton = await screen.findByTestId("record-button");
+    const recordButton = await screen.findByTestId('record-button');
     await userEvent.click(recordButton);
 
     if (config.currentData) {
-      const audioContext = (window.AudioContext as unknown as jest.Mock).mock
-        .instances[0];
+      const audioContext = (window.AudioContext as unknown as jest.Mock).mock.instances[0];
       setupAnalyserNode(audioContext);
     }
-
 
     return recordButton;
   };
@@ -102,4 +97,4 @@ export const createIntegrationRecordingSetup = () => {
     simulateRecordingFlow,
     cleanup,
   };
-}; 
+};

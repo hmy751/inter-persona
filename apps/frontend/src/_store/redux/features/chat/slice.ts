@@ -1,9 +1,6 @@
-import { createSlice } from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
-import {
-  ChatContentStatusType,
-  ChatContentSpeakerType,
-} from "@/_store/redux/type";
+import { createSlice } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { ChatContentStatusType, ChatContentSpeakerType } from '@/_store/redux/type';
 
 export interface ChatContent {
   status: ChatContentStatusType;
@@ -25,13 +22,10 @@ const initialState: ChatState = {
 };
 
 const slice = createSlice({
-  name: "chat",
+  name: 'chat',
   initialState,
   reducers: {
-    initializeChatState: (
-      state,
-      action: PayloadAction<ChatContent[] | null>
-    ) => {
+    initializeChatState: (state, action: PayloadAction<ChatContent[] | null>) => {
       if (action.payload?.length) {
         state.contents = [...action.payload];
       } else {
@@ -43,53 +37,43 @@ const slice = createSlice({
     startChat: (state, action: PayloadAction<{ interviewId: number }>) => {
       state.interviewId = action.payload.interviewId;
     },
-    triggerContent: (
-      state,
-      action: PayloadAction<{ speaker: ChatContentSpeakerType }>
-    ) => {
+    triggerContent: (state, action: PayloadAction<{ speaker: ChatContentSpeakerType }>) => {
       const current = {
         status: ChatContentStatusType.loading,
         speaker: action.payload.speaker,
-        content: "",
+        content: '',
         timeStamp: new Date(),
       };
       state.contents.push(current);
     },
     updateContent: (state, action: PayloadAction<{ content: string }>) => {
       if (state?.contents?.length > 0) {
-        const lastContent = state.contents[
-          state.contents.length - 1
-        ] as ChatContent;
+        const lastContent = state.contents[state.contents.length - 1] as ChatContent;
         lastContent.content = action.payload.content;
         lastContent.status = ChatContentStatusType.success;
       }
     },
-    errorContent: (state) => {
+    errorContent: state => {
       if (state?.contents?.length > 0) {
-        const lastContent = state.contents[
-          state.contents.length - 1
-        ] as ChatContent;
+        const lastContent = state.contents[state.contents.length - 1] as ChatContent;
         lastContent.status = ChatContentStatusType.fail;
       }
     },
-    resetContentStatus: (state) => {
+    resetContentStatus: state => {
       if (state?.contents?.length > 0) {
-        const lastContent = state.contents[
-          state.contents.length - 1
-        ] as ChatContent;
+        const lastContent = state.contents[state.contents.length - 1] as ChatContent;
         lastContent.status = ChatContentStatusType.idle;
       }
     },
-    removeContent: (state) => {
+    removeContent: state => {
       state.contents.pop();
     },
-    increaseTrySpeechCount: (state) => {
+    increaseTrySpeechCount: state => {
       state.trySpeechCount++;
     },
-    resetTrySpeechCount: (state) => {
+    resetTrySpeechCount: state => {
       state.trySpeechCount = 0;
     },
-
   },
 });
 
@@ -105,10 +89,10 @@ export const {
   resetContentStatus,
 } = slice.actions;
 
-export const SEND_RECORD = "SEND_RECORD" as const;
-export const START_CHAT = "START_CHAT" as const;
-export const REQUEST_ANSWER = "REQUEST_ANSWER" as const;
-export const RETRY_ANSWER = "RETRY_ANSWER" as const;
-export const CANCEL_CURRENT_REQUEST_ANSWER = "CANCEL_CURRENT_REQUEST_ANSWER" as const;
+export const SEND_RECORD = 'SEND_RECORD' as const;
+export const START_CHAT = 'START_CHAT' as const;
+export const REQUEST_ANSWER = 'REQUEST_ANSWER' as const;
+export const RETRY_ANSWER = 'RETRY_ANSWER' as const;
+export const CANCEL_CURRENT_REQUEST_ANSWER = 'CANCEL_CURRENT_REQUEST_ANSWER' as const;
 
 export default slice.reducer;

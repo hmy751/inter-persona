@@ -9,10 +9,12 @@ const prisma = new PrismaClient();
 
 const app: Application = express();
 
-app.use(cors({
-  origin: config.cors.origin,
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: config.cors.origin,
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -35,4 +37,4 @@ process.on('SIGINT', async () => {
   });
 });
 
-export { app, prisma }; 
+export { app, prisma };

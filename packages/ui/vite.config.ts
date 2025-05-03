@@ -15,7 +15,7 @@ export default defineConfig({
       entry: path.resolve(__dirname, 'src/index.ts'),
       name: 'RepoUi',
       formats: ['es', 'umd'],
-      fileName: (format) => `ui.${format}.js`,
+      fileName: format => `ui.${format}.js`,
     },
     rollupOptions: {
       external: ['react', 'react-dom', 'react/jsx-runtime', '@repo/store', /^@repo\/store\/.*/],
@@ -24,7 +24,7 @@ export default defineConfig({
           react: 'React',
           'react-dom': 'ReactDOM',
           'react/jsx-runtime': 'jsxRuntime',
-          '@repo/store': 'RepoStore'
+          '@repo/store': 'RepoStore',
         },
       },
     },

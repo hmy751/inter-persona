@@ -1,8 +1,8 @@
-import Spinner from "./Spinner";
-import styles from "./Button.module.css";
+import Spinner from './Spinner';
+import styles from './Button.module.css';
 
-type ButtonVariant = "primary" | "secondary" | "outline" | "text";
-type ButtonSize = "sm" | "md" | "lg";
+type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'text';
+type ButtonSize = 'sm' | 'md' | 'lg';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
@@ -13,8 +13,8 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export default function Button({
-  variant = "primary",
-  size = "md",
+  variant = 'primary',
+  size = 'md',
   fullWidth = false,
   isLoading = false,
   children,
@@ -27,10 +27,10 @@ export default function Button({
         ${styles.button}
         ${styles[variant]}
         ${styles[`size-${size}`]}
-        ${fullWidth ? styles.fullWidth : ""}
-        ${isLoading ? styles.loading : ""}
-        ${className || ""}
-        ${props.disabled ? styles.disabled : ""}
+        ${fullWidth ? styles.fullWidth : ''}
+        ${isLoading ? styles.loading : ''}
+        ${className || ''}
+        ${props.disabled ? styles.disabled : ''}
       `}
       disabled={isLoading || props.disabled}
       {...props}

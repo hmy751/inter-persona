@@ -1,4 +1,4 @@
-import { ERROR_MESSAGE } from "@repo/constant/message";
+import { ERROR_MESSAGE } from '@repo/constant/message';
 
 export const validateEmail = (value: string) => {
   if (!value) {
@@ -55,4 +55,3 @@ export const validateName = (value: string) => {
 
   return true;
 };
-

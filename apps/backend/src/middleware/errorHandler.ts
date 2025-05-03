@@ -1,11 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 
-export const errorHandler = (
-  error: Error,
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const errorHandler = (error: Error, req: Request, res: Response, next: NextFunction) => {
   console.error('에러 발생:', error);
 
   // Prisma 특정 에러 처리
@@ -40,4 +35,4 @@ export const errorHandler = (
   return res.status(500).json({
     message: '서버 내부 오류가 발생했습니다',
   });
-}; 
+};

@@ -1,7 +1,7 @@
-import styles from "./Header.module.css";
-import HeaderUserInfo from "./HeaderUserInfo";
-import BackButton from "./BackButton";
-import HeaderTitle from "./HeaderTitle";
+import styles from './Header.module.css';
+import HeaderUserInfo from './HeaderUserInfo';
+import BackButton from './BackButton';
+import HeaderTitle from './HeaderTitle';
 
 interface HeaderProps {}
 
