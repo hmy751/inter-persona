@@ -1,17 +1,22 @@
+/** @type {import("eslint").Linter.Config} */
+
 module.exports = {
   root: true,
-  extends: ["@repo/eslint-config/base.js"],
+  extends: ['@repo/eslint-config/node.js'],
   parserOptions: {
-    project: true,
+    project: './tsconfig.json',
     tsconfigRootDir: __dirname,
   },
   env: {
     node: true,
   },
-  ignorePatterns: [".*.js", "node_modules/", "dist/"],
+  ignorePatterns: ['.*.js', 'node_modules/', 'dist/'],
   overrides: [
     {
-      files: ["*.ts", "*.tsx"],
+      files: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
+      env: {
+        jest: true,
+      },
     },
   ],
 };
