@@ -1,12 +1,12 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import HeaderUserInfo from "@/_components/layout/Header/HeaderUserInfo";
-import useUserStore from "@/_store/zustand/useUserStore";
+import type { Meta, StoryObj } from '@storybook/react';
+import HeaderUserInfo from '@/_components/layout/Header/HeaderUserInfo';
+import useUserStore from '@/_store/zustand/useUserStore';
 
 const mockUser = {
   id: 1,
-  name: "user",
-  email: "teset@gmail.com",
-  imageSrc: "/assets/images/dev_profile.png",
+  name: 'user',
+  email: 'teset@gmail.com',
+  imageSrc: '/assets/images/dev_profile.png',
 };
 
 const withMockStore = (Story: React.ComponentType) => {
@@ -16,12 +16,12 @@ const withMockStore = (Story: React.ComponentType) => {
 };
 
 const meta = {
-  title: "Pages/layout/HeaderUserInfo",
+  title: 'Pages/layout/HeaderUserInfo',
   component: HeaderUserInfo,
   parameters: {
-    layout: "centered",
+    layout: 'centered',
   },
-  tags: ["autodocs"],
+  tags: ['autodocs'],
 } satisfies Meta<typeof HeaderUserInfo>;
 
 export default meta;
@@ -34,11 +34,11 @@ export const LoggedIn: Story = {
 
 export const LongUserName: Story = {
   decorators: [
-    (Story) => {
+    Story => {
       useUserStore.setState({
         user: {
           ...mockUser,
-          name: "Very Long User Name That Might Break Layout",
+          name: 'Very Long User Name That Might Break Layout',
         },
       });
       return <Story />;
@@ -48,11 +48,11 @@ export const LongUserName: Story = {
 
 export const NoImage: Story = {
   decorators: [
-    (Story) => {
+    Story => {
       useUserStore.setState({
         user: {
           ...mockUser,
-          imageSrc: "",
+          imageSrc: '',
         },
       });
       return <Story />;
@@ -62,7 +62,7 @@ export const NoImage: Story = {
 
 export const LoggedOut: Story = {
   decorators: [
-    (Story) => {
+    Story => {
       useUserStore.setState({ user: null });
       return <Story />;
     },

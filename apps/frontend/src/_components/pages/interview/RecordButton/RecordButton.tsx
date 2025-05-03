@@ -1,49 +1,37 @@
-"use client";
+'use client';
 
-import { useRef, useState, useEffect, useCallback, useMemo } from "react";
-import Button from "@repo/ui/Button";
-import { detectSilence } from "./utils";
-import Image from "next/image";
-import styles from "./RecordButton.module.css";
-import Recorder from "recorder-js";
-import { useDispatch, useSelector } from "react-redux";
-import { SEND_RECORD } from "@/_store/redux/features/chat/slice";
-import { ChatContentStatusType } from "@/_store/redux/type";
-import {
-  selectChatLimit,
-  selectCurrentRecordingAnswer,
-} from "@/_store/redux/features/chat/selector";
-import clsx from "clsx";
-import {
-  IDLE_ICON_SRC,
-  RECORDING_ICON_SRC,
-  DISABLED_ICON_SRC,
-} from "./constants";
-import { RecordError, handleRecordError } from "./_error";
-import { createRecordError, RecordErrorType } from "./_error";
-import useToastStore from "@repo/store/useToastStore";
-import { useCreateResult } from "@/_data/result";
+import { useRef, useState, useEffect, useCallback, useMemo } from 'react';
+import Button from '@repo/ui/Button';
+import { detectSilence } from './utils';
+import Image from 'next/image';
+import styles from './RecordButton.module.css';
+import Recorder from 'recorder-js';
+import { useDispatch, useSelector } from 'react-redux';
+import { SEND_RECORD } from '@/_store/redux/features/chat/slice';
+import { ChatContentStatusType } from '@/_store/redux/type';
+import { selectChatLimit, selectCurrentRecordingAnswer } from '@/_store/redux/features/chat/selector';
+import clsx from 'clsx';
+import { IDLE_ICON_SRC, RECORDING_ICON_SRC, DISABLED_ICON_SRC } from './constants';
+import { RecordError, handleRecordError } from './_error';
+import { createRecordError, RecordErrorType } from './_error';
+import useToastStore from '@repo/store/useToastStore';
+import { useCreateResult } from '@/_data/result';
 
 export enum RecordingStatusType {
-  idle = "idle",
-  recording = "recording",
-  finished = "finished",
+  idle = 'idle',
+  recording = 'recording',
+  finished = 'finished',
 }
 
 export default function RecordButton() {
   const recorderRef = useRef<Recorder | null>(null);
-  const [recordingStatus, setRecordingStatus] = useState<RecordingStatusType>(
-    RecordingStatusType.idle
-  );
-  const [buttonIconSrc, setButtonIconSrc] = useState<string>(
-    "/assets/images/record-button.svg"
-  );
+  const [recordingStatus, setRecordingStatus] = useState<RecordingStatusType>(RecordingStatusType.idle);
+  const [buttonIconSrc, setButtonIconSrc] = useState<string>('/assets/images/record-button.svg');
   const chatLimit = useSelector(selectChatLimit);
 
   const dispatch = useDispatch();
   const currentRecordingAnswer = useSelector(selectCurrentRecordingAnswer);
-  const isDisabledRecord =
-    currentRecordingAnswer?.status === ChatContentStatusType.fail;
+  const isDisabledRecord = currentRecordingAnswer?.status === ChatContentStatusType.fail;
   const cleanupRef = useRef<() => void>(() => {});
   const { addToast } = useToastStore();
   const { mutate, isPending } = useCreateResult();
@@ -52,8 +40,7 @@ export default function RecordButton() {
     try {
       cleanupRef.current?.();
 
-      const isRecordingOrDisabled =
-        recordingStatus === RecordingStatusType.recording || isDisabledRecord;
+      const isRecordingOrDisabled = recordingStatus === RecordingStatusType.recording || isDisabledRecord;
 
       if (isRecordingOrDisabled) return;
 
@@ -68,14 +55,14 @@ export default function RecordButton() {
         stream = await mediaDevices.getUserMedia({ audio: true });
       } catch (error: any) {
         switch (error.name) {
-          case "NotAllowedError":
+          case 'NotAllowedError':
             throw createRecordError(RecordErrorType.PERMISSION_DENIED, error);
-          case "NotFoundError":
+          case 'NotFoundError':
             throw createRecordError(RecordErrorType.DEVICE_NOT_FOUND, error);
-          case "NotReadableError":
-          case "TrackStartError":
+          case 'NotReadableError':
+          case 'TrackStartError':
             throw createRecordError(RecordErrorType.DEVICE_NOT_READABLE, error);
-          case "OverconstrainedError":
+          case 'OverconstrainedError':
             throw createRecordError(RecordErrorType.DEVICE_NOT_FOUND, error);
           default:
             throw createRecordError(RecordErrorType.UNKNOWN_ERROR, error);
@@ -122,11 +109,7 @@ export default function RecordButton() {
         throw createRecordError(RecordErrorType.UNKNOWN_ERROR, error);
       }
 
-      cleanupRef.current = detectSilence(
-        analyserNode,
-        dataArray,
-        setRecordingStatus
-      );
+      cleanupRef.current = detectSilence(analyserNode, dataArray, setRecordingStatus);
     } catch (error) {
       if (error instanceof RecordError) {
         handleRecordError(error);
@@ -134,8 +117,8 @@ export default function RecordButton() {
       }
 
       addToast({
-        title: "알 수 없는 오류",
-        description: "알 수 없는 오류가 발생했습니다. 다시 시도해주세요.",
+        title: '알 수 없는 오류',
+        description: '알 수 없는 오류가 발생했습니다. 다시 시도해주세요.',
         duration: 3000,
       });
     }
@@ -154,8 +137,8 @@ export default function RecordButton() {
         throw createRecordError(RecordErrorType.FILE_TOO_LARGE);
       }
 
-      const audioFile = new File([blob], "recording.wav", {
-        type: "audio/wav",
+      const audioFile = new File([blob], 'recording.wav', {
+        type: 'audio/wav',
       });
 
       if (!audioFile) {
@@ -163,15 +146,15 @@ export default function RecordButton() {
       }
 
       const params = {
-        language: "ko-KR",
-        completion: "sync",
+        language: 'ko-KR',
+        completion: 'sync',
         wordAlignment: true,
         fullText: true,
       };
 
       const formData = new FormData();
-      formData.append("media", audioFile);
-      formData.append("params", JSON.stringify(params));
+      formData.append('media', audioFile);
+      formData.append('params', JSON.stringify(params));
 
       dispatch({ type: SEND_RECORD, payload: { formData } });
     } catch (error) {
@@ -181,8 +164,8 @@ export default function RecordButton() {
       }
 
       addToast({
-        title: "알 수 없는 오류",
-        description: "알 수 없는 오류가 발생했습니다. 다시 시도해주세요.",
+        title: '알 수 없는 오류',
+        description: '알 수 없는 오류가 발생했습니다. 다시 시도해주세요.',
         duration: 3000,
       });
     }
@@ -204,13 +187,11 @@ export default function RecordButton() {
     (function checkFinishedRecording() {
       if (recorderRef.current === null) return;
 
-      const isIdleRecordingOrDisabled =
-        recordingStatus === RecordingStatusType.idle || isDisabledRecord;
+      const isIdleRecordingOrDisabled = recordingStatus === RecordingStatusType.idle || isDisabledRecord;
 
       if (isIdleRecordingOrDisabled) return;
 
-      const isFinishedRecording =
-        recordingStatus === RecordingStatusType.finished;
+      const isFinishedRecording = recordingStatus === RecordingStatusType.finished;
 
       if (isFinishedRecording) {
         finishRecord();
@@ -255,8 +236,8 @@ export default function RecordButton() {
   const handleClickResultButton = async () => {
     if (!chatLimit) {
       addToast({
-        title: "인터뷰 아직 완료되지 않았습니다.",
-        description: "인터뷰가 완료되면 결과를 확인할 수 있습니다.",
+        title: '인터뷰 아직 완료되지 않았습니다.',
+        description: '인터뷰가 완료되면 결과를 확인할 수 있습니다.',
         duration: 3000,
       });
       return;
@@ -268,12 +249,7 @@ export default function RecordButton() {
   return (
     <>
       {chatLimit ? (
-        <Button
-          onClick={handleClickResultButton}
-          variant="primary"
-          size="lg"
-          isLoading={isPending}
-        >
+        <Button onClick={handleClickResultButton} variant="primary" size="lg" isLoading={isPending}>
           결과 보기
         </Button>
       ) : (
@@ -288,8 +264,7 @@ export default function RecordButton() {
           className={clsx([
             styles.button,
             isDisabledRecord && styles.disabled,
-            recordingStatus === RecordingStatusType.recording &&
-              styles.recording,
+            recordingStatus === RecordingStatusType.recording && styles.recording,
           ])}
         />
       )}

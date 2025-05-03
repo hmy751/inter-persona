@@ -1,13 +1,13 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import ProfileInput from "@/_components/pages/main/ProfileInput";
+import type { Meta, StoryObj } from '@storybook/react';
+import ProfileInput from '@/_components/pages/main/ProfileInput';
 
 const meta = {
-  title: "Pages/Main/ProfileInput",
+  title: 'Pages/Main/ProfileInput',
   component: ProfileInput,
   parameters: {
-    layout: "centered",
+    layout: 'centered',
   },
-  tags: ["autodocs"],
+  tags: ['autodocs'],
 } satisfies Meta<typeof ProfileInput>;
 
 export default meta;

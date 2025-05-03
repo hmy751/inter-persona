@@ -5,7 +5,7 @@ import image from './image.png';
 console.log(image); 
 */
 
-const path = require("path");
+const path = require('path');
 
 module.exports = {
   process(sourceText: string, sourcePath: string, options: any) {

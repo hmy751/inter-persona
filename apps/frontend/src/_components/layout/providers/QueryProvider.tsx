@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 export const createQueryClient = () => {
   return new QueryClient({
@@ -8,14 +8,8 @@ export const createQueryClient = () => {
   });
 };
 
-export default function QueryProviders({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function QueryProviders({ children }: { children: React.ReactNode }) {
   const queryClient = createQueryClient();
 
-  return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 }

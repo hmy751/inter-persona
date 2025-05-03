@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import LoginForm from "./LoginForm";
-import SignupForm from "./SignupForm";
-import styles from "./FormSection.module.css";
-import Text from "@repo/ui/Text";
-import Button from "@repo/ui/Button";
+import { useState } from 'react';
+import LoginForm from './LoginForm';
+import SignupForm from './SignupForm';
+import styles from './FormSection.module.css';
+import Text from '@repo/ui/Text';
+import Button from '@repo/ui/Button';
 
 export default function FormSection() {
   const [isLogin, setIsLogin] = useState(true);
@@ -23,7 +23,7 @@ export default function FormSection() {
           </Text>
         ) : (
           <Text as="p" size="sm" align="center">
-            이미 계정이 있으신가요?{" "}
+            이미 계정이 있으신가요?{' '}
             <Button size="sm" variant="text" onClick={() => setIsLogin(true)}>
               로그인
             </Button>

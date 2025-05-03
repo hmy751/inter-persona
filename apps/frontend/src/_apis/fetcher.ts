@@ -36,12 +36,7 @@ const handleResponse = async (response: Response) => {
   const data = isJSON ? await response.json() : await response.text();
 
   if (!response.ok) {
-    throw new APIError(
-      data.message || response.statusText,
-      response.status,
-      data.code || 'UNKNOWN_ERROR',
-      data
-    );
+    throw new APIError(data.message || response.statusText, response.status, data.code || 'UNKNOWN_ERROR', data);
   }
 
   return data;
@@ -61,10 +56,7 @@ const handleError = (error: unknown) => {
 };
 
 const createHttpClient = (defaultConfig: FetcherConfig) => {
-  const request = async <T>(
-    url: string,
-    options: RequestConfig = {}
-  ): Promise<T> => {
+  const request = async <T>(url: string, options: RequestConfig = {}): Promise<T> => {
     try {
       const finalOptions = { ...options };
 
@@ -87,8 +79,7 @@ const createHttpClient = (defaultConfig: FetcherConfig) => {
   };
 
   return {
-    get: <T>(url: string, options?: RequestConfig) =>
-      request<T>(url, { ...options, method: 'GET' }),
+    get: <T>(url: string, options?: RequestConfig) => request<T>(url, { ...options, method: 'GET' }),
 
     post: <T>(url: string, data?: unknown, options?: RequestConfig) =>
       request<T>(url, {
@@ -104,8 +95,7 @@ const createHttpClient = (defaultConfig: FetcherConfig) => {
         body: JSON.stringify(data),
       }),
 
-    delete: <T>(url: string, options?: RequestConfig) =>
-      request<T>(url, { ...options, method: 'DELETE' })
+    delete: <T>(url: string, options?: RequestConfig) => request<T>(url, { ...options, method: 'DELETE' }),
   };
 };
 

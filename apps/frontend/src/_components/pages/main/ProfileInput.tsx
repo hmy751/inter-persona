@@ -1,33 +1,15 @@
-"use client";
+'use client';
 
-import { useState, useRef, ChangeEvent, DragEvent, useEffect } from "react";
-import Avatar from "@repo/ui/Avatar";
-import styles from "./ProfileInput.module.css";
-import Text from "@repo/ui/Text";
-import { urlToFile } from "@/_libs/utils";
+import { useState, useRef, ChangeEvent, DragEvent, useEffect } from 'react';
+import Avatar from '@repo/ui/Avatar';
+import styles from './ProfileInput.module.css';
+import Text from '@repo/ui/Text';
+import { urlToFile } from '@/_libs/utils';
 
 export const UploadIcon = () => (
-  <svg
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      d="M12 16V8"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M9 11L12 8L15 11"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 16V8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M9 11L12 8L15 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     <path
       d="M20 16.7428C21.2215 16.1862 22 14.9194 22 13.5C22 11.567 20.433 10 18.5 10C18.2815 10 18.0771 10.0194 17.8836 10.0564C17.1884 7.7201 15.043 6 12.5 6C9.46243 6 7 8.46243 7 11.5C7 11.8254 7.02871 12.1423 7.08296 12.4492C5.26814 12.8373 4 14.4588 4 16.3636C4 18.5305 5.74939 20.3201 7.90901 20.3201H14.5"
       stroke="currentColor"
@@ -41,7 +23,7 @@ export const UploadIcon = () => (
 interface ProfileInputProps {
   setImage: React.Dispatch<React.SetStateAction<File | null>>;
   defaultImageUrl?: string;
-  size?: "lg" | "xl";
+  size?: 'lg' | 'xl';
   maxSizeInMB?: number;
   acceptedFormats?: string;
   className?: string;
@@ -52,16 +34,14 @@ interface ProfileInputProps {
 export default function ProfileInput({
   setImage,
   error,
-  defaultImageUrl = "/assets/images/dev_profile.png",
-  size = "xl",
+  defaultImageUrl = '/assets/images/dev_profile.png',
+  size = 'xl',
   maxSizeInMB = 5,
-  acceptedFormats = "image/jpeg, image/png, image/jpg",
+  acceptedFormats = 'image/jpeg, image/png, image/jpg',
   className,
   onValidate,
 }: ProfileInputProps) {
-  const [previewUrl, setPreviewUrl] = useState<string | null>(
-    defaultImageUrl || null
-  );
+  const [previewUrl, setPreviewUrl] = useState<string | null>(defaultImageUrl || null);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [internalError, setInternalError] = useState<string | undefined>(error);
@@ -73,13 +53,13 @@ export default function ProfileInput({
   useEffect(() => {
     if (defaultImageUrl) {
       setPreviewUrl(defaultImageUrl);
-      urlToFile(defaultImageUrl, "default", "image/png").then((file) => {
+      urlToFile(defaultImageUrl, 'default', 'image/png').then(file => {
         setImage(file);
       });
     }
 
     return () => {
-      if (previewUrl && previewUrl.startsWith("blob:")) {
+      if (previewUrl && previewUrl.startsWith('blob:')) {
         URL.revokeObjectURL(previewUrl);
       }
     };
@@ -108,7 +88,7 @@ export default function ProfileInput({
       return;
     }
 
-    if (previewUrl && previewUrl.startsWith("blob:")) {
+    if (previewUrl && previewUrl.startsWith('blob:')) {
       URL.revokeObjectURL(previewUrl);
     }
 
@@ -154,8 +134,8 @@ export default function ProfileInput({
       className={`
         ${styles.imageInputContainer} 
         ${styles[`size-${size}`]} 
-        ${isDragging ? styles.dragging : ""}
-        ${className || ""}
+        ${isDragging ? styles.dragging : ''}
+        ${className || ''}
       `}
       tabIndex={0}
     >
@@ -179,7 +159,7 @@ export default function ProfileInput({
           src={previewUrl || defaultImageUrl}
           size={size}
           alt="프로필 이미지"
-          className={`${styles.avatar} ${isDragging ? styles.draggingAvatar : ""}`}
+          className={`${styles.avatar} ${isDragging ? styles.draggingAvatar : ''}`}
         />
         <div className={styles.uploadOverlay}>
           <div className={styles.uploadIcon}>
@@ -188,9 +168,7 @@ export default function ProfileInput({
         </div>
       </div>
       <Text size="sm" color="secondary">
-        {isDragging
-          ? "이미지를 놓아주세요"
-          : "클릭 또는 드래그하여 이미지를 업로드 해주세요"}
+        {isDragging ? '이미지를 놓아주세요' : '클릭 또는 드래그하여 이미지를 업로드 해주세요'}
       </Text>
     </div>
   );

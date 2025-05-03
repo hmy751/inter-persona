@@ -1,6 +1,6 @@
-import styles from "./TotalEvaluationSection.module.css";
-import Text from "@repo/ui/Text";
-import { useGetResultTotalEvaluation } from "@/_data/result";
+import styles from './TotalEvaluationSection.module.css';
+import Text from '@repo/ui/Text';
+import { useGetResultTotalEvaluation } from '@/_data/result';
 
 interface TotalEvaluationSectionProps {}
 
@@ -20,7 +20,7 @@ export default function TotalEvaluationSection({}: TotalEvaluationSectionProps):
       <Text as="h3" size="md">
         Total Evaluation
       </Text>
-      {data.evaluation.map((item) => (
+      {data.evaluation.map(item => (
         <div className={styles.evaluation}>
           <div className={styles.evaluationHeader}>
             <Text size="sm" weight="bold">

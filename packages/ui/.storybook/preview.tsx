@@ -1,4 +1,4 @@
-import basicPreview from "@repo/storybook-config/preview";
+import basicPreview from '@repo/storybook-config/preview';
 
 const preview = {
   ...basicPreview,

@@ -1,16 +1,8 @@
-import {
-  ReactNode,
-  ReactElement,
-  useMemo,
-  useEffect,
-  useState,
-  createContext,
-  useContext,
-} from "react";
-import { createPortal } from "react-dom";
-import styles from "./Dialog.module.css";
-import Text from "./Text";
-import Button from "./Button";
+import { ReactNode, ReactElement, useMemo, useEffect, useState, createContext, useContext } from 'react';
+import { createPortal } from 'react-dom';
+import styles from './Dialog.module.css';
+import Text from './Text';
+import Button from './Button';
 
 interface DialogContextType {
   open: boolean;
@@ -30,11 +22,7 @@ const DialogContext = createContext<DialogContextType>({
   controlled: false,
 });
 
-export default function Dialog({
-  children,
-  open: controlledOpen,
-  onOpenChange,
-}: DialogProps): ReactElement {
+export default function Dialog({ children, open: controlledOpen, onOpenChange }: DialogProps): ReactElement {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
 
   const isControlled = controlledOpen !== undefined;
@@ -56,9 +44,7 @@ export default function Dialog({
     [open, setOpen, isControlled]
   );
 
-  return (
-    <DialogContext.Provider value={value}>{children}</DialogContext.Provider>
-  );
+  return <DialogContext.Provider value={value}>{children}</DialogContext.Provider>;
 }
 
 Dialog.Trigger = ({ children }: { children: ReactNode }) => {
@@ -72,11 +58,11 @@ Dialog.Content = ({ children }: { children: ReactNode }) => {
   // ESC key 클로즈 용도로 이벤트 등록
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === 'Escape') setOpen(false);
     };
 
-    document.addEventListener("keydown", handleEscape);
-    return () => document.removeEventListener("keydown", handleEscape);
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
   }, [setOpen]);
   if (!open) return null;
 
@@ -101,13 +87,7 @@ Dialog.Footer = ({ children }: { children: ReactNode }) => {
   return <div className={styles.footer}>{children}</div>;
 };
 
-Dialog.Confirm = ({
-  callback,
-  children,
-}: {
-  callback: () => void;
-  children: ReactNode;
-}) => {
+Dialog.Confirm = ({ callback, children }: { callback: () => void; children: ReactNode }) => {
   const { setOpen } = useContext(DialogContext);
   const handleConfirm = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -122,13 +102,7 @@ Dialog.Confirm = ({
   );
 };
 
-Dialog.Cancel = ({
-  callback,
-  children,
-}: {
-  callback?: () => void;
-  children: ReactNode;
-}) => {
+Dialog.Cancel = ({ callback, children }: { callback?: () => void; children: ReactNode }) => {
   const { setOpen } = useContext(DialogContext);
   const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();

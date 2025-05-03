@@ -6,15 +6,15 @@ export async function POST(req: Request) {
     const formData = await req.formData();
 
     const response = await fetch(`${INVOKE_URL}/recognizer/upload`, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "X-CLOVASPEECH-API-KEY": CLIENT_SECRET,
+        'X-CLOVASPEECH-API-KEY': CLIENT_SECRET,
       },
       body: formData,
     });
 
     if (!response.ok) {
-      throw new Error("STT API request failed");
+      throw new Error('STT API request failed');
     }
 
     const data = await response.json();
@@ -24,4 +24,4 @@ export async function POST(req: Request) {
       return new Response(error.message, { status: 500 });
     }
   }
-} 
+}
