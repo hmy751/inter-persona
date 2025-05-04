@@ -1,0 +1,17 @@
+{
+  "name": "@repo/schema",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    "./user": "./src/user.ts"
+  },
+  "dependencies": {
+    "zod": "^3.24.3"
+  },
+  "devDependencies": {
+    "@repo/constant": "workspace:*",
+    "@repo/typescript-config": "workspace:*"
+  }
+}
