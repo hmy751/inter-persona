@@ -1,20 +1,14 @@
-"use client";
+'use client';
 
-import Header from "@/_components/layout/Header/Header";
-import styles from "./LayoutUI.module.css";
-import dynamic from "next/dynamic";
+import Header from '@/_components/layout/Header/Header';
+import styles from './LayoutUI.module.css';
+import dynamic from 'next/dynamic';
 
-const AppToast = dynamic(() => import("@/_components/layout/AppToast"), {
+const AppToast = dynamic(() => import('@/_components/layout/AppToast'), {
   ssr: false,
 });
-const AppAlertDialog = dynamic(
-  () => import("@/_components/layout/AppAlertDialog"),
-  { ssr: false }
-);
-const AppConfirmDialog = dynamic(
-  () => import("@/_components/layout/AppConfirmDialog"),
-  { ssr: false }
-);
+const AppAlertDialog = dynamic(() => import('@/_components/layout/AppAlertDialog'), { ssr: false });
+const AppConfirmDialog = dynamic(() => import('@/_components/layout/AppConfirmDialog'), { ssr: false });
 
 interface LayoutProps {
   children: React.ReactNode;

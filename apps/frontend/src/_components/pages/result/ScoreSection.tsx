@@ -1,7 +1,7 @@
-import Text from "@repo/ui/Text";
-import styles from "./ScoreSection.module.css";
-import ProgressBar from "./ProgressBar";
-import { useGetResultScore } from "@/_data/result";
+import Text from '@repo/ui/Text';
+import styles from './ScoreSection.module.css';
+import ProgressBar from './ProgressBar';
+import { useGetResultScore } from '@/_data/result';
 
 interface ScoreSectionProps {}
 

@@ -1,5 +1,5 @@
-import styles from "./InterviewerProfile.module.css";
-import Avatar from "@repo/ui/Avatar";
+import styles from './InterviewerProfile.module.css';
+import Avatar from '@repo/ui/Avatar';
 
 export default function InterviewerProfile({
   src,
@@ -12,7 +12,7 @@ export default function InterviewerProfile({
 }) {
   return (
     <div className={styles.container}>
-      <Avatar src={src || "/assets/images/elon_musk.png"} size="md" />
+      <Avatar src={src || '/assets/images/elon_musk.png'} size="md" />
       <div className={styles.infoContainer}>
         <div className={styles.name}>{name}</div>
         <div className={styles.description}>{description}</div>

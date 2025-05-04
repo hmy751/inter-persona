@@ -1,30 +1,27 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import ChatArticle from "@/_components/pages/interview/ChatArticle";
-import {
-  ChatContentSpeakerType,
-  ChatContentStatusType,
-} from "@/_store/redux/type";
+import type { Meta, StoryObj } from '@storybook/react';
+import ChatArticle from '@/_components/pages/interview/ChatArticle';
+import { ChatContentSpeakerType, ChatContentStatusType } from '@/_store/redux/type';
 
 const interviewer = {
-  imgUrl: "/assets/images/elon_musk.png",
-  name: "Elon Musk",
-  description: "CEO of SpaceX, Tesla, and Neuralink",
+  imgUrl: '/assets/images/elon_musk.png',
+  name: 'Elon Musk',
+  description: 'CEO of SpaceX, Tesla, and Neuralink',
 };
 
 const user = {
-  imageSrc: "/assets/images/dev_profile.png",
+  imageSrc: '/assets/images/dev_profile.png',
 };
 
 const meta = {
-  title: "Pages/Interview/ChatArticle",
+  title: 'Pages/Interview/ChatArticle',
   component: ChatArticle,
   parameters: {
-    layout: "Desktop",
+    layout: 'Desktop',
     nextjs: {
       appDirectory: true,
     },
   },
-  tags: ["autodocs"],
+  tags: ['autodocs'],
 } satisfies Meta<typeof ChatArticle>;
 
 export default meta;
@@ -33,7 +30,7 @@ type Story = StoryObj<typeof meta>;
 const mockInterviewerChatContent = {
   status: ChatContentStatusType.success,
   speaker: ChatContentSpeakerType.bot,
-  content: "안녕하세요. 간단히 자기소개 부탁드립니다.",
+  content: '안녕하세요. 간단히 자기소개 부탁드립니다.',
   timeStamp: new Date(),
 };
 
@@ -53,7 +50,7 @@ export const InterviewerChat = {
 const mockLoadingInterviewerChatContent = {
   status: ChatContentStatusType.loading,
   speaker: ChatContentSpeakerType.bot,
-  content: "",
+  content: '',
   timeStamp: new Date(),
 };
 
@@ -73,7 +70,7 @@ export const InterviewerChatWithLoading = {
 const mockUserChatContent = {
   status: ChatContentStatusType.success,
   speaker: ChatContentSpeakerType.user,
-  content: "안녕하세요 개발자 입니다.",
+  content: '안녕하세요 개발자 입니다.',
   timeStamp: new Date(),
 };
 
@@ -93,7 +90,7 @@ export const UserChat = {
 const mockLoadingUserChatContent = {
   status: ChatContentStatusType.loading,
   speaker: ChatContentSpeakerType.user,
-  content: "",
+  content: '',
   timeStamp: new Date(),
 };
 
@@ -113,21 +110,20 @@ export const UserChatWithLoading = {
 const mockUserChatContentWithInterviewerError = {
   status: ChatContentStatusType.fail,
   speaker: ChatContentSpeakerType.user,
-  content: "안녕하세요 개발자 입니다.",
+  content: '안녕하세요 개발자 입니다.',
   timeStamp: new Date(),
 };
 
 export const UserChatWithInterviewerError = {
   decorators: [
     (Story: any) => (
-      <div style={{ height: "200px" }}>
+      <div style={{ height: '200px' }}>
         <Story />
       </div>
     ),
   ],
   render: () => {
-    const { status, speaker, content } =
-      mockUserChatContentWithInterviewerError;
+    const { status, speaker, content } = mockUserChatContentWithInterviewerError;
 
     return (
       <ChatArticle type={speaker} status={status} content={content}>

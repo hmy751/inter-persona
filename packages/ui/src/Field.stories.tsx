@@ -1,14 +1,14 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import Field from "./Field";
-import Input from "./Input";
-import { useState } from "react";
+import type { Meta, StoryObj } from '@storybook/react';
+import Field from './Field';
+import Input from './Input';
+import { useState } from 'react';
 const meta = {
-  title: "Common/Field",
+  title: 'Common/Field',
   component: Field,
   parameters: {
-    layout: "centered",
+    layout: 'centered',
   },
-  tags: ["autodocs"],
+  tags: ['autodocs'],
 } satisfies Meta<typeof Field>;
 
 export default meta;
@@ -16,7 +16,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {
   args: {
-    label: "Email",
+    label: 'Email',
     children: <Input placeholder="Enter Text..." />,
   },
   render() {
@@ -40,16 +40,14 @@ export const Primary: Story = {
 
 export const Error: Story = {
   args: {
-    label: "Email",
+    label: 'Email',
     children: <Input placeholder="Enter Text..." />,
-    message: "Please enter a valid email address",
+    message: 'Please enter a valid email address',
   },
   render() {
     const [isFocused, setIsFocused] = useState(false);
     const [isTouched, setIsTouched] = useState(false);
-    const [errorMessage, setErrorMessage] = useState(
-      "Please enter a valid email address"
-    );
+    const [errorMessage, setErrorMessage] = useState('Please enter a valid email address');
 
     return (
       <div>

@@ -1,12 +1,12 @@
-import React, { PropsWithChildren } from "react";
-import { render, RenderOptions, RenderResult } from "@testing-library/react";
-import { Provider } from "react-redux";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { createQueryClient } from "@/_components/layout/providers/QueryProvider";
-import { makeStore } from "@/_store/redux/rootStore";
-import type { AppStore, RootState } from "@/_store/redux/rootStore";
+import React, { PropsWithChildren } from 'react';
+import { render, RenderOptions, RenderResult } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { createQueryClient } from '@/_components/layout/providers/QueryProvider';
+import { makeStore } from '@/_store/redux/rootStore';
+import type { AppStore, RootState } from '@/_store/redux/rootStore';
 
-interface ExtendedRenderOptions extends Omit<RenderOptions, "queries"> {
+interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
   preloadedState?: Partial<RootState>;
   store?: AppStore;
   queryClient?: QueryClient;
@@ -24,9 +24,7 @@ export function renderWithProviders(
   function Wrapper({ children }: PropsWithChildren): JSX.Element {
     return (
       <Provider store={store}>
-        <QueryClientProvider client={queryClient}>
-          {children}
-        </QueryClientProvider>
+        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
       </Provider>
     );
   }

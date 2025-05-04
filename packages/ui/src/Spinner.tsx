@@ -1,22 +1,18 @@
-import styles from "./Spinner.module.css";
+import styles from './Spinner.module.css';
 
 interface SpinnerProps {
-  size?: "sm" | "md" | "lg";
+  size?: 'sm' | 'md' | 'lg';
   color?: string;
   className?: string;
 }
 
-export default function Spinner({
-  size = "md",
-  color = "var(--color-primary)",
-  className,
-}: SpinnerProps) {
+export default function Spinner({ size = 'md', color = 'var(--color-primary)', className }: SpinnerProps) {
   return (
     <div
       className={`
         ${styles.spinner}
         ${styles[size]}
-        ${className || ""}
+        ${className || ''}
       `}
       style={{ borderTopColor: color }}
       role="status"

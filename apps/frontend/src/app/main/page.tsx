@@ -1,6 +1,6 @@
-import styles from "./page.module.css";
-import Text from "@repo/ui/Text";
-import FormSection from "@/_components/pages/main/FormSection";
+import styles from './page.module.css';
+import Text from '@repo/ui/Text';
+import FormSection from '@/_components/pages/main/FormSection';
 
 export default function MainPage() {
   return (

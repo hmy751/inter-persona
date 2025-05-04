@@ -1,11 +1,10 @@
-"use client";
+'use client';
 
-import { useAlertDialogStore } from "@repo/store/useAlertDialogStore";
-import Dialog from "@repo/ui/Dialog";
+import { useAlertDialogStore } from '@repo/store/useAlertDialogStore';
+import Dialog from '@repo/ui/Dialog';
 
 export default function AppAlertDialog() {
-  const { open, setOpen, title, description, clearAlert } =
-    useAlertDialogStore();
+  const { open, setOpen, title, description, clearAlert } = useAlertDialogStore();
 
   return (
     <>

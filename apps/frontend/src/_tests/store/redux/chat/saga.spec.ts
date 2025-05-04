@@ -5,10 +5,26 @@ import { runSaga } from 'redux-saga';
 import useToastStore from '@repo/store/useToastStore';
 
 import { speechToTextSaga } from '@/_store/redux/features/chat/saga/speechToTextSaga';
-import { cancelCurrentRequestAnswerSaga, requestAnswerSaga, retryAnswerSaga } from '@/_store/redux/features/chat/saga/requestAnswerSaga';
-import { removeContent, triggerContent, SEND_RECORD, increaseTrySpeechCount, REQUEST_ANSWER, errorContent, updateContent, CANCEL_CURRENT_REQUEST_ANSWER, RETRY_ANSWER, resetTrySpeechCount, resetContentStatus } from '@/_store/redux/features/chat/slice';
+import {
+  cancelCurrentRequestAnswerSaga,
+  requestAnswerSaga,
+  retryAnswerSaga,
+} from '@/_store/redux/features/chat/saga/requestAnswerSaga';
+import {
+  removeContent,
+  triggerContent,
+  SEND_RECORD,
+  increaseTrySpeechCount,
+  REQUEST_ANSWER,
+  errorContent,
+  updateContent,
+  CANCEL_CURRENT_REQUEST_ANSWER,
+  RETRY_ANSWER,
+  resetTrySpeechCount,
+  resetContentStatus,
+} from '@/_store/redux/features/chat/slice';
 import { ChatContentSpeakerType } from '@/_store/redux/type';
-import { STT_ERROR_TOAST, STT_NETWORK_ERROR_TOAST, } from '@/_store/redux/features/chat/constants';
+import { STT_ERROR_TOAST, STT_NETWORK_ERROR_TOAST } from '@/_store/redux/features/chat/constants';
 
 afterEach(() => {
   jest.clearAllMocks();
@@ -29,14 +45,18 @@ describe('사용자 답변 녹음, 비동기 통신 에러 처리 테스트', ()
       type: SEND_RECORD,
       payload: {
         id: BigInt(1),
-        formData: new FormData()
-      }
+        formData: new FormData(),
+      },
     };
 
-    await runSaga({
-      dispatch: (action) => dispatched.push(action),
-      getState: () => ({ chat: { interviewId: 1, trySpeechCount: 0 } })
-    }, speechToTextSaga, action).toPromise();
+    await runSaga(
+      {
+        dispatch: action => dispatched.push(action),
+        getState: () => ({ chat: { interviewId: 1, trySpeechCount: 0 } }),
+      },
+      speechToTextSaga,
+      action
+    ).toPromise();
 
     expect(dispatched).toEqual([
       triggerContent({ speaker: ChatContentSpeakerType.user }),
@@ -61,35 +81,37 @@ describe('사용자 답변 녹음, 비동기 통신 에러 처리 테스트', ()
       type: SEND_RECORD,
       payload: {
         id: BigInt(1),
-        formData: new FormData()
-      }
+        formData: new FormData(),
+      },
     };
 
     for (let i = 0; i < 3; i++) {
-      await runSaga({
-        dispatch: (action) => dispatched.push(action),
-        getState: () => ({ chat: { interviewId: 1, trySpeechCount: 0 } })
-      }, speechToTextSaga, action).toPromise();
+      await runSaga(
+        {
+          dispatch: action => dispatched.push(action),
+          getState: () => ({ chat: { interviewId: 1, trySpeechCount: 0 } }),
+        },
+        speechToTextSaga,
+        action
+      ).toPromise();
 
-      expect(dispatched[i * 3]).toEqual(
-        triggerContent({ speaker: ChatContentSpeakerType.user }),
-      );
-      expect(dispatched[i * 3 + 1]).toEqual(
-        removeContent()
-      );
-      expect(dispatched[i * 3 + 2]).toEqual(
-        increaseTrySpeechCount()
-      );
+      expect(dispatched[i * 3]).toEqual(triggerContent({ speaker: ChatContentSpeakerType.user }));
+      expect(dispatched[i * 3 + 1]).toEqual(removeContent());
+      expect(dispatched[i * 3 + 2]).toEqual(increaseTrySpeechCount());
 
       expect(setAddToastSpy).toHaveBeenCalledWith(STT_ERROR_TOAST);
 
       attemptCount++;
     }
 
-    await runSaga({
-      dispatch: (action) => dispatched.push(action),
-      getState: () => ({ chat: { interviewId: 1, trySpeechCount: attemptCount } })
-    }, speechToTextSaga, action).toPromise();
+    await runSaga(
+      {
+        dispatch: action => dispatched.push(action),
+        getState: () => ({ chat: { interviewId: 1, trySpeechCount: attemptCount } }),
+      },
+      speechToTextSaga,
+      action
+    ).toPromise();
 
     expect(setAddToastSpy).toHaveBeenCalledWith(STT_NETWORK_ERROR_TOAST);
   });
@@ -108,14 +130,18 @@ describe('AI 응답 비동기 통신 에러 처리 테스트', () => {
       type: REQUEST_ANSWER,
       payload: {
         interviewId: 1,
-        content: 'test'
-      }
+        content: 'test',
+      },
     };
 
-    await runSaga({
-      dispatch: (action) => dispatched.push(action),
-      getState: () => ({ chat: { interviewId: 1, trySpeechCount: 0 } })
-    }, requestAnswerSaga, action).toPromise();
+    await runSaga(
+      {
+        dispatch: action => dispatched.push(action),
+        getState: () => ({ chat: { interviewId: 1, trySpeechCount: 0 } }),
+      },
+      requestAnswerSaga,
+      action
+    ).toPromise();
 
     expect(dispatched).toEqual([
       triggerContent({ speaker: ChatContentSpeakerType.bot }),
@@ -136,20 +162,24 @@ describe('AI 응답 비동기 통신 에러 처리 테스트', () => {
       type: REQUEST_ANSWER,
       payload: {
         interviewId: 1,
-        content: 'test'
-      }
+        content: 'test',
+      },
     };
 
-    await runSaga({
-      dispatch: (action) => dispatched.push(action),
-      getState: () => ({ chat: { interviewId: 1, trySpeechCount: 0 } })
-    }, requestAnswerSaga, action).toPromise();
+    await runSaga(
+      {
+        dispatch: action => dispatched.push(action),
+        getState: () => ({ chat: { interviewId: 1, trySpeechCount: 0 } }),
+      },
+      requestAnswerSaga,
+      action
+    ).toPromise();
 
     const prevErrorDispatched = [
       triggerContent({ speaker: ChatContentSpeakerType.bot }),
       removeContent(),
       errorContent(),
-    ]
+    ];
 
     expect(dispatched).toEqual(prevErrorDispatched);
 
@@ -164,13 +194,17 @@ describe('AI 응답 비동기 통신 에러 처리 테스트', () => {
       payload: {
         interviewId: 1,
         content: 'test',
-      }
+      },
     };
 
-    await runSaga({
-      dispatch: (action) => dispatched.push(action),
-      getState: () => ({ chat: { interviewId: 1, trySpeechCount: 0 } })
-    }, retryAnswerSaga, retryAction).toPromise();
+    await runSaga(
+      {
+        dispatch: action => dispatched.push(action),
+        getState: () => ({ chat: { interviewId: 1, trySpeechCount: 0 } }),
+      },
+      retryAnswerSaga,
+      retryAction
+    ).toPromise();
 
     expect(dispatched).toEqual([
       ...prevErrorDispatched,
@@ -193,32 +227,35 @@ describe('AI 응답 비동기 통신 에러 처리 테스트', () => {
       type: REQUEST_ANSWER,
       payload: {
         interviewId: 1,
-        content: 'test'
-      }
+        content: 'test',
+      },
     };
 
-    await runSaga({
-      dispatch: (action) => dispatched.push(action),
-      getState: () => ({ chat: { interviewId: 1, trySpeechCount: 0 } })
-    }, requestAnswerSaga, action).toPromise();
+    await runSaga(
+      {
+        dispatch: action => dispatched.push(action),
+        getState: () => ({ chat: { interviewId: 1, trySpeechCount: 0 } }),
+      },
+      requestAnswerSaga,
+      action
+    ).toPromise();
 
     const prevErrorDispatched = [
       triggerContent({ speaker: ChatContentSpeakerType.bot }),
       removeContent(),
       errorContent(),
-    ]
+    ];
 
     expect(dispatched).toEqual(prevErrorDispatched);
 
-    await runSaga({
-      dispatch: (action) => dispatched.push(action),
-      getState: () => ({ chat: { interviewId: 1, trySpeechCount: 0 } })
-    }, cancelCurrentRequestAnswerSaga).toPromise();
+    await runSaga(
+      {
+        dispatch: action => dispatched.push(action),
+        getState: () => ({ chat: { interviewId: 1, trySpeechCount: 0 } }),
+      },
+      cancelCurrentRequestAnswerSaga
+    ).toPromise();
 
-    expect(dispatched).toEqual([
-      ...prevErrorDispatched,
-      removeContent(),
-      resetTrySpeechCount(),
-    ]);
+    expect(dispatched).toEqual([...prevErrorDispatched, removeContent(), resetTrySpeechCount()]);
   });
 });

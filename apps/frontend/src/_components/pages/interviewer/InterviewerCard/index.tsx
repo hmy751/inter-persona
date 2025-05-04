@@ -1,7 +1,7 @@
-import Image from "next/image";
-import styles from "./InterviewerCard.module.css";
-import Text from "@repo/ui/Text";
-import StartInterviewButton from "./StartInterviewButton";
+import Image from 'next/image';
+import styles from './InterviewerCard.module.css';
+import Text from '@repo/ui/Text';
+import StartInterviewButton from './StartInterviewButton';
 
 interface InterviewerCardProps {
   id: number;

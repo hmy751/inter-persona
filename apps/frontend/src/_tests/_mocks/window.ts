@@ -1,4 +1,3 @@
-
 /**
  * window.navigator
  */
@@ -6,7 +5,7 @@ export const mockStream = {};
 const mockGetUserMedia = jest.fn().mockResolvedValue(mockStream);
 
 if (!window.navigator.mediaDevices) {
-  Object.defineProperty(window.navigator, "mediaDevices", {
+  Object.defineProperty(window.navigator, 'mediaDevices', {
     writable: true,
     configurable: true,
     enumerable: true,
@@ -15,7 +14,6 @@ if (!window.navigator.mediaDevices) {
     },
   });
 }
-
 
 /**
  * window.AudioContext
@@ -27,16 +25,14 @@ const mockAnalyserNode = {
 };
 const mockCreateAnalyser = jest.fn().mockImplementation(() => mockAnalyserNode);
 const mockSource = { connect: jest.fn() };
-const mockCreateMediaStreamSource = jest
-  .fn()
-  .mockImplementation(() => mockSource);
+const mockCreateMediaStreamSource = jest.fn().mockImplementation(() => mockSource);
 
 function MockAudioContextConstructor(this: any) {
   this.createAnalyser = mockCreateAnalyser;
   this.createMediaStreamSource = mockCreateMediaStreamSource;
 }
 
-Object.defineProperty(window, "AudioContext", {
+Object.defineProperty(window, 'AudioContext', {
   value: jest.fn(MockAudioContextConstructor),
 });
 
@@ -44,11 +40,11 @@ Object.defineProperty(window, "AudioContext", {
  * File 관련 mock
  */
 const mockFile = jest.fn().mockImplementation(() => ({
-  type: "audio/wav",
-  name: "recording.wav",
+  type: 'audio/wav',
+  name: 'recording.wav',
 }));
 
-Object.defineProperty(window, "File", {
+Object.defineProperty(window, 'File', {
   value: mockFile,
 });
 
@@ -59,6 +55,6 @@ export const mockFormData = {
   append: jest.fn(),
 };
 const MockFormData = jest.fn().mockImplementation(() => mockFormData);
-Object.defineProperty(window, "FormData", {
+Object.defineProperty(window, 'FormData', {
   value: MockFormData,
 });

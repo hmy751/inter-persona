@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
 type ValidatorFn = (value: string, ...args: any[]) => string;
 
@@ -30,14 +30,14 @@ interface FormFieldState {
 }
 
 export function useFormField({
-  initialValue = "",
+  initialValue = '',
   validator,
   dependencies = [],
 }: UseFormFieldProps = {}): FormFieldState {
   const [value, setValue] = useState(initialValue);
   const [isFocused, setFocused] = useState(false);
   const [isTouched, setTouched] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (isTouched && validator) {
@@ -53,7 +53,7 @@ export function useFormField({
     setValue(initialValue);
     setFocused(false);
     setTouched(false);
-    setError("");
+    setError('');
   };
 
   return {

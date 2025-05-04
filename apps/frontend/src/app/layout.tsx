@@ -1,12 +1,12 @@
-import { Noto_Sans_KR } from "next/font/google";
-import "@repo/ui/styles/globals.css";
-import MSWProvider from "@/_components/layout/providers/MSWProvider";
-import RootProviders from "@/_components/layout/providers/RootProviders";
-import LayoutUI from "@/_components/layout/LayoutUI";
+import { Noto_Sans_KR } from 'next/font/google';
+import '@repo/ui/styles/globals.css';
+import MSWProvider from '@/_components/layout/providers/MSWProvider';
+import RootProviders from '@/_components/layout/providers/RootProviders';
+import LayoutUI from '@/_components/layout/LayoutUI';
 
 const noto_sans_kr = Noto_Sans_KR({
-  subsets: ["latin"],
-  display: "swap",
+  subsets: ['latin'],
+  display: 'swap',
 });
 
 export default function RootLayout({

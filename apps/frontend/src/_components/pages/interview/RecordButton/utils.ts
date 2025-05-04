@@ -1,4 +1,4 @@
-import { RecordingStatusType } from "./RecordButton";
+import { RecordingStatusType } from './RecordButton';
 
 export const checkFileWave = (audioFile: File) => {
   const reader = new FileReader();
@@ -12,10 +12,10 @@ export const checkFileWave = (audioFile: File) => {
     const header = String.fromCharCode(...uint8Array.slice(0, 4)); // "RIFF" 확인
     const waveFormat = String.fromCharCode(...uint8Array.slice(8, 12)); // "WAVE" 확인
 
-    if (header === "RIFF" && waveFormat === "WAVE") {
-      console.log("This is a valid WAV file.");
+    if (header === 'RIFF' && waveFormat === 'WAVE') {
+      console.log('This is a valid WAV file.');
     } else {
-      console.log("This is not a WAV file.");
+      console.log('This is not a WAV file.');
     }
   };
 
@@ -30,7 +30,6 @@ export const detectSilence = (
   silenceThreshold = 0.01,
   timeout = 1000
 ) => {
-
   let silenceStart = performance.now();
   let animationFrameId: number;
 
@@ -38,7 +37,6 @@ export const detectSilence = (
     analyser.getByteTimeDomainData(dataArray);
 
     let sumSquares = 0;
-
 
     // RMS 계산
     for (let i = 0; i < dataArray.length; i++) {

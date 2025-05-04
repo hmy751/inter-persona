@@ -1,15 +1,15 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import Dialog from "./Dialog";
-import Button from "./Button";
-import { useAlertDialogStore } from "@repo/store/useAlertDialogStore";
-import { useConfirmDialogStore } from "@repo/store/useConfirmDialogStore";
+import type { Meta, StoryObj } from '@storybook/react';
+import Dialog from './Dialog';
+import Button from './Button';
+import { useAlertDialogStore } from '@repo/store/useAlertDialogStore';
+import { useConfirmDialogStore } from '@repo/store/useConfirmDialogStore';
 const meta = {
-  title: "Common/Dialog",
+  title: 'Common/Dialog',
   component: Dialog,
   parameters: {
-    layout: "centered",
+    layout: 'centered',
   },
-  tags: ["autodocs"],
+  tags: ['autodocs'],
 } satisfies Meta<typeof Dialog>;
 
 export default meta;
@@ -27,9 +27,7 @@ export const Primary: Story = {
         </Dialog.Trigger>
         <Dialog.Content>
           <Dialog.Title>Dialog Title</Dialog.Title>
-          <Dialog.Description>
-            This is a description of the dialog content.
-          </Dialog.Description>
+          <Dialog.Description>This is a description of the dialog content.</Dialog.Description>
           <Dialog.Footer>
             <Dialog.Cancel>Ok</Dialog.Cancel>
           </Dialog.Footer>
@@ -45,7 +43,7 @@ export const WithFooter: Story = {
   },
   render: () => {
     const handleConfirm = () => {
-      console.log("Confirm");
+      console.log('Confirm');
     };
 
     return (
@@ -55,9 +53,7 @@ export const WithFooter: Story = {
         </Dialog.Trigger>
         <Dialog.Content>
           <Dialog.Title>Dialog Title</Dialog.Title>
-          <Dialog.Description>
-            This is a description of the dialog content.
-          </Dialog.Description>
+          <Dialog.Description>This is a description of the dialog content.</Dialog.Description>
           <Dialog.Footer>
             <Dialog.Cancel>Cancel</Dialog.Cancel>
             <Dialog.Confirm callback={handleConfirm}>Confirm</Dialog.Confirm>
@@ -73,14 +69,11 @@ export const ControlledAlertDialog: Story = {
     children: <div></div>,
   },
   render: () => {
-    const { open, setOpen, title, description, setAlert, clearAlert } =
-      useAlertDialogStore();
+    const { open, setOpen, title, description, setAlert, clearAlert } = useAlertDialogStore();
 
     return (
       <>
-        <Button onClick={() => setAlert("Error", "This is a Network Error")}>
-          Set Alert
-        </Button>
+        <Button onClick={() => setAlert('Error', 'This is a Network Error')}>Set Alert</Button>
         <Dialog open={open} onOpenChange={setOpen}>
           <Dialog.Content>
             <Dialog.Title>{title}</Dialog.Title>
@@ -100,22 +93,14 @@ export const ControlledConfirmDialog: Story = {
     children: <div></div>,
   },
   render: () => {
-    const {
-      open,
-      setOpen,
-      title,
-      description,
-      confirmCallback,
-      clearConfirm,
-      setConfirm,
-    } = useConfirmDialogStore();
+    const { open, setOpen, title, description, confirmCallback, clearConfirm, setConfirm } = useConfirmDialogStore();
 
     return (
       <>
         <Button
           onClick={() =>
-            setConfirm("Confirm", "Are you sure?", () => {
-              console.log("Confirmed");
+            setConfirm('Confirm', 'Are you sure?', () => {
+              console.log('Confirmed');
             })
           }
         >
@@ -127,9 +112,7 @@ export const ControlledConfirmDialog: Story = {
             <Dialog.Description>{description}</Dialog.Description>
             <Dialog.Footer>
               <Dialog.Cancel callback={clearConfirm}>Cancel</Dialog.Cancel>
-              <Dialog.Confirm callback={confirmCallback}>
-                Confirm
-              </Dialog.Confirm>
+              <Dialog.Confirm callback={confirmCallback}>Confirm</Dialog.Confirm>
             </Dialog.Footer>
           </Dialog.Content>
         </Dialog>

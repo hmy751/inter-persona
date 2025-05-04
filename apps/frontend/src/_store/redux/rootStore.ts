@@ -1,25 +1,28 @@
-import { configureStore } from "@reduxjs/toolkit";
-import createSagaMiddleware from "redux-saga";
-import chatReducer from "@/_store/redux/features/chat/slice";
-import { rootSaga } from "./rootSaga";
+import { configureStore } from '@reduxjs/toolkit';
+import createSagaMiddleware from 'redux-saga';
+import chatReducer from '@/_store/redux/features/chat/slice';
+import { rootSaga } from './rootSaga';
 
 const sagaMiddleware = createSagaMiddleware();
 
 export const makeStore = (preloadedState = {}) => {
   const store = configureStore({
-    middleware: (getDefaultMiddleware) =>
+    middleware: getDefaultMiddleware =>
       getDefaultMiddleware({
-        serializableCheck: process.env.NODE_ENV === 'test' ? false : {
-          ignoredActions: ["SEND_RECORD", 'chat/startChat', 'chat/triggerContent'],
-          ignoredActionPaths: ["payload.formData"],
-          ignoredPaths: ['chat.contents.*.timeStamp'],
-        },
+        serializableCheck:
+          process.env.NODE_ENV === 'test'
+            ? false
+            : {
+                ignoredActions: ['SEND_RECORD', 'chat/startChat', 'chat/triggerContent'],
+                ignoredActionPaths: ['payload.formData'],
+                ignoredPaths: ['chat.contents.*.timeStamp'],
+              },
       }).concat(sagaMiddleware),
     reducer: {
       chat: chatReducer,
     },
     preloadedState,
-    devTools: process.env.NODE_ENV !== "production",
+    devTools: process.env.NODE_ENV !== 'production',
   });
 
   sagaMiddleware.run(rootSaga);
@@ -27,5 +30,5 @@ export const makeStore = (preloadedState = {}) => {
 };
 
 export type AppStore = ReturnType<typeof makeStore>;
-export type RootState = ReturnType<AppStore["getState"]>;
-export type AppDispatch = AppStore["dispatch"];
+export type RootState = ReturnType<AppStore['getState']>;
+export type AppDispatch = AppStore['dispatch'];

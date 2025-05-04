@@ -12,8 +12,8 @@ export const setNextParamsMock = (params: Record<string, string>) => {
   Object.assign(mockParams, params);
 };
 
-jest.mock("next/navigation", () => {
-  const originalModule = jest.requireActual("next/navigation");
+jest.mock('next/navigation', () => {
+  const originalModule = jest.requireActual('next/navigation');
   return {
     __esModule: true,
     ...originalModule,
@@ -28,7 +28,7 @@ jest.mock("next/navigation", () => {
     useSearchParams: jest.fn().mockImplementation(() => {
       return new URLSearchParams(window.location.search);
     }),
-    usePathname: jest.fn().mockImplementation((pathArg) => {
+    usePathname: jest.fn().mockImplementation(pathArg => {
       return pathArg;
     }),
     useParams: jest.fn().mockImplementation(() => mockParams),
@@ -38,7 +38,7 @@ jest.mock("next/navigation", () => {
 /**
  * next/image mock
  */
-jest.mock("next/image", () => ({
+jest.mock('next/image', () => ({
   __esModule: true,
   default: ({ src, alt, ...props }: any) => {
     return <img src={src} alt={alt} {...props} />;
@@ -48,7 +48,7 @@ jest.mock("next/image", () => ({
 /**
  * next/head mock
  */
-jest.mock("next/head", () => {
+jest.mock('next/head', () => {
   return {
     __esModule: true,
     default: ({ children }: { children: React.ReactNode }) => {
@@ -60,15 +60,13 @@ jest.mock("next/head", () => {
 /**
  * next/dynamic mock
  */
-jest.mock("next/dynamic", () => ({
+jest.mock('next/dynamic', () => ({
   __esModule: true,
   default: (...props: any) => {
-    const dynamicModule = jest.requireActual("next/dynamic");
+    const dynamicModule = jest.requireActual('next/dynamic');
     const dynamicActualComp = dynamicModule.default;
     const RequiredComponent = dynamicActualComp(props[0]);
-    RequiredComponent.preload
-      ? RequiredComponent.preload()
-      : RequiredComponent.render.preload();
+    RequiredComponent.preload ? RequiredComponent.preload() : RequiredComponent.render.preload();
     return RequiredComponent;
   },
 }));
