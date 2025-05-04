@@ -1,16 +1,16 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import Spinner from "@repo/ui/Spinner";
+import type { Meta, StoryObj } from '@storybook/react';
+import Spinner from '@repo/ui/Spinner';
 
 const meta = {
-  title: "Common/Spinner",
+  title: 'Common/Spinner',
   component: Spinner,
   parameters: {
-    layout: "centered",
+    layout: 'centered',
   },
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   argTypes: {
-    size: { control: "select", options: ["sm", "md", "lg"] },
-    color: { control: "color" },
+    size: { control: 'select', options: ['sm', 'md', 'lg'] },
+    color: { control: 'color' },
   },
 } satisfies Meta<typeof Spinner>;
 
@@ -19,6 +19,6 @@ type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {
   args: {
-    size: "md",
+    size: 'md',
   },
 };

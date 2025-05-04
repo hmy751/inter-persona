@@ -7,7 +7,7 @@ interface RecorderMockType extends jest.Mock {
 const mockRecorderInit = jest.fn().mockResolvedValue(undefined);
 const mockRecorderStart = jest.fn().mockResolvedValue(undefined);
 const mockRecorderStop = jest.fn().mockResolvedValue({
-  blob: new Blob(["mock audio data"], { type: "audio/wav" }),
+  blob: new Blob(['mock audio data'], { type: 'audio/wav' }),
 });
 
 function RecorderMockConstructor(this: any, audioContext: AudioContext) {
@@ -22,4 +22,4 @@ RecorderMock.mockRecorderInit = mockRecorderInit;
 RecorderMock.mockRecorderStart = mockRecorderStart;
 RecorderMock.mockRecorderStop = mockRecorderStop;
 
-jest.mock("recorder-js", () => RecorderMock);
+jest.mock('recorder-js', () => RecorderMock);

@@ -1,5 +1,5 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { delay } from "@/_libs/utils";
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { delay } from '@/_libs/utils';
 import {
   fetchCreateInterview,
   fetchGetInterview,
@@ -8,15 +8,15 @@ import {
   GetInterviewResponse,
   GetInterviewInterviewerResponse,
   GetInterviewUserResponse,
-} from "@/_apis/interview";
-import { APIError } from "@/_apis/fetcher";
-import useToastStore from "@repo/store/useToastStore";
-import { useRouter } from "next/navigation";
+} from '@/_apis/interview';
+import { APIError } from '@/_apis/fetcher';
+import useToastStore from '@repo/store/useToastStore';
+import { useRouter } from 'next/navigation';
 
 // 인터뷰 조회
 export const useGetInterview = (interviewId: number) => {
   return useQuery<GetInterviewResponse, APIError>({
-    queryKey: ["interview", interviewId],
+    queryKey: ['interview', interviewId],
     queryFn: () => fetchGetInterview({ interviewId }),
     enabled: !!interviewId,
   });
@@ -25,7 +25,7 @@ export const useGetInterview = (interviewId: number) => {
 // 인터뷰 생성
 export const useCreateInterview = (userId: number, interviewerId: number) => {
   const router = useRouter();
-  const addToast = useToastStore((state) => state.addToast);
+  const addToast = useToastStore(state => state.addToast);
 
   const { mutate, isPending } = useMutation({
     mutationFn: async () => {
@@ -36,29 +36,29 @@ export const useCreateInterview = (userId: number, interviewerId: number) => {
         userId,
       });
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       if (!data?.id) {
         addToast({
-          title: "인터뷰 생성 실패",
-          description: "인터뷰 생성에 실패했습니다. 다시 시도해주세요.",
+          title: '인터뷰 생성 실패',
+          description: '인터뷰 생성에 실패했습니다. 다시 시도해주세요.',
         });
         return;
       }
 
       router.push(`/interview/${data.id}`);
     },
-    onError: (error) => {
+    onError: error => {
       if (error instanceof APIError) {
         addToast({
-          title: "인터뷰 생성 실패",
+          title: '인터뷰 생성 실패',
           description: error.message,
         });
         return;
       }
 
       addToast({
-        title: "인터뷰 생성 실패",
-        description: "인터뷰 생성에 실패했습니다. 다시 시도해주세요.",
+        title: '인터뷰 생성 실패',
+        description: '인터뷰 생성에 실패했습니다. 다시 시도해주세요.',
       });
     },
   });
@@ -66,11 +66,10 @@ export const useCreateInterview = (userId: number, interviewerId: number) => {
   return { mutate, isPending };
 };
 
-
-// 인터뷰, 인터뷰어 조회 
+// 인터뷰, 인터뷰어 조회
 export const useGetInterviewInterviewer = (interviewId: number) => {
   return useQuery<GetInterviewInterviewerResponse, APIError>({
-    queryKey: ["interview", interviewId, "interviewer"],
+    queryKey: ['interview', interviewId, 'interviewer'],
     queryFn: () => fetchGetInterviewInterviewer({ interviewId }),
     enabled: !!interviewId,
   });
@@ -79,7 +78,7 @@ export const useGetInterviewInterviewer = (interviewId: number) => {
 // 인터뷰, 유저 조회
 export const useGetInterviewUser = (interviewId: number) => {
   return useQuery<GetInterviewUserResponse, APIError>({
-    queryKey: ["interview", interviewId, "user"],
+    queryKey: ['interview', interviewId, 'user'],
     queryFn: () => fetchGetInterviewUser({ interviewId }),
     enabled: !!interviewId,
   });

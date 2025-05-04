@@ -1,4 +1,4 @@
-import { create } from "zustand";
+import { create } from 'zustand';
 
 export interface AlertDialogState {
   open: boolean;
@@ -9,15 +9,15 @@ export interface AlertDialogState {
   clearAlert: () => void;
 }
 
-export const useAlertDialogStore = create<AlertDialogState>((set) => ({
+export const useAlertDialogStore = create<AlertDialogState>(set => ({
   open: false,
-  title: "",
-  description: "",
+  title: '',
+  description: '',
   setOpen: (open: boolean) => set({ open }),
   setAlert: (title: string, description: string) => {
     set({ open: true, title, description });
   },
-  clearAlert: () => set({ open: false, title: "", description: "" }),
+  clearAlert: () => set({ open: false, title: '', description: '' }),
 }));
 
 export default useAlertDialogStore;

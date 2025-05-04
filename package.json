@@ -12,6 +12,7 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "eslint-plugin-prettier": "^5.3.1",
     "path": "^0.12.7",
     "prettier": "^3.2.5",
     "tsup": "^8.3.5",

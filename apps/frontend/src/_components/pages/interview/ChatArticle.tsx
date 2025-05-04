@@ -1,16 +1,13 @@
-import { createContext, useContext, useMemo } from "react";
-import styles from "./chat.module.css";
-import Avatar from "@repo/ui/Avatar";
-import clsx from "clsx";
-import Button from "@repo/ui/Button";
-import { ChatContentStatusType } from "@/_store/redux/type";
-import { useDispatch } from "react-redux";
-import {
-  RETRY_ANSWER,
-  CANCEL_CURRENT_REQUEST_ANSWER,
-} from "@/_store/redux/features/chat/slice";
+import { createContext, useContext, useMemo } from 'react';
+import styles from './chat.module.css';
+import Avatar from '@repo/ui/Avatar';
+import clsx from 'clsx';
+import Button from '@repo/ui/Button';
+import { ChatContentStatusType } from '@/_store/redux/type';
+import { useDispatch } from 'react-redux';
+import { RETRY_ANSWER, CANCEL_CURRENT_REQUEST_ANSWER } from '@/_store/redux/features/chat/slice';
 
-export type ChatType = "user" | "bot" | "";
+export type ChatType = 'user' | 'bot' | '';
 
 interface ChatArticleProps {
   type: ChatType;
@@ -23,7 +20,7 @@ const ChatArticleContext = createContext<{
   type: ChatType;
   status: ChatContentStatusType;
   content: string | null;
-}>({ type: "", status: ChatContentStatusType.loading, content: null });
+}>({ type: '', status: ChatContentStatusType.loading, content: null });
 
 function ChatRetryCancelSelector() {
   const { status, content } = useContext(ChatArticleContext);
@@ -61,29 +58,15 @@ function ChatRetryCancelSelector() {
 function ChatSpeech() {
   const { type, status, content } = useContext(ChatArticleContext);
 
-  if (status === "loading") {
-    if (type === "user") {
-      return (
-        <div
-          className={clsx(styles.skeletonLoader, styles.skeletonBlueBackground)}
-        />
-      );
+  if (status === 'loading') {
+    if (type === 'user') {
+      return <div className={clsx(styles.skeletonLoader, styles.skeletonBlueBackground)} />;
     } else {
-      return (
-        <div
-          className={clsx(styles.skeletonLoader, styles.skeletonGrayBackground)}
-        />
-      );
+      return <div className={clsx(styles.skeletonLoader, styles.skeletonGrayBackground)} />;
     }
   }
 
-  return (
-    <div
-      className={type === "user" ? styles.chatSpeechUser : styles.chatSpeechBot}
-    >
-      {content}
-    </div>
-  );
+  return <div className={type === 'user' ? styles.chatSpeechUser : styles.chatSpeechBot}>{content}</div>;
 }
 
 function ChatAvatar({ src }: { src: string }) {
@@ -94,26 +77,12 @@ function ChatAvatar({ src }: { src: string }) {
   );
 }
 
-export default function ChatArticle({
-  type,
-  children,
-  status,
-  content,
-}: ChatArticleProps) {
-  const contextValue = useMemo(
-    () => ({ type, status, content }),
-    [type, status, content]
-  );
+export default function ChatArticle({ type, children, status, content }: ChatArticleProps) {
+  const contextValue = useMemo(() => ({ type, status, content }), [type, status, content]);
 
   return (
     <ChatArticleContext.Provider value={contextValue}>
-      <div
-        className={
-          type === "user" ? styles.chatArticleUser : styles.chatArticleBot
-        }
-      >
-        {children}
-      </div>
+      <div className={type === 'user' ? styles.chatArticleUser : styles.chatArticleBot}>{children}</div>
     </ChatArticleContext.Provider>
   );
 }

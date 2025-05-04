@@ -1,11 +1,10 @@
-"use client";
+'use client';
 
-import { useConfirmDialogStore } from "@repo/store/useConfirmDialogStore";
-import Dialog from "@repo/ui/Dialog";
+import { useConfirmDialogStore } from '@repo/store/useConfirmDialogStore';
+import Dialog from '@repo/ui/Dialog';
 
 export default function AppConfirmDialog() {
-  const { open, setOpen, title, description, confirmCallback, clearConfirm } =
-    useConfirmDialogStore();
+  const { open, setOpen, title, description, confirmCallback, clearConfirm } = useConfirmDialogStore();
 
   return (
     <>

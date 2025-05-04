@@ -3,8 +3,8 @@
 
 // Used for __tests__/testing-library.js
 // Learn more: https://github.com/testing-library/jest-dom
-import "jest-canvas-mock";
-import "jest-css-modules";
+import 'jest-canvas-mock';
+import 'jest-css-modules';
 
 // // window 객체가 없을 경우를 대비한 전역 설정
 if (typeof window === 'undefined') {

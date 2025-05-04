@@ -1,4 +1,4 @@
-import fetcher from "./fetcher";
+import fetcher from './fetcher';
 
 // 로그인
 export interface LoginBody {
@@ -13,7 +13,7 @@ interface LoginResponse {
 }
 
 export const fetchLogin = async ({ email, password }: LoginBody) => {
-  return fetcher.post<LoginResponse>("login", {
+  return fetcher.post<LoginResponse>('login', {
     email,
     password,
   });
@@ -21,7 +21,4 @@ export const fetchLogin = async ({ email, password }: LoginBody) => {
 
 // 회원가입
 
-
 // 회원 정보 조회
-
-

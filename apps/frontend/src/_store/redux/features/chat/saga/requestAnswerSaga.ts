@@ -1,9 +1,4 @@
-
-import {
-  call,
-  put,
-  select,
-} from "redux-saga/effects";
+import { call, put, select } from 'redux-saga/effects';
 import {
   START_CHAT,
   triggerContent,
@@ -13,17 +8,14 @@ import {
   resetTrySpeechCount,
   CANCEL_CURRENT_REQUEST_ANSWER,
   resetContentStatus,
-} from "../slice";
-import { delay } from "../../../utils";
-import { RootState } from "@/_store/redux/rootStore";
-import {
-  fetchAnswer,
-  AnswerData,
-} from "@/_apis/interview";
-import { ChatContentSpeakerType } from "@/_store/redux/type";
-import { useToastStore } from "@repo/store/useToastStore";
-import { AI_ERROR_TOAST, AI_NETWORK_ERROR_TOAST } from "../constants";
-import { errorContent } from "../slice";
+} from '../slice';
+import { delay } from '../../../utils';
+import { RootState } from '@/_store/redux/rootStore';
+import { fetchAnswer, AnswerData } from '@/_apis/interview';
+import { ChatContentSpeakerType } from '@/_store/redux/type';
+import { useToastStore } from '@repo/store/useToastStore';
+import { AI_ERROR_TOAST, AI_NETWORK_ERROR_TOAST } from '../constants';
+import { errorContent } from '../slice';
 interface RequestAnswerAction {
   type: string;
   payload: {
@@ -62,9 +54,7 @@ export function* requestAnswerSaga(action: RequestAnswerAction): Generator<any, 
       yield put(errorContent());
     }
   } catch (err) {
-    useToastStore
-      .getState()
-      .addToast(AI_NETWORK_ERROR_TOAST);
+    useToastStore.getState().addToast(AI_NETWORK_ERROR_TOAST);
     yield put(removeContent());
   }
 }

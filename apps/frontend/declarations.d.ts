@@ -1,5 +1,5 @@
-import { TransitionShaderMaterial } from "./path/to/TransitionShader";
-import * as THREE from "three";
+import { TransitionShaderMaterial } from './path/to/TransitionShader';
+import * as THREE from 'three';
 
 declare global {
   namespace JSX {

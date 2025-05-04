@@ -1,6 +1,5 @@
-
 export const delay = (ms: number) => {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  return new Promise(resolve => setTimeout(resolve, ms));
 };
 
 export const urlToFile = async (url: string, filename: string, mimeType: string) => {

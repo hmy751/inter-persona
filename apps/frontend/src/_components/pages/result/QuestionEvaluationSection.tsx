@@ -1,6 +1,6 @@
-import Text from "@repo/ui/Text";
-import styles from "./QuestionEvaluationSection.module.css";
-import { useGetResultQuestionEvaluation } from "@/_data/result";
+import Text from '@repo/ui/Text';
+import styles from './QuestionEvaluationSection.module.css';
+import { useGetResultQuestionEvaluation } from '@/_data/result';
 
 interface QuestionEvaluationSectionProps {}
 

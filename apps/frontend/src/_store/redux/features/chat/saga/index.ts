@@ -1,8 +1,8 @@
-import { takeLatest } from "redux-saga/effects";
-import { SEND_RECORD, START_CHAT, CANCEL_CURRENT_REQUEST_ANSWER, RETRY_ANSWER } from "../slice";
+import { takeLatest } from 'redux-saga/effects';
+import { SEND_RECORD, START_CHAT, CANCEL_CURRENT_REQUEST_ANSWER, RETRY_ANSWER } from '../slice';
 
-import { requestAnswerSaga, cancelCurrentRequestAnswerSaga, retryAnswerSaga } from "./requestAnswerSaga";
-import { speechToTextSaga } from "./speechToTextSaga";
+import { requestAnswerSaga, cancelCurrentRequestAnswerSaga, retryAnswerSaga } from './requestAnswerSaga';
+import { speechToTextSaga } from './speechToTextSaga';
 
 export function* watchRecord() {
   yield takeLatest(SEND_RECORD, speechToTextSaga);

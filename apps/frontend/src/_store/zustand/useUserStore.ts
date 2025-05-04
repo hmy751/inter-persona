@@ -1,5 +1,5 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 interface UserData {
   id: number;
@@ -17,13 +17,13 @@ interface UserState {
 
 const useUserStore = create<UserState>()(
   persist(
-    (set) => ({
+    set => ({
       user: null as UserData | null,
       setUser: (user: UserData) => set({ user }),
       clearUser: () => set({ user: null }),
     }),
     {
-      name: "user-storage",
+      name: 'user-storage',
     }
   )
 );

@@ -1,6 +1,6 @@
-import { useEffect, useRef } from "react";
-import clsx from "clsx";
-import styles from "./Input.module.css";
+import { useEffect, useRef } from 'react';
+import clsx from 'clsx';
+import styles from './Input.module.css';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   isFocused?: boolean;
@@ -45,16 +45,16 @@ export default function Input({
         onTouchChange?.(true);
       };
 
-      inputRef.current.addEventListener("touchstart", handleTouch, {
+      inputRef.current.addEventListener('touchstart', handleTouch, {
         once: true,
       });
-      inputRef.current.addEventListener("mousedown", handleTouch, {
+      inputRef.current.addEventListener('mousedown', handleTouch, {
         once: true,
       });
 
       return () => {
-        inputRef.current?.removeEventListener("touchstart", handleTouch);
-        inputRef.current?.removeEventListener("mousedown", handleTouch);
+        inputRef.current?.removeEventListener('touchstart', handleTouch);
+        inputRef.current?.removeEventListener('mousedown', handleTouch);
       };
     }
   }, [isTouched, onTouchChange]);

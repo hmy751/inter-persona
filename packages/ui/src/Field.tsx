@@ -1,4 +1,4 @@
-import styles from "./Field.module.css";
+import styles from './Field.module.css';
 
 interface FieldProps {
   children: React.ReactNode;
@@ -11,7 +11,7 @@ export default function Field({
   children,
   label,
   message,
-  elementHeight = "var(--space-10)",
+  elementHeight = 'var(--space-10)',
 }: FieldProps): React.ReactElement {
   return (
     <div className={styles.field}>

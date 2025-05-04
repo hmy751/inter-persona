@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
-import { ReactNode, useEffect } from "react";
-import { createPortal } from "react-dom";
-import styles from "./Toast.module.css";
-import Text from "./Text";
-import useToastStore, { ToastData } from "@repo/store/useToastStore";
+import { ReactNode, useEffect } from 'react';
+import { createPortal } from 'react-dom';
+import styles from './Toast.module.css';
+import Text from './Text';
+import useToastStore, { ToastData } from '@repo/store/useToastStore';
 
 interface ToastProps {
   children?: ReactNode;
 }
 
 export default function Toast({ children }: ToastProps) {
-  const toasts = useToastStore((state) => state.toasts);
+  const toasts = useToastStore(state => state.toasts);
 
   return (
     <>
       {children}
       {createPortal(
         <div className={styles.viewport}>
-          {toasts.map((toast) => (
+          {toasts.map(toast => (
             <ToastItem key={toast.id} {...toast} />
           ))}
         </div>,
@@ -29,7 +29,7 @@ export default function Toast({ children }: ToastProps) {
 }
 
 function ToastItem({ id, title, description, duration = 5000 }: ToastData) {
-  const removeToast = useToastStore((state) => state.removeToast);
+  const removeToast = useToastStore(state => state.removeToast);
 
   useEffect(() => {
     const timer = setTimeout(() => removeToast(id), duration);

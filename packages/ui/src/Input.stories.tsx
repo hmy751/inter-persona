@@ -1,18 +1,18 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import Input from "./Input";
-import { useState } from "react";
+import type { Meta, StoryObj } from '@storybook/react';
+import Input from './Input';
+import { useState } from 'react';
 
 const meta = {
-  title: "Common/Input",
+  title: 'Common/Input',
   component: Input,
   parameters: {
-    layout: "centered",
+    layout: 'centered',
   },
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   argTypes: {
     placeholder: {
       control: {
-        type: "text",
+        type: 'text',
       },
     },
   },
@@ -23,7 +23,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {
   args: {
-    placeholder: "Enter Text...",
+    placeholder: 'Enter Text...',
   },
   render() {
     const [isFocused, setIsFocused] = useState(false);
@@ -45,7 +45,7 @@ export const Primary: Story = {
 
 export const Focused: Story = {
   args: {
-    placeholder: "Enter Text...",
+    placeholder: 'Enter Text...',
   },
   render() {
     const [isTouched, setIsTouched] = useState(true);
@@ -66,7 +66,7 @@ export const Focused: Story = {
 
 export const Touched: Story = {
   args: {
-    placeholder: "Enter Text...",
+    placeholder: 'Enter Text...',
   },
   render() {
     const [isTouched, setIsTouched] = useState(true);
@@ -87,12 +87,12 @@ export const Touched: Story = {
 
 export const Error: Story = {
   args: {
-    placeholder: "Enter Text...",
+    placeholder: 'Enter Text...',
   },
   render() {
     const [isFocused, setIsFocused] = useState(false);
     const [isTouched, setIsTouched] = useState(false);
-    const [errorMessage, setErrorMessage] = useState("Error");
+    const [errorMessage, setErrorMessage] = useState('Error');
     return (
       <div>
         <Input
@@ -110,19 +110,14 @@ export const Error: Story = {
 
 export const Disabled: Story = {
   args: {
-    placeholder: "Enter Text...",
+    placeholder: 'Enter Text...',
   },
   render() {
     const [isTouched, setIsTouched] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
     return (
       <div>
-        <Input
-          placeholder="Enter Text..."
-          isDisabled={true}
-          isTouched={isTouched}
-          isFocused={isFocused}
-        />
+        <Input placeholder="Enter Text..." isDisabled={true} isTouched={isTouched} isFocused={isFocused} />
       </div>
     );
   },
