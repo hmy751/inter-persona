@@ -5,6 +5,7 @@
  */
 
 /** @type {import("eslint").Linter.Config} */
+
 module.exports = {
   extends: [
     './base.js', // 중앙 설정 확장
