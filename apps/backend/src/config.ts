@@ -15,6 +15,11 @@ const config = {
     port: parseInt(process.env.PORT || '8000', 10),
     host: process.env.HOST || 'localhost',
   },
+  jwt: {
+    secret: process.env.JWT_SECRET,
+    issuer: process.env.JWT_ISSUER,
+    expiresIn: process.env.JWT_EXPIRES_IN,
+  },
   db: {
     url: process.env.DATABASE_URL,
   },
