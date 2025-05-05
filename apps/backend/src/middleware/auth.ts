@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import jwt, { JwtPayload, TokenExpiredError, JsonWebTokenError } from 'jsonwebtoken';
 import config from '@/config';
 import { prisma } from '@/app';
-import { VERIFY_AUTH_ERROR, SERVER_ERROR } from '@repo/constant/message';
+import { VERIFY_AUTH_ERROR, SERVER_ERROR } from '@/libs/constant';
 
 export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;

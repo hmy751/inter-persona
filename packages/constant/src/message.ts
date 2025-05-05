@@ -16,18 +16,3 @@ export const VALIDATION = {
     length: '이름은 최소 2자 이상 최대 10자 이하여야 합니다.',
   },
 };
-
-export const VERIFY_AUTH_ERROR = {
-  unauthorized: '인증되지 않은 사용자입니다.',
-  expired: '토큰이 만료되었습니다.',
-  invalid: '토큰이 유효하지 않습니다.',
-  invalidCredentials: '이메일 또는 비밀번호가 올바르지 않습니다.',
-};
-
-export const SERVER_ERROR = {
-  internal: '서버에 문제가 발생했습니다.',
-};
-
-export const VALIDATION_ERROR = {
-  invalidInput: '입력값이 올바르지 않습니다.',
-};
