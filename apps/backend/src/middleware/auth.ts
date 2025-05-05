@@ -40,6 +40,7 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
 
     return next();
   } catch (err) {
+    console.error('Verify token error:', err);
     if (err instanceof TokenExpiredError) {
       return res.status(401).json({ message: VERIFY_AUTH_ERROR.expired });
     }
