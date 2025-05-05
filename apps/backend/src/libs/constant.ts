@@ -4,10 +4,12 @@ export const VERIFY_AUTH_ERROR = {
   invalid: '토큰이 유효하지 않습니다.',
 };
 
-export const USER_ERROR = {
+export const USER_ROUTE = {
   unauthorized: '인증되지 않은 사용자입니다.',
   alreadyExists: '이미 존재하는 이메일입니다.',
   invalidCredentials: '이메일 또는 비밀번호가 올바르지 않습니다.',
+  registerSuccess: '회원가입에 성공했습니다.',
+  loginSuccess: '로그인에 성공했습니다.',
 };
 
 export const SERVER_ERROR = {
