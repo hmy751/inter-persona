@@ -1,9 +1,9 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { prisma } from '@/app';
 import bcrypt from 'bcrypt';
+import { USER_ERROR, SERVER_ERROR, VALIDATION_ERROR } from '@/libs/constant';
 import { generateToken } from '@/libs/utils';
-import { SERVER_ERROR, VALIDATION_ERROR, VERIFY_AUTH_ERROR } from '@repo/constant/message';
-import { LoginSchema } from '@repo/schema/user';
+import { LoginSchema, RegisterSchema } from '@repo/schema/user';
 
 const router: Router = Router();
 
@@ -33,14 +33,14 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
     });
 
     if (!foundUser) {
-      res.status(401).json({ message: VERIFY_AUTH_ERROR.unauthorized });
+      res.status(401).json({ message: USER_ERROR.unauthorized });
       return;
     }
 
     const isPasswordValid = await bcrypt.compare(password, foundUser.password);
 
     if (!isPasswordValid) {
-      res.status(401).json({ message: VERIFY_AUTH_ERROR?.invalidCredentials || 'Invalid credentials' });
+      res.status(401).json({ message: USER_ERROR.invalidCredentials });
       return;
     }
 
@@ -53,8 +53,42 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
   }
 });
 
-router.post('/join', (req, res) => {
-  res.send('Hello World!');
+router.post('/register', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const validationResult = RegisterSchema.safeParse(req.body);
+
+    if (!validationResult.success) {
+      const fieldErrors = validationResult.error.flatten().fieldErrors;
+
+      res.status(400).json({
+        message: VALIDATION_ERROR?.invalidInput || 'Invalid input',
+        errors: fieldErrors,
+      });
+      return;
+    }
+
+    const { email, password, name, profileImage } = validationResult.data;
+
+    const foundUser = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (foundUser) {
+      res.status(400).json({ message: USER_ERROR.alreadyExists });
+      return;
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = await prisma.user.create({
+      data: { email, password: hashedPassword, name, profileImageUrl: profileImage },
+    });
+
+    res.status(201).json({ success: true });
+  } catch (error) {
+    console.error('Register error:', error);
+    res.status(500).json({ message: SERVER_ERROR.internal });
+  }
 });
 
 export default router;
