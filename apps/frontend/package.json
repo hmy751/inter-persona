@@ -15,12 +15,13 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.0.1",
     "@react-three/drei": "^9.112.0",
     "@react-three/fiber": "^8.17.7",
     "@reduxjs/toolkit": "^2.2.7",
+    "@repo/schema": "workspace:*",
     "@repo/store": "workspace:*",
     "@repo/ui": "workspace:*",
-    "@repo/schema": "workspace:*",
     "@tanstack/react-query": "^5.56.2",
     "clsx": "^2.1.1",
     "framer-motion": "^11.5.4",
