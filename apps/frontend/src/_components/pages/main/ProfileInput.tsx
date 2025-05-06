@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, ChangeEvent, DragEvent, useEffect } from 'react';
+import { useState, useRef, ChangeEvent, DragEvent, useEffect, forwardRef, useCallback, MutableRefObject } from 'react';
 import Avatar from '@repo/ui/Avatar';
 import styles from './ProfileInput.module.css';
 import Text from '@repo/ui/Text';
@@ -31,145 +31,183 @@ interface ProfileInputProps {
   error?: string;
 }
 
-export default function ProfileInput({
-  setImage,
-  error,
-  defaultImageUrl = '/assets/images/dev_profile.png',
-  size = 'xl',
-  maxSizeInMB = 5,
-  acceptedFormats = 'image/jpeg, image/png, image/jpg',
-  className,
-  onValidate,
-}: ProfileInputProps) {
-  const [previewUrl, setPreviewUrl] = useState<string | null>(defaultImageUrl || null);
-  const [isDragging, setIsDragging] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [internalError, setInternalError] = useState<string | undefined>(error);
+const ProfileInput = forwardRef<HTMLInputElement, ProfileInputProps>(
+  (
+    {
+      setImage,
+      error,
+      defaultImageUrl = '/assets/images/dev_profile.png',
+      size = 'xl',
+      maxSizeInMB = 5,
+      acceptedFormats = 'image/jpeg, image/png, image/jpg',
+      className,
+      onValidate,
+    },
+    ref
+  ) => {
+    const [previewUrl, setPreviewUrl] = useState<string | null>(defaultImageUrl || null);
+    const [isDragging, setIsDragging] = useState(false);
+    const internalRef = useRef<HTMLInputElement>(null);
+    const [internalError, setInternalError] = useState<string | undefined>(error);
 
-  useEffect(() => {
-    setInternalError(error);
-  }, [error]);
+    const assignRef = useCallback(
+      (element: HTMLInputElement) => {
+        if (element) {
+          (internalRef as MutableRefObject<HTMLInputElement>).current = element;
+        }
 
-  useEffect(() => {
-    if (defaultImageUrl) {
-      setPreviewUrl(defaultImageUrl);
-      urlToFile(defaultImageUrl, 'default', 'image/png').then(file => {
-        setImage(file);
-      });
-    }
+        if (typeof ref === 'function') {
+          ref(element);
+        } else if (ref) {
+          (ref as MutableRefObject<HTMLInputElement>).current = element;
+        }
+      },
+      [ref, internalRef]
+    );
 
-    return () => {
-      if (previewUrl && previewUrl.startsWith('blob:')) {
-        URL.revokeObjectURL(previewUrl);
+    useEffect(() => {
+      setInternalError(error);
+    }, [error]);
+
+    useEffect(() => {
+      if (defaultImageUrl) {
+        setPreviewUrl(defaultImageUrl);
+        urlToFile(defaultImageUrl, 'default', 'image/png').then(file => {
+          setImage(file);
+        });
       }
-    };
-  }, [defaultImageUrl]);
 
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0] || null;
-    handleFile(file);
-  };
+      return () => {
+        if (previewUrl && previewUrl.startsWith('blob:')) {
+          URL.revokeObjectURL(previewUrl);
+        }
+      };
+    }, [defaultImageUrl]);
 
-  const handleFile = (file: File | null) => {
-    if (file && onValidate) {
-      const validationError = onValidate(file);
-      setInternalError(validationError);
-    }
-
-    if (!file) {
-      setImage(null);
-      setPreviewUrl(defaultImageUrl || null);
-      return;
-    }
-
-    const fileSizeInMB = file.size / (1024 * 1024);
-    if (fileSizeInMB > (maxSizeInMB || 5)) {
-      setImage(file);
-      return;
-    }
-
-    if (previewUrl && previewUrl.startsWith('blob:')) {
-      URL.revokeObjectURL(previewUrl);
-    }
-
-    const newPreviewUrl = URL.createObjectURL(file);
-    setPreviewUrl(newPreviewUrl);
-    setImage(file);
-  };
-
-  const handleDragEnter = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(true);
-  };
-
-  const handleDragLeave = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
-  };
-
-  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
-
-  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
-
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      const file = e.dataTransfer.files[0]!;
+    const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0] || null;
       handleFile(file);
-    }
-  };
+    };
 
-  const handleSelectClick = () => {
-    fileInputRef.current?.click();
-  };
+    const handleFile = useCallback(
+      (file: File | null) => {
+        if (file && onValidate) {
+          const validationError = onValidate(file);
+          setInternalError(validationError);
+        }
 
-  return (
-    <div
-      className={`
+        if (!file) {
+          setImage(null);
+          setPreviewUrl(defaultImageUrl || null);
+          return;
+        }
+
+        const fileSizeInMB = file.size / (1024 * 1024);
+
+        if (fileSizeInMB > (maxSizeInMB || 5)) {
+          setImage(file);
+          return;
+        }
+
+        if (previewUrl && previewUrl.startsWith('blob:')) {
+          URL.revokeObjectURL(previewUrl);
+        }
+
+        const newPreviewUrl = URL.createObjectURL(file);
+
+        setPreviewUrl(newPreviewUrl);
+        setImage(file);
+      },
+      [onValidate, setInternalError, setImage, setPreviewUrl, defaultImageUrl, maxSizeInMB, previewUrl]
+    );
+
+    const handleDragEnter = useCallback(
+      (e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragging(true);
+      },
+      [setIsDragging]
+    );
+
+    const handleDragLeave = useCallback(
+      (e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragging(false);
+      },
+      [setIsDragging]
+    );
+
+    const handleDragOver = useCallback((e: DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+    }, []);
+
+    const handleDrop = useCallback(
+      (e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragging(false);
+
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+          const file = e.dataTransfer.files[0]!;
+          handleFile(file);
+        }
+      },
+      [handleFile, setIsDragging]
+    );
+
+    const handleSelectClick = useCallback(() => {
+      internalRef.current?.click();
+    }, [internalRef]);
+
+    return (
+      <div
+        className={`
         ${styles.imageInputContainer} 
         ${styles[`size-${size}`]} 
         ${isDragging ? styles.dragging : ''}
         ${className || ''}
       `}
-      tabIndex={0}
-    >
-      <input
-        type="file"
-        ref={fileInputRef}
-        onChange={handleFileChange}
-        accept={acceptedFormats}
-        className={styles.hiddenInput}
-        aria-label="프로필 이미지 선택"
-      />
-      <div
-        className={styles.avatarContainer}
-        onClick={handleSelectClick}
-        onDragEnter={handleDragEnter}
-        onDragLeave={handleDragLeave}
-        onDragOver={handleDragOver}
-        onDrop={handleDrop}
+        tabIndex={0}
       >
-        <Avatar
-          src={previewUrl || defaultImageUrl}
-          size={size}
-          alt="프로필 이미지"
-          className={`${styles.avatar} ${isDragging ? styles.draggingAvatar : ''}`}
+        <input
+          ref={assignRef}
+          type="file"
+          onChange={handleFileChange}
+          accept={acceptedFormats}
+          className={styles.hiddenInput}
+          aria-label="프로필 이미지 선택"
         />
-        <div className={styles.uploadOverlay}>
-          <div className={styles.uploadIcon}>
-            <UploadIcon />
+        <div
+          className={styles.avatarContainer}
+          onClick={handleSelectClick}
+          onDragEnter={handleDragEnter}
+          onDragLeave={handleDragLeave}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+        >
+          <Avatar
+            src={previewUrl || defaultImageUrl}
+            size={size}
+            alt="프로필 이미지"
+            className={`${styles.avatar} ${isDragging ? styles.draggingAvatar : ''}`}
+          />
+          <div className={styles.uploadOverlay}>
+            <div className={styles.uploadIcon}>
+              <UploadIcon />
+            </div>
           </div>
         </div>
+        <Text size="sm" color="secondary">
+          {isDragging ? '이미지를 놓아주세요' : '클릭 또는 드래그하여 이미지를 업로드 해주세요'}
+        </Text>
       </div>
-      <Text size="sm" color="secondary">
-        {isDragging ? '이미지를 놓아주세요' : '클릭 또는 드래그하여 이미지를 업로드 해주세요'}
-      </Text>
-    </div>
-  );
-}
+    );
+  }
+);
+
+ProfileInput.displayName = 'ProfileInput';
+
+export default ProfileInput;
