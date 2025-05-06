@@ -4,8 +4,15 @@
   "private": true,
   "license": "MIT",
   "type": "module",
+  "scripts": {
+    "build": "tsup"
+  },
   "exports": {
-    "./user": "./src/user.ts"
+    "./user": {
+      "import": "./dist/user.js",
+      "require": "./dist/user.cjs",
+      "types": "./dist/user.d.ts"
+    }
   },
   "dependencies": {
     "zod": "^3.24.3"
