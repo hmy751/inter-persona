@@ -63,5 +63,5 @@ export const RegisterSchema = z.object({
     .max(10, {
       message: VALIDATION.name.length,
     }),
-  profileImage: z.string().optional(),
+  profileImage: z.optional(z.instanceof(File)),
 });
