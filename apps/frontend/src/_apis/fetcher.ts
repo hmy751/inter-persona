@@ -43,7 +43,9 @@ const handleResponse = async (response: Response) => {
 };
 
 const handleError = (error: unknown) => {
-  if (error instanceof APIError) throw error;
+  if (error instanceof APIError) {
+    throw error;
+  }
 
   if (error instanceof Error) {
     if (error.name === 'AbortError') {
@@ -56,21 +58,25 @@ const handleError = (error: unknown) => {
 };
 
 const createHttpClient = (defaultConfig: FetcherConfig) => {
-  const request = async <T>(url: string, options: RequestConfig = {}): Promise<T> => {
+  const request = async <T>(url: string, options: RequestConfig = {}, isFormData = false): Promise<T> => {
     try {
-      const finalOptions = { ...options };
-
-      const controller = createAbortController(finalOptions.timeout || defaultConfig.timeout!);
+      const controller = createAbortController(options.timeout || defaultConfig.timeout!);
       const fullURL = `${defaultConfig.baseURL}/${url}`;
 
-      const response = await fetch(fullURL, {
-        ...finalOptions,
+      const finalOptions: RequestConfig = {
+        ...options,
         headers: {
           ...defaultConfig.headers,
-          ...finalOptions.headers,
+          ...options.headers,
         },
         signal: controller.signal,
-      });
+      };
+
+      if (isFormData && finalOptions.headers) {
+        delete (finalOptions.headers as Record<string, string>)['Content-Type'];
+      }
+
+      const response = await fetch(fullURL, finalOptions);
 
       return handleResponse(response);
     } catch (error) {
@@ -81,19 +87,33 @@ const createHttpClient = (defaultConfig: FetcherConfig) => {
   return {
     get: <T>(url: string, options?: RequestConfig) => request<T>(url, { ...options, method: 'GET' }),
 
-    post: <T>(url: string, data?: unknown, options?: RequestConfig) =>
-      request<T>(url, {
-        ...options,
-        method: 'POST',
-        body: JSON.stringify(data),
-      }),
+    post: <T>(url: string, data?: unknown, options?: RequestConfig) => {
+      const isFormData = data instanceof FormData;
 
-    put: <T>(url: string, data?: unknown, options?: RequestConfig) =>
-      request<T>(url, {
-        ...options,
-        method: 'PUT',
-        body: JSON.stringify(data),
-      }),
+      return request<T>(
+        url,
+        {
+          ...options,
+          method: 'POST',
+          body: isFormData ? data : JSON.stringify(data),
+        },
+        isFormData
+      );
+    },
+
+    put: <T>(url: string, data?: unknown, options?: RequestConfig) => {
+      const isFormData = data instanceof FormData;
+
+      return request<T>(
+        url,
+        {
+          ...options,
+          method: 'PUT',
+          body: isFormData ? data : JSON.stringify(data),
+        },
+        isFormData
+      );
+    },
 
     delete: <T>(url: string, options?: RequestConfig) => request<T>(url, { ...options, method: 'DELETE' }),
   };
