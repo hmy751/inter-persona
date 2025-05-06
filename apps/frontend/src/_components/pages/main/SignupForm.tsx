@@ -1,6 +1,5 @@
 'use client';
 
-import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -10,34 +9,13 @@ import Input from '@repo/ui/Input';
 import Button from '@repo/ui/Button';
 import { VALIDATION } from '@repo/constant/message';
 import styles from './FormSection.module.css';
-import useUserStore from '@/_store/zustand/useUserStore';
 import ProfileInput from './ProfileInput';
 import { RegisterSchema } from '@repo/schema/user';
 
-const validateProfileImage = (file: File | null) => {
-  if (!file) {
-    return;
-  }
-
-  const fileSizeInMB = file.size / (1024 * 1024);
-  if (fileSizeInMB > 5) {
-    return '이미지 크기는 5MB 이하여야 합니다.';
-  }
-
-  const acceptedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-  if (!acceptedTypes.includes(file.type)) {
-    return 'JPG, PNG 형식의 이미지만 업로드 가능합니다.';
-  }
-
-  return;
-};
-
 export default function SignupForm() {
   const router = useRouter();
-  const { setUser } = useUserStore();
 
   const {
-    register,
     control,
     handleSubmit,
     formState: { errors },
@@ -58,26 +36,21 @@ export default function SignupForm() {
 
   return (
     <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
-      {/* <Field label="프로필 이미지" elementHeight="var(--space-12)" message={profileImageError}>
+      <Field label="프로필 이미지" elementHeight="100%" message={errors.profileImage?.message}>
         <Controller
           name="profileImage"
           control={control}
-          render={({ field: { onChange, value, ref } }) => (
+          render={({ field: { onChange, ref } }) => (
             <ProfileInput
-              ref={ref} // ref 전달 (ProfileInput이 forwardRef를 사용해야 할 수 있음)
+              ref={ref}
               size="xl"
-              currentImage={value} // Controller의 value를 전달
               setImage={file => {
-                onChange(file); // react-hook-form의 onChange 호출
-                // 필요하다면 여기에서 validateProfileImage를 호출하고 setProfileImageError 설정
-                const validationMessage = validateProfileImage(file);
-                setProfileImageError(validationMessage);
+                onChange(file);
               }}
-              // onValidate는 ProfileInput 내부에서 처리하거나, setImage 내에서 직접 호출
             />
           )}
         />
-      </Field> */}
+      </Field>
 
       <Field label="이메일" message={errors.email?.message}>
         <Controller
