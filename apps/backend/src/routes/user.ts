@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import { USER_ROUTE, SERVER_ERROR, VALIDATION_ERROR } from '@/libs/constant';
 import { generateToken } from '@/libs/utils';
 import { LoginSchema, RegisterSchema } from '@repo/schema/user';
+import { uploadFile } from '@/middleware/uploadFile';
 
 const router: Router = Router();
 
@@ -53,7 +54,7 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
   }
 });
 
-router.post('/register', async (req: Request, res: Response, next: NextFunction) => {
+router.post('/register', uploadFile.single('profileImage'), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const validationResult = RegisterSchema.safeParse(req.body);
 
