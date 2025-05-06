@@ -2,8 +2,8 @@ import express, { Application } from 'express';
 import { PrismaClient } from '@prisma/client';
 import cors from 'cors';
 
-import userRouter from './routes/user';
-import config from './config';
+import userRouter from '@/routes/user';
+import config from '@/config';
 
 const prisma = new PrismaClient();
 
