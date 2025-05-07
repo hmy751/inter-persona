@@ -2,6 +2,7 @@ import config from '@/config';
 import express, { Application } from 'express';
 import { PrismaClient } from '@prisma/client';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 import userRouter from '@/routes/user';
 
@@ -15,6 +16,7 @@ app.use(
     credentials: true,
   })
 );
+app.use(cookieParser());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 

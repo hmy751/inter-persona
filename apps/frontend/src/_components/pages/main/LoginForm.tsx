@@ -8,102 +8,100 @@ import Input from '@repo/ui/Input';
 import Button from '@repo/ui/Button';
 import styles from './FormSection.module.css';
 import useUserStore from '@/_store/zustand/useUserStore';
-import { useFormField } from '@/_hooks/useFormField';
-
-const validateEmail = (email: string) => {
-  if (!email) return '이메일을 입력해주세요.';
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) return '이메일 형식으로 입력해주세요.';
-  return '';
-};
-
-const validatePassword = (password: string) => {
-  if (!password) return '비밀번호를 입력해주세요.';
-  if (password.length < 10) return '비밀번호는 최소 10자 이상이어야 합니다.';
-
-  const hasUpperCase = /[A-Z]/.test(password);
-  const hasLowerCase = /[a-z]/.test(password) && /[a-z].*[a-z]/.test(password); // 소문자 최소 2개
-  const hasDigit = /\d/.test(password);
-
-  if (!(hasUpperCase && hasLowerCase && hasDigit)) {
-    return '비밀번호는 대문자 1개 이상, 소문자 2개 이상, 숫자 1개 이상을 포함해야 합니다.';
-  }
-
-  return '';
-};
+import { Controller, useForm } from 'react-hook-form';
+import { LoginRequestSchema, LoginResponseSchema } from '@repo/schema/user';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { VALIDATION } from '@repo/constant/message';
+import { useToastStore } from '@repo/store/useToastStore';
 
 export default function LoginForm() {
   const router = useRouter();
-  const { setUser } = useUserStore();
-  const emailField = useFormField({ validator: validateEmail });
-  const passwordField = useFormField({ validator: validatePassword });
-
-  const loginMutation = useMutation({
-    mutationFn: fetchLogin,
-    onSuccess: data => {
-      if (!data) return;
-      setUser(data);
-      router.push('/interviewer');
+  const { addToast } = useToastStore();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isSubmitting, isValid },
+  } = useForm<z.infer<typeof LoginRequestSchema>>({
+    resolver: zodResolver(LoginRequestSchema),
+    mode: 'onChange',
+    defaultValues: {
+      email: '',
+      password: '',
     },
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!emailField.isTouched) emailField.setTouched(true);
-    if (!passwordField.isTouched) passwordField.setTouched(true);
-
-    const emailError = emailField.error;
-    const passwordError = passwordField.error;
-
-    if (emailError) {
-      emailField.setError(emailError);
+  const onSubmit = async (data: z.infer<typeof LoginRequestSchema>) => {
+    if (!isValid) {
+      return;
     }
 
-    if (passwordError) {
-      passwordField.setError(passwordError);
+    try {
+      const responseData = await fetchLogin(data);
+
+      const validationResult = LoginResponseSchema.safeParse(responseData);
+
+      if (!validationResult.success) {
+        addToast({
+          title: '로그인 실패',
+          description: '서버에 문제가 발생했습니다. 다시 시도해주세요.',
+          duration: 3000,
+        });
+        return;
+      }
+
+      addToast({
+        title: '로그인 성공',
+        description: '로그인에 성공했습니다.',
+        duration: 3000,
+      });
+    } catch (error) {
+      addToast({
+        title: '로그인 실패',
+        description: '서버에 문제가 발생했습니다. 다시 시도해주세요.',
+        duration: 3000,
+      });
     }
-
-    if (emailError || passwordError) return;
-
-    loginMutation.mutate({
-      email: emailField.value,
-      password: passwordField.value,
-    });
   };
 
   return (
-    <form className={styles.form} onSubmit={handleSubmit}>
-      <Field label="이메일" message={emailField.error}>
-        <Input
-          type="email"
-          value={emailField.value}
-          onChange={e => emailField.setValue(e.target.value)}
-          placeholder="Enter Text..."
-          isFocused={emailField.isFocused}
-          isTouched={emailField.isTouched}
-          isError={emailField.error}
-          onFocusChange={emailField.setFocused}
-          onTouchChange={emailField.setTouched}
+    <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
+      <Field label="이메일" message={errors['email']?.message}>
+        <Controller
+          name="email"
+          control={control}
+          render={({ field: { onChange, onBlur, value }, fieldState: { isTouched } }) => (
+            <Input
+              type="email"
+              isTouched={isTouched}
+              placeholder={VALIDATION.email.required}
+              onChange={onChange}
+              onBlur={onBlur}
+              value={value}
+            />
+          )}
         />
       </Field>
 
-      <Field label="비밀번호" message={passwordField.error}>
-        <Input
-          type="password"
-          value={passwordField.value}
-          onChange={e => passwordField.setValue(e.target.value)}
-          placeholder="Enter Text..."
-          isFocused={passwordField.isFocused}
-          isTouched={passwordField.isTouched}
-          isError={passwordField.error}
-          onFocusChange={passwordField.setFocused}
-          onTouchChange={passwordField.setTouched}
+      <Field label="비밀번호" message={errors['password']?.message}>
+        <Controller
+          name="password"
+          control={control}
+          render={({ field: { onChange, onBlur, value }, fieldState: { isTouched } }) => (
+            <Input
+              type="password"
+              isTouched={isTouched}
+              placeholder={VALIDATION.password.required}
+              onChange={onChange}
+              onBlur={onBlur}
+              value={value}
+            />
+          )}
         />
       </Field>
 
-      <Button variant="primary" fullWidth type="submit">
-        시작하기
+      <Button variant="primary" fullWidth type="submit" disabled={isSubmitting} isLoading={isSubmitting}>
+        로그인
       </Button>
     </form>
   );
