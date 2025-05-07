@@ -2,9 +2,10 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { prisma } from '@/app';
 import bcrypt from 'bcrypt';
 import { USER_ROUTE, SERVER_ERROR, VALIDATION_ERROR } from '@/libs/constant';
-import { generateToken } from '@/libs/utils';
-import { LoginRequestSchema, RegisterRequestSchema, RegisterResponseSchema } from '@repo/schema/user';
+import { generateToken } from '@/libs/utils/generateToken';
 import { uploadFile } from '@/middleware/uploadFile';
+import { getS3Client, uploadToS3 } from '@/libs/utils/uploadS3';
+import { LoginRequestSchema, RegisterRequestSchema, RegisterResponseSchema } from '@repo/schema/user';
 
 const router: Router = Router();
 
@@ -68,7 +69,7 @@ router.post('/register', uploadFile.single('profileImage'), async (req: Request,
       return;
     }
 
-    const { email, password, name, profileImage } = validationResult.data;
+    const { email, password, name } = validationResult.data;
 
     const foundUser = await prisma.user.findUnique({
       where: { email },
@@ -79,10 +80,19 @@ router.post('/register', uploadFile.single('profileImage'), async (req: Request,
       return;
     }
 
+    let profileImageUrl: string | null = null;
+
+    const s3Client = getS3Client();
+
+    if (req.file) {
+      const uploadResult = await uploadToS3(s3Client, req.file);
+      profileImageUrl = uploadResult.Location;
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await prisma.user.create({
-      data: { email, password: hashedPassword, name, profileImageUrl: profileImage },
+      data: { email, password: hashedPassword, name, profileImageUrl },
     });
 
     const responseData = RegisterResponseSchema.safeParse({
