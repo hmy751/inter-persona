@@ -1,54 +1,56 @@
 import { NextFunction, Request, Response } from 'express';
-import jwt, { JwtPayload, TokenExpiredError, JsonWebTokenError } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
+import type { JwtPayload } from 'jsonwebtoken';
+const { TokenExpiredError, JsonWebTokenError } = jwt;
+
 import config from '@/config';
 import { prisma } from '@/app';
 import { VERIFY_AUTH_ERROR, SERVER_ERROR } from '@/libs/constant';
 
 export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
-  const authHeader = req.headers.authorization;
-
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ message: VERIFY_AUTH_ERROR.unauthorized });
-  }
-
-  const token = authHeader.split(' ')[1];
+  const token = req?.cookies?.token;
 
   if (!token) {
-    return res.status(401).json({ message: VERIFY_AUTH_ERROR.unauthorized });
+    res.status(401).json({ message: VERIFY_AUTH_ERROR.unauthorized });
+    return;
   }
 
   try {
     const decoded = jwt.verify(token, config.jwt.secret as string) as JwtPayload;
 
     if (decoded.iss !== config.jwt.issuer) {
-      return res.status(401).json({ message: VERIFY_AUTH_ERROR.invalid });
+      res.status(401).json({ message: VERIFY_AUTH_ERROR.invalid });
+      return;
     }
 
     const foundUser = await prisma.user.findUnique({
       where: {
-        id: decoded.id,
+        id: parseInt(decoded.id),
       },
     });
 
     if (!foundUser) {
-      return res.status(401).json({ message: VERIFY_AUTH_ERROR.unauthorized });
+      res.status(401).json({ message: VERIFY_AUTH_ERROR.unauthorized });
+      return;
     }
 
     req.user = {
       ...foundUser,
     };
 
-    return next();
+    next();
   } catch (err) {
     console.error('Verify token error:', err);
     if (err instanceof TokenExpiredError) {
-      return res.status(401).json({ message: VERIFY_AUTH_ERROR.expired });
+      res.status(401).json({ message: VERIFY_AUTH_ERROR.expired });
+      return;
     }
 
     if (err instanceof JsonWebTokenError) {
-      return res.status(401).json({ message: VERIFY_AUTH_ERROR.invalid });
+      res.status(401).json({ message: VERIFY_AUTH_ERROR.invalid });
+      return;
     }
 
-    return res.status(500).json({ message: SERVER_ERROR.internal });
+    res.status(500).json({ message: SERVER_ERROR.internal });
   }
 };
