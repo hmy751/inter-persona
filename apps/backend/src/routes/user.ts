@@ -3,7 +3,7 @@ import { prisma } from '@/app';
 import bcrypt from 'bcrypt';
 import { USER_ROUTE, SERVER_ERROR, VALIDATION_ERROR } from '@/libs/constant';
 import { generateToken } from '@/libs/utils';
-import { LoginRequestSchema, RegisterRequestSchema } from '@repo/schema/user';
+import { LoginRequestSchema, RegisterRequestSchema, RegisterResponseSchema } from '@repo/schema/user';
 import { uploadFile } from '@/middleware/uploadFile';
 
 const router: Router = Router();
@@ -85,7 +85,12 @@ router.post('/register', uploadFile.single('profileImage'), async (req: Request,
       data: { email, password: hashedPassword, name, profileImageUrl: profileImage },
     });
 
-    res.status(201).json({ success: true, message: USER_ROUTE.registerSuccess });
+    const responseData = RegisterResponseSchema.safeParse({
+      success: true,
+      message: USER_ROUTE.registerSuccess,
+    });
+
+    res.status(201).json(responseData.data);
   } catch (error) {
     console.error('Register error:', error);
     res.status(500).json({ message: SERVER_ERROR.internal });
