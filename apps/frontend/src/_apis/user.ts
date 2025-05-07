@@ -1,21 +1,14 @@
 import fetcher from './fetcher';
-import { RegisterResponseSchema } from '@repo/schema/user';
+import { RegisterResponseSchema, LoginRequestSchema, LoginResponseSchema } from '@repo/schema/user';
 import { z } from 'zod';
 
 // 로그인
-export interface LoginBody {
-  email: string;
-  password: string;
-}
-interface LoginResponse {
-  id: number;
-  name: string;
-  email: string;
-  imageSrc: string;
-}
+type LoginBody = z.infer<typeof LoginRequestSchema>;
+
+type LoginResponse = z.infer<typeof LoginResponseSchema>;
 
 export const fetchLogin = async ({ email, password }: LoginBody) => {
-  return fetcher.post<LoginResponse>('login', {
+  return fetcher.post<LoginResponse>('user/login', {
     email,
     password,
   });
