@@ -87,3 +87,8 @@ export const RegisterRequestSchema = z
     message: VALIDATION.password.mismatch,
     path: ['passwordConfirm'],
   });
+
+export const RegisterResponseSchema = z.object({
+  success: z.boolean(),
+  message: z.string(),
+});
