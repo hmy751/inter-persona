@@ -29,6 +29,12 @@ export const LoginRequestSchema = z.object({
     }),
 });
 
+export const LoginResponseSchema = z.object({
+  token: z.string(),
+  success: z.boolean(),
+  message: z.string(),
+});
+
 export const RegisterRequestSchema = z
   .object({
     email: z
