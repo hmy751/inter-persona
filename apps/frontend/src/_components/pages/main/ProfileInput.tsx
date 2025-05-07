@@ -5,7 +5,7 @@ import Avatar from '@repo/ui/Avatar';
 import styles from './ProfileInput.module.css';
 import Text from '@repo/ui/Text';
 import { urlToFile } from '@/_libs/utils';
-import { DEFAULT_PROFILE_IMAGE_NAME } from '@repo/constant/name';
+import { DEFAULT_PROFILE_IMAGE_NAME, DEFAULT_PROFILE_IMAGE_URL } from '@repo/constant/name';
 
 export const UploadIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -37,7 +37,7 @@ const ProfileInput = forwardRef<HTMLInputElement, ProfileInputProps>(
     {
       setImage,
       error,
-      defaultImageUrl = '/assets/images/dev_profile.png',
+      defaultImageUrl = DEFAULT_PROFILE_IMAGE_URL,
       size = 'xl',
       maxSizeInMB = 5,
       acceptedFormats = 'image/jpeg, image/png, image/jpg',
@@ -73,9 +73,11 @@ const ProfileInput = forwardRef<HTMLInputElement, ProfileInputProps>(
     useEffect(() => {
       if (defaultImageUrl) {
         setPreviewUrl(defaultImageUrl);
-        urlToFile(defaultImageUrl, DEFAULT_PROFILE_IMAGE_NAME, 'image/png').then(file => {
-          setImage(file);
-        });
+        if (!defaultImageUrl.includes('http')) {
+          urlToFile(defaultImageUrl, DEFAULT_PROFILE_IMAGE_NAME, 'image/png').then(file => {
+            setImage(file);
+          });
+        }
       }
 
       return () => {
