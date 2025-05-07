@@ -1,4 +1,4 @@
-export const ERROR_MESSAGE = {
+export const VALIDATION = {
   email: {
     required: '이메일을 입력해주세요.',
     invalid: '이메일 형식이 올바르지 않습니다.',
@@ -10,6 +10,7 @@ export const ERROR_MESSAGE = {
     uppercase: '비밀번호는 대문자를 포함해야 합니다.',
     number: '비밀번호는 숫자를 포함해야 합니다.',
     special: '비밀번호는 특수문자를 포함해야 합니다.',
+    mismatch: '비밀번호가 일치하지 않습니다.',
   },
   name: {
     required: '이름을 입력해주세요.',
