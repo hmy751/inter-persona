@@ -1,21 +1,19 @@
 import fetcher from './fetcher';
-import { RegisterResponseSchema } from '@repo/schema/user';
+import {
+  RegisterResponseSchema,
+  LoginRequestSchema,
+  LoginResponseSchema,
+  UserInfoResponseSchema,
+} from '@repo/schema/user';
 import { z } from 'zod';
 
 // 로그인
-export interface LoginBody {
-  email: string;
-  password: string;
-}
-interface LoginResponse {
-  id: number;
-  name: string;
-  email: string;
-  imageSrc: string;
-}
+type LoginBody = z.infer<typeof LoginRequestSchema>;
+
+type LoginResponse = z.infer<typeof LoginResponseSchema>;
 
 export const fetchLogin = async ({ email, password }: LoginBody) => {
-  return fetcher.post<LoginResponse>('login', {
+  return fetcher.post<LoginResponse>('user/login', {
     email,
     password,
   });
@@ -29,3 +27,8 @@ export const fetchRegister = async (formData: FormData) => {
 };
 
 // 회원 정보 조회
+type UserInfoResponse = z.infer<typeof UserInfoResponseSchema>;
+
+export const fetchUserInfo = async () => {
+  return fetcher.get<UserInfoResponse>('user/info');
+};

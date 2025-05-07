@@ -29,6 +29,11 @@ export const LoginRequestSchema = z.object({
     }),
 });
 
+export const LoginResponseSchema = z.object({
+  success: z.boolean(),
+  message: z.string(),
+});
+
 export const RegisterRequestSchema = z
   .object({
     email: z
@@ -91,4 +96,11 @@ export const RegisterRequestSchema = z
 export const RegisterResponseSchema = z.object({
   success: z.boolean(),
   message: z.string(),
+});
+
+export const UserInfoResponseSchema = z.object({
+  id: z.number(),
+  email: z.string(),
+  name: z.string(),
+  profileImageUrl: z.string(),
 });

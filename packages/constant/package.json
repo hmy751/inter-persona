@@ -4,7 +4,18 @@
   "private": true,
   "license": "MIT",
   "exports": {
-    "./message": "./src/message.ts",
-    "./name": "./src/name.ts"
+    "./message": {
+      "import": "./dist/message.js",
+      "require": "./dist/message.cjs",
+      "types": "./dist/message.d.ts"
+    },
+    "./name": {
+      "import": "./dist/name.js",
+      "require": "./dist/name.cjs",
+      "types": "./dist/name.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsup"
   }
 }
