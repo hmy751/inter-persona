@@ -5,8 +5,9 @@ import { USER_ROUTE, SERVER_ERROR, VALIDATION_ERROR } from '@/libs/constant';
 import { generateToken } from '@/libs/utils/generateToken';
 import { uploadFile } from '@/middleware/uploadFile';
 import { getS3Client, uploadToS3 } from '@/libs/utils/uploadS3';
-import { LoginRequestSchema, RegisterRequestSchema, RegisterResponseSchema, LoginResponseSchema } from '@repo/schema/user';
+import { LoginRequestSchema, RegisterRequestSchema, RegisterResponseSchema, LoginResponseSchema, UserInfoResponseSchema } from '@repo/schema/user';
 import config from '@/config';
+import { verifyToken } from '@/middleware/auth';
 
 const router: Router = Router();
 
@@ -53,7 +54,7 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
       httpOnly: true,
       secure: config.env === 'production',
       sameSite: 'lax',
-      maxAge: 10 * 60 * 1000,
+      maxAge: 20 * 60 * 1000,
     });
 
     const responseData = LoginResponseSchema.safeParse({
@@ -116,6 +117,31 @@ router.post('/register', uploadFile.single('profileImage'), async (req: Request,
     res.status(201).json(responseData.data);
   } catch (error) {
     console.error('Register error:', error);
+    res.status(500).json({ message: SERVER_ERROR.internal });
+  }
+});
+
+router.get('/info', verifyToken, async (req: Request, res: Response, next: NextFunction) => {
+  if (!req?.user?.id) {
+    res.status(401).json({ message: USER_ROUTE.unauthorized });
+    return;
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.id },
+    });
+
+    const responseData = UserInfoResponseSchema.safeParse({
+      id: user?.id,
+      email: user?.email,
+      name: user?.name,
+      profileImageUrl: user?.profileImageUrl,
+    });
+
+    res.status(200).json(responseData.data);
+  } catch (error) {
+    console.error('User info error:', error);
     res.status(500).json({ message: SERVER_ERROR.internal });
   }
 });
