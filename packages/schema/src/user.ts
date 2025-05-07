@@ -97,3 +97,10 @@ export const RegisterResponseSchema = z.object({
   success: z.boolean(),
   message: z.string(),
 });
+
+export const UserInfoResponseSchema = z.object({
+  id: z.number(),
+  email: z.string(),
+  name: z.string(),
+  profileImageUrl: z.string(),
+});
