@@ -5,7 +5,7 @@ import { USER_ROUTE, SERVER_ERROR, VALIDATION_ERROR } from '@/libs/constant';
 import { generateToken } from '@/libs/utils/generateToken';
 import { uploadFile } from '@/middleware/uploadFile';
 import { getS3Client, uploadToS3 } from '@/libs/utils/uploadS3';
-import { LoginRequestSchema, RegisterRequestSchema, RegisterResponseSchema } from '@repo/schema/user';
+import { LoginRequestSchema, RegisterRequestSchema, RegisterResponseSchema, LoginResponseSchema } from '@repo/schema/user';
 
 const router: Router = Router();
 
@@ -48,7 +48,13 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
 
     const token = generateToken({ id: foundUser.id.toString() });
 
-    res.status(201).json({ token, success: true, message: USER_ROUTE.loginSuccess });
+    const responseData = LoginResponseSchema.safeParse({
+      token,
+      success: true,
+      message: USER_ROUTE.loginSuccess,
+    });
+
+    res.status(201).json(responseData.data);
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ message: SERVER_ERROR.internal });
