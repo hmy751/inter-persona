@@ -55,12 +55,21 @@ export default function SignupForm({ onSuccess }: { onSuccess: () => void }) {
       const validationResult = RegisterResponseSchema.safeParse(data);
 
       if (!validationResult.success) {
-        throw new Error(validationResult.error.message);
+        addToast({
+          title: '회원가입 실패',
+          description: '서버에 문제가 발생했습니다. 다시 시도해주세요.',
+          duration: 3000,
+        });
+        return;
       }
 
       setConfirm('회원가입 성공', '회원가입이 완료되었습니다.', onSuccess);
     } catch (error) {
-      console.error(error);
+      addToast({
+        title: '회원가입 실패',
+        description: '서버에 문제가 발생했습니다. 다시 시도해주세요.',
+        duration: 3000,
+      });
     }
   };
 
