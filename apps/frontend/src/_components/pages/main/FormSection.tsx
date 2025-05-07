@@ -12,7 +12,7 @@ export default function FormSection() {
 
   return (
     <>
-      {isLogin ? <LoginForm /> : <SignupForm />}
+      {isLogin ? <LoginForm /> : <SignupForm onSuccess={() => setIsLogin(true)} />}
       <div className={styles.toggleButton} onClick={() => setIsLogin(!isLogin)}>
         {isLogin ? (
           <Text as="p" size="sm" align="center">

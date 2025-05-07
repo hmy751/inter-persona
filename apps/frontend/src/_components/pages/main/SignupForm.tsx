@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -10,17 +9,21 @@ import Button from '@repo/ui/Button';
 import { VALIDATION } from '@repo/constant/message';
 import styles from './FormSection.module.css';
 import ProfileInput from './ProfileInput';
-import { RegisterSchema } from '@repo/schema/user';
+import { RegisterRequestSchema, RegisterResponseSchema } from '@repo/schema/user';
+import { fetchRegister } from '@/_apis/user';
+import { useToastStore } from '@repo/store/useToastStore';
+import { useConfirmDialogStore } from '@repo/store/useConfirmDialogStore';
 
-export default function SignupForm() {
-  const router = useRouter();
+export default function SignupForm({ onSuccess }: { onSuccess: () => void }) {
+  const { addToast } = useToastStore();
+  const { setConfirm } = useConfirmDialogStore();
 
   const {
     control,
     handleSubmit,
-    formState: { errors },
-  } = useForm<z.infer<typeof RegisterSchema>>({
-    resolver: zodResolver(RegisterSchema),
+    formState: { errors, isSubmitting, isValid },
+  } = useForm<z.infer<typeof RegisterRequestSchema>>({
+    resolver: zodResolver(RegisterRequestSchema),
     mode: 'onChange',
     defaultValues: {
       email: '',
@@ -30,8 +33,35 @@ export default function SignupForm() {
     },
   });
 
-  const onSubmit = (data: z.infer<typeof RegisterSchema>) => {
-    console.log(data);
+  const onSubmit = async (data: z.infer<typeof RegisterRequestSchema>) => {
+    if (!isValid) {
+      return;
+    }
+
+    const formData = new FormData();
+
+    formData.append('email', data.email);
+    formData.append('name', data.name);
+    formData.append('password', data.password);
+    formData.append('passwordConfirm', data.passwordConfirm);
+
+    if (data.profileImage && data.profileImage instanceof File) {
+      formData.append('profileImage', data.profileImage);
+    }
+
+    try {
+      const data = await fetchRegister(formData);
+
+      const validationResult = RegisterResponseSchema.safeParse(data);
+
+      if (!validationResult.success) {
+        throw new Error(validationResult.error.message);
+      }
+
+      setConfirm('회원가입 성공', '회원가입이 완료되었습니다.', onSuccess);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -120,7 +150,7 @@ export default function SignupForm() {
         />
       </Field>
 
-      <Button variant="primary" fullWidth type="submit">
+      <Button variant="primary" fullWidth type="submit" disabled={isSubmitting} isLoading={isSubmitting}>
         회원가입
       </Button>
     </form>
