@@ -6,6 +6,7 @@ import { generateToken } from '@/libs/utils/generateToken';
 import { uploadFile } from '@/middleware/uploadFile';
 import { getS3Client, uploadToS3 } from '@/libs/utils/uploadS3';
 import { LoginRequestSchema, RegisterRequestSchema, RegisterResponseSchema, LoginResponseSchema } from '@repo/schema/user';
+import config from '@/config';
 
 const router: Router = Router();
 
@@ -48,8 +49,14 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
 
     const token = generateToken({ id: foundUser.id.toString() });
 
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: config.env === 'production',
+      sameSite: 'lax',
+      maxAge: 10 * 60 * 1000,
+    });
+
     const responseData = LoginResponseSchema.safeParse({
-      token,
       success: true,
       message: USER_ROUTE.loginSuccess,
     });
