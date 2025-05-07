@@ -70,6 +70,7 @@ const createHttpClient = (defaultConfig: FetcherConfig) => {
           ...options.headers,
         },
         signal: controller.signal,
+        credentials: 'include',
       };
 
       if (isFormData && finalOptions.headers) {
