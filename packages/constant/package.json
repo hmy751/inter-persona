@@ -4,6 +4,7 @@
   "private": true,
   "license": "MIT",
   "exports": {
-    "./message": "./src/message.ts"
+    "./message": "./src/message.ts",
+    "./name": "./src/name.ts"
   }
 }
