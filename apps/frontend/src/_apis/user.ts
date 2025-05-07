@@ -1,5 +1,10 @@
 import fetcher from './fetcher';
-import { RegisterResponseSchema, LoginRequestSchema, LoginResponseSchema } from '@repo/schema/user';
+import {
+  RegisterResponseSchema,
+  LoginRequestSchema,
+  LoginResponseSchema,
+  UserInfoResponseSchema,
+} from '@repo/schema/user';
 import { z } from 'zod';
 
 // 로그인
@@ -22,3 +27,8 @@ export const fetchRegister = async (formData: FormData) => {
 };
 
 // 회원 정보 조회
+type UserInfoResponse = z.infer<typeof UserInfoResponseSchema>;
+
+export const fetchUserInfo = async () => {
+  return fetcher.get<UserInfoResponse>('user/info');
+};
