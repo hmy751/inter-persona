@@ -3,14 +3,14 @@ import { prisma } from '@/app';
 import bcrypt from 'bcrypt';
 import { USER_ROUTE, SERVER_ERROR, VALIDATION_ERROR } from '@/libs/constant';
 import { generateToken } from '@/libs/utils';
-import { LoginSchema, RegisterSchema } from '@repo/schema/user';
+import { LoginRequestSchema, RegisterRequestSchema } from '@repo/schema/user';
 import { uploadFile } from '@/middleware/uploadFile';
 
 const router: Router = Router();
 
 router.post('/login', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const validationResult = LoginSchema.safeParse(req.body);
+    const validationResult = LoginRequestSchema.safeParse(req.body);
 
     if (!validationResult.success) {
       const fieldErrors = validationResult.error.flatten().fieldErrors;
@@ -56,7 +56,7 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
 
 router.post('/register', uploadFile.single('profileImage'), async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const validationResult = RegisterSchema.safeParse(req.body);
+    const validationResult = RegisterRequestSchema.safeParse(req.body);
 
     if (!validationResult.success) {
       const fieldErrors = validationResult.error.flatten().fieldErrors;

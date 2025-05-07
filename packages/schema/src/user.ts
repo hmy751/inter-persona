@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { VALIDATION } from '@repo/constant/message';
 
-export const LoginSchema = z.object({
+export const LoginRequestSchema = z.object({
   email: z
     .string()
     .min(1, {
@@ -29,7 +29,7 @@ export const LoginSchema = z.object({
     }),
 });
 
-export const RegisterSchema = z
+export const RegisterRequestSchema = z
   .object({
     email: z
       .string()
