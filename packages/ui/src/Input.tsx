@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { forwardRef, MutableRefObject, useEffect, useRef, useCallback } from 'react';
 import clsx from 'clsx';
 import styles from './Input.module.css';
 
@@ -12,67 +12,88 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   onTouchChange?: (isTouched: boolean) => void;
 }
 
-export default function Input({
-  isFocused,
-  isTouched,
-  isError,
-  placeholder,
-  isDisabled,
-  onFocusChange,
-  onTouchChange,
-  ...restProps
-}: InputProps): React.ReactElement {
-  const inputRef = useRef<HTMLInputElement>(null);
+const Input = forwardRef<HTMLInputElement, InputProps>(
+  (
+    { isFocused, isTouched, isError, placeholder, isDisabled, onFocusChange, onTouchChange, ...restProps }: InputProps,
+    ref: React.Ref<HTMLInputElement>
+  ): React.ReactElement => {
+    const internalInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    onFocusChange?.(true);
+    const assignRef = useCallback(
+      (element: HTMLInputElement) => {
+        if (element) {
+          (internalInputRef as MutableRefObject<HTMLInputElement>).current = element;
+        }
 
-    if (!isTouched) {
-      onTouchChange?.(true);
-    }
+        if (typeof ref === 'function') {
+          ref(element);
+        } else if (ref) {
+          (ref as MutableRefObject<HTMLInputElement>).current = element;
+        }
+      },
+      [ref]
+    );
 
-    restProps.onFocus?.(e);
-  };
+    const handleFocus = useCallback(
+      (e: React.FocusEvent<HTMLInputElement>) => {
+        onFocusChange?.(true);
 
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    onFocusChange?.(false);
-    restProps.onBlur?.(e);
-  };
+        if (!isTouched) {
+          onTouchChange?.(true);
+        }
 
-  useEffect(() => {
-    if (!isTouched && inputRef.current) {
-      const handleTouch = () => {
-        onTouchChange?.(true);
-      };
+        restProps.onFocus?.(e);
+      },
+      [isTouched, onTouchChange, onFocusChange, restProps]
+    );
 
-      inputRef.current.addEventListener('touchstart', handleTouch, {
-        once: true,
-      });
-      inputRef.current.addEventListener('mousedown', handleTouch, {
-        once: true,
-      });
+    const handleBlur = useCallback(
+      (e: React.FocusEvent<HTMLInputElement>) => {
+        onFocusChange?.(false);
+        restProps.onBlur?.(e);
+      },
+      [onFocusChange, restProps]
+    );
 
-      return () => {
-        inputRef.current?.removeEventListener('touchstart', handleTouch);
-        inputRef.current?.removeEventListener('mousedown', handleTouch);
-      };
-    }
-  }, [isTouched, onTouchChange]);
+    useEffect(() => {
+      if (!isTouched && internalInputRef.current) {
+        const handleTouch = () => {
+          onTouchChange?.(true);
+        };
 
-  return (
-    <input
-      ref={inputRef}
-      placeholder={placeholder}
-      className={clsx(
-        styles.input,
-        isFocused && styles.isFocused,
-        isTouched && styles.isTouched,
-        isError && styles.isError,
-        isDisabled && styles.isDisabled
-      )}
-      onFocus={handleFocus}
-      onBlur={handleBlur}
-      {...restProps}
-    />
-  );
-}
+        internalInputRef.current.addEventListener('touchstart', handleTouch, {
+          once: true,
+        });
+        internalInputRef.current.addEventListener('mousedown', handleTouch, {
+          once: true,
+        });
+
+        return () => {
+          internalInputRef.current?.removeEventListener('touchstart', handleTouch);
+          internalInputRef.current?.removeEventListener('mousedown', handleTouch);
+        };
+      }
+    }, [isTouched, onTouchChange]);
+
+    return (
+      <input
+        ref={assignRef}
+        placeholder={placeholder}
+        className={clsx(
+          styles.input,
+          isFocused && styles.isFocused,
+          isTouched && styles.isTouched,
+          isError && styles.isError,
+          isDisabled && styles.isDisabled
+        )}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        {...restProps}
+      />
+    );
+  }
+);
+
+Input.displayName = 'Input';
+
+export default Input;

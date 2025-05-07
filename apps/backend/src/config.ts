@@ -15,11 +15,22 @@ const config = {
     port: parseInt(process.env.PORT || '8000', 10),
     host: process.env.HOST || 'localhost',
   },
+  jwt: {
+    secret: process.env.JWT_SECRET,
+    issuer: process.env.JWT_ISSUER,
+    expiresIn: process.env.JWT_EXPIRES_IN,
+  },
   db: {
     url: process.env.DATABASE_URL,
   },
   cors: {
     origin: process.env.CORS_ORIGIN || '*',
+  },
+  s3: {
+    bucketName: process.env.S3_BUCKET_NAME,
+    region: process.env.AWS_REGION,
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   },
 };
 
