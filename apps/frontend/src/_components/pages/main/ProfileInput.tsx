@@ -73,11 +73,9 @@ const ProfileInput = forwardRef<HTMLInputElement, ProfileInputProps>(
     useEffect(() => {
       if (defaultImageUrl) {
         setPreviewUrl(defaultImageUrl);
-        if (!defaultImageUrl.includes('http')) {
-          urlToFile(defaultImageUrl, DEFAULT_PROFILE_IMAGE_NAME, 'image/png').then(file => {
-            setImage(file);
-          });
-        }
+        urlToFile(defaultImageUrl, DEFAULT_PROFILE_IMAGE_NAME, 'image/png').then(file => {
+          setImage(file);
+        });
       }
 
       return () => {
