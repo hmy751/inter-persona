@@ -8,11 +8,56 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String?
-  password  String 
-  profileImageUrl String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                  Int             @id @default(autoincrement())
+  email               String          @unique
+  name                String?
+  password            String 
+  profileImageUrl     String?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  interviews          Interview[]     @relation("UserInterviews")
 } 
+
+model Interviewer {
+  id                  Int             @id @default(autoincrement())
+  name                String?
+  persona             Json      // { "mbti": "INTJ", "style": "직설적", "focus": "기술" }
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  interviews          Interview[]     @relation("InterviewerInterviews")
+}
+
+model Interview {
+  id            Int                   @id @default(autoincrement())
+  category      String    // 예: "프론트엔드", "백엔드"
+  status        String                @default("ongoing")
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+  contents      InterviewContent[]    @relation("InterviewContents")
+  userId        Int
+  user          User                  @relation("UserInterviews", fields: [userId], references: [id])
+  interviewerId Int
+  interviewer   Interviewer           @relation("InterviewerInterviews", fields: [interviewerId], references: [id])
+  review        Review?               @relation("InterviewReview")
+}
+
+model InterviewContent {
+  id            Int                   @id @default(autoincrement())
+  content       String    
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+  speaker       String    // "user" 또는 "interviewer"
+  interviewId   Int
+  interview     Interview             @relation("InterviewContents", fields: [interviewId], references: [id])
+}
+
+model Review {
+  id                  Int                   @id @default(autoincrement())
+  scores              Json      // 예: [{ "standard": "Technical", "score": 18, "summary": "좋음" }]
+  contentFeedback     Json      // 각 문항에 대한 피드백
+  feedback            String    // 서술형 피드백
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  interviewId         Int                   @unique
+  interview           Interview             @relation("InterviewReview", fields: [interviewId], references: [id])
+}
