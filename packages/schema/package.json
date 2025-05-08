@@ -12,6 +12,11 @@
       "import": "./dist/user.js",
       "require": "./dist/user.cjs",
       "types": "./dist/user.d.ts"
+    },
+    "./interviewer": {
+      "import": "./dist/interviewer.js",
+      "require": "./dist/interviewer.cjs",
+      "types": "./dist/interviewer.d.ts"
     }
   },
   "dependencies": {

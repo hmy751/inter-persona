@@ -2,12 +2,13 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { prisma } from '@/app';
 import bcrypt from 'bcrypt';
 import { USER_ROUTE, SERVER_ERROR, VALIDATION_ERROR } from '@/libs/constant';
+import { DEFAULT_PROFILE_IMAGE_URL } from '@repo/constant/name';
 import { generateToken } from '@/libs/utils/generateToken';
 import { uploadFile } from '@/middleware/uploadFile';
 import { getS3Client, uploadToS3 } from '@/libs/utils/uploadS3';
 import { LoginRequestSchema, RegisterRequestSchema, RegisterResponseSchema, LoginResponseSchema, UserInfoResponseSchema } from '@repo/schema/user';
 import config from '@/config';
-import { verifyToken } from '@/middleware/auth';
+import { authenticate } from '@/middleware/auth';
 
 const router: Router = Router();
 
@@ -101,6 +102,8 @@ router.post('/register', uploadFile.single('profileImage'), async (req: Request,
     if (req.file) {
       const uploadResult = await uploadToS3(s3Client, req.file);
       profileImageUrl = uploadResult.Location;
+    } else {
+      profileImageUrl = DEFAULT_PROFILE_IMAGE_URL;
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -121,7 +124,7 @@ router.post('/register', uploadFile.single('profileImage'), async (req: Request,
   }
 });
 
-router.get('/info', verifyToken, async (req: Request, res: Response, next: NextFunction) => {
+router.get('/info', authenticate, async (req: Request, res: Response, next: NextFunction) => {
   if (!req?.user?.id) {
     res.status(401).json({ message: USER_ROUTE.unauthorized });
     return;
