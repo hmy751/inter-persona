@@ -55,6 +55,8 @@ export default function LoginForm() {
         description: '로그인에 성공했습니다.',
         duration: 3000,
       });
+
+      router.push('/interviewer');
     } catch (error) {
       addToast({
         title: '로그인 실패',
