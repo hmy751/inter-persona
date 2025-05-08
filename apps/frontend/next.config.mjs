@@ -2,21 +2,32 @@
 const nextConfig = {
   webpack: (config, { isServer }) => {
     if (isServer) {
-      if (Array.isArray(config.resolve.alias))
-        config.resolve.alias.push({ name: "msw/browser", alias: false });
-      else config.resolve.alias["msw/browser"] = false;
+      if (Array.isArray(config.resolve.alias)) {
+        config.resolve.alias.push({ name: 'msw/browser', alias: false });
+      } else {
+        config.resolve.alias['msw/browser'] = false;
+      }
     } else {
-      if (Array.isArray(config.resolve.alias))
-        config.resolve.alias.push({ name: "msw/node", alias: false });
-      else config.resolve.alias["msw/node"] = false;
+      if (Array.isArray(config.resolve.alias)) {
+        config.resolve.alias.push({ name: 'msw/node', alias: false });
+      } else {
+        config.resolve.alias['msw/node'] = false;
+      }
     }
     return config;
+  },
+  images: {
+    remotePatterns: [
+      {
+        hostname: 'inter-persona.s3.ap-northeast-2.amazonaws.com',
+      },
+    ],
   },
   async redirects() {
     return [
       {
-        source: "/",
-        destination: "/main",
+        source: '/',
+        destination: '/main',
         permanent: true,
       },
     ];
