@@ -2,6 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { prisma } from '@/app';
 import bcrypt from 'bcrypt';
 import { USER_ROUTE, SERVER_ERROR, VALIDATION_ERROR } from '@/libs/constant';
+import { DEFAULT_PROFILE_IMAGE_URL } from '@repo/constant/name';
 import { generateToken } from '@/libs/utils/generateToken';
 import { uploadFile } from '@/middleware/uploadFile';
 import { getS3Client, uploadToS3 } from '@/libs/utils/uploadS3';
@@ -101,6 +102,8 @@ router.post('/register', uploadFile.single('profileImage'), async (req: Request,
     if (req.file) {
       const uploadResult = await uploadToS3(s3Client, req.file);
       profileImageUrl = uploadResult.Location;
+    } else {
+      profileImageUrl = DEFAULT_PROFILE_IMAGE_URL;
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
