@@ -1,9 +1,8 @@
 import fetcher from './fetcher';
-import { Interviewer } from './model';
+import { z } from 'zod';
+import { InterviewerListResponseSchema } from '@repo/schema/interviewer';
 
-export interface InterviewerListResponse {
-  list: Interviewer[];
-}
+type InterviewerListResponse = z.infer<typeof InterviewerListResponseSchema>;
 
 export const fetchInterviewerList = async () => {
   return fetcher.get<InterviewerListResponse>('interviewer');
