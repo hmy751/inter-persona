@@ -12,6 +12,10 @@ export const USER_ROUTE = {
   loginSuccess: '로그인에 성공했습니다.',
 };
 
+export const INTERVIEWER_ROUTE = {
+  notFound: '해당 인터뷰어를 찾을 수 없습니다.',
+};
+
 export const SERVER_ERROR = {
   internal: '서버에 문제가 발생했습니다.',
 };
