@@ -1,13 +1,12 @@
 'use client';
 
-import { useMutation } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { fetchLogin } from '@/_apis/user';
 import { useRouter } from 'next/navigation';
 import Field from '@repo/ui/Field';
 import Input from '@repo/ui/Input';
 import Button from '@repo/ui/Button';
 import styles from './FormSection.module.css';
-import useUserStore from '@/_store/zustand/useUserStore';
 import { Controller, useForm } from 'react-hook-form';
 import { LoginRequestSchema, LoginResponseSchema } from '@repo/schema/user';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -18,6 +17,8 @@ import { useToastStore } from '@repo/store/useToastStore';
 export default function LoginForm() {
   const router = useRouter();
   const { addToast } = useToastStore();
+  const queryClient = useQueryClient();
+
   const {
     control,
     handleSubmit,
@@ -44,7 +45,7 @@ export default function LoginForm() {
       if (!validationResult.success) {
         addToast({
           title: '로그인 실패',
-          description: '서버에 문제가 발생했습니다. 다시 시도해주세요.',
+          description: '서버 응답 처리 중 문제가 발생했습니다. 다시 시도해주세요.',
           duration: 3000,
         });
         return;
@@ -56,11 +57,14 @@ export default function LoginForm() {
         duration: 3000,
       });
 
+      await queryClient.invalidateQueries({ queryKey: ['user', 'info'] });
+
       router.push('/interviewer');
     } catch (error) {
+      const description = error instanceof Error ? error.message : '서버에 문제가 발생했습니다. 다시 시도해주세요.';
       addToast({
         title: '로그인 실패',
-        description: '서버에 문제가 발생했습니다. 다시 시도해주세요.',
+        description,
         duration: 3000,
       });
     }
@@ -102,7 +106,7 @@ export default function LoginForm() {
         />
       </Field>
 
-      <Button variant="primary" fullWidth type="submit" disabled={isSubmitting} isLoading={isSubmitting}>
+      <Button variant="primary" fullWidth type="submit" disabled={isSubmitting || !isValid} isLoading={isSubmitting}>
         로그인
       </Button>
     </form>
