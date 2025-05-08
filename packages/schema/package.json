@@ -17,6 +17,11 @@
       "import": "./dist/interviewer.js",
       "require": "./dist/interviewer.cjs",
       "types": "./dist/interviewer.d.ts"
+    },
+    "./interview": {
+      "import": "./dist/interview.js",
+      "require": "./dist/interview.cjs",
+      "types": "./dist/interview.d.ts"
     }
   },
   "dependencies": {
