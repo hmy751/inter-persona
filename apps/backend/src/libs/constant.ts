@@ -16,6 +16,11 @@ export const INTERVIEWER_ROUTE = {
   notFound: '해당 인터뷰어를 찾을 수 없습니다.',
 };
 
+export const INTERVIEW_ROUTE = {
+  notFoundInterviewer: '해당 인터뷰어를 찾을 수 없습니다.',
+  invalidCategory: '카테고리가 올바르지 않습니다.',
+};
+
 export const SERVER_ERROR = {
   internal: '서버에 문제가 발생했습니다.',
 };
