@@ -7,7 +7,7 @@ import config from '@/config';
 import { prisma } from '@/app';
 import { VERIFY_AUTH_ERROR, SERVER_ERROR } from '@/libs/constant';
 
-export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
+export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
   const token = req?.cookies?.token;
 
   if (!token) {

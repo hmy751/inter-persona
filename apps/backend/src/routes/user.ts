@@ -7,7 +7,7 @@ import { uploadFile } from '@/middleware/uploadFile';
 import { getS3Client, uploadToS3 } from '@/libs/utils/uploadS3';
 import { LoginRequestSchema, RegisterRequestSchema, RegisterResponseSchema, LoginResponseSchema, UserInfoResponseSchema } from '@repo/schema/user';
 import config from '@/config';
-import { verifyToken } from '@/middleware/auth';
+import { authenticate } from '@/middleware/auth';
 
 const router: Router = Router();
 
@@ -121,7 +121,7 @@ router.post('/register', uploadFile.single('profileImage'), async (req: Request,
   }
 });
 
-router.get('/info', verifyToken, async (req: Request, res: Response, next: NextFunction) => {
+router.get('/info', authenticate, async (req: Request, res: Response, next: NextFunction) => {
   if (!req?.user?.id) {
     res.status(401).json({ message: USER_ROUTE.unauthorized });
     return;
