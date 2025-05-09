@@ -1,7 +1,14 @@
 import fetcher from './fetcher';
 import { Interviewer, User } from './model';
 import { z } from 'zod';
-import { InterviewRequestSchema, InterviewResponseSchema } from '@repo/schema/interview';
+import {
+  InterviewRequestSchema,
+  InterviewResponseSchema,
+  InterviewInterviewerRequestSchema,
+  InterviewInterviewerResponseSchema,
+  InterviewUserRequestSchema,
+  InterviewUserResponseSchema,
+} from '@repo/schema/interview';
 
 /**
  * 인터뷰 조회
@@ -37,12 +44,9 @@ export const fetchCreateInterview = async ({ interviewerId, userId, category }: 
 /**
  * 인터뷰, 인터뷰어 조회
  */
-export interface GetInterviewInterviewerBody {
-  interviewId: number;
-}
-export interface GetInterviewInterviewerResponse {
-  interviewer: Interviewer;
-}
+export type GetInterviewInterviewerBody = z.infer<typeof InterviewInterviewerRequestSchema>;
+
+export type GetInterviewInterviewerResponse = z.infer<typeof InterviewInterviewerResponseSchema>;
 
 export const fetchGetInterviewInterviewer = async ({ interviewId }: GetInterviewInterviewerBody) => {
   return fetcher.get<GetInterviewInterviewerResponse>(`interview/${interviewId}/interviewer`);
@@ -51,12 +55,9 @@ export const fetchGetInterviewInterviewer = async ({ interviewId }: GetInterview
 /**
  * 인터뷰, 유저 조회
  */
-export interface GetInterviewUserBody {
-  interviewId: number;
-}
-export interface GetInterviewUserResponse {
-  user: User;
-}
+export type GetInterviewUserBody = z.infer<typeof InterviewUserRequestSchema>;
+
+export type GetInterviewUserResponse = z.infer<typeof InterviewUserResponseSchema>;
 
 export const fetchGetInterviewUser = async ({ interviewId }: GetInterviewUserBody) => {
   return fetcher.get<GetInterviewUserResponse>(`interview/${interviewId}/user`);
