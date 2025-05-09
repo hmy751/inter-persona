@@ -8,6 +8,7 @@ import {
   resetTrySpeechCount,
   CANCEL_CURRENT_REQUEST_ANSWER,
   resetContentStatus,
+  errorContent,
 } from '../slice';
 import { delay } from '../../../utils';
 import { RootState } from '@/_store/redux/rootStore';
@@ -15,7 +16,6 @@ import { fetchAnswer, AnswerData } from '@/_apis/interview';
 import { ChatContentSpeakerType } from '@/_store/redux/type';
 import { useToastStore } from '@repo/store/useToastStore';
 import { AI_ERROR_TOAST, AI_NETWORK_ERROR_TOAST } from '../constants';
-import { errorContent } from '../slice';
 interface RequestAnswerAction {
   type: string;
   payload: {
@@ -39,7 +39,7 @@ export function* requestAnswerSaga(action: RequestAnswerAction): Generator<any, 
 
     yield call(delay, 200);
 
-    yield put(triggerContent({ speaker: ChatContentSpeakerType.bot }));
+    yield put(triggerContent({ speaker: ChatContentSpeakerType.interviewer }));
     yield call(delay, 500);
 
     const data: AnswerData = yield call(fetchAnswer, {

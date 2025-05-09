@@ -144,7 +144,7 @@ describe('AI 응답 비동기 통신 에러 처리 테스트', () => {
     ).toPromise();
 
     expect(dispatched).toEqual([
-      triggerContent({ speaker: ChatContentSpeakerType.bot }),
+      triggerContent({ speaker: ChatContentSpeakerType.interviewer }),
       removeContent(),
       errorContent(),
     ]);
@@ -176,7 +176,7 @@ describe('AI 응답 비동기 통신 에러 처리 테스트', () => {
     ).toPromise();
 
     const prevErrorDispatched = [
-      triggerContent({ speaker: ChatContentSpeakerType.bot }),
+      triggerContent({ speaker: ChatContentSpeakerType.interviewer }),
       removeContent(),
       errorContent(),
     ];
@@ -209,7 +209,7 @@ describe('AI 응답 비동기 통신 에러 처리 테스트', () => {
     expect(dispatched).toEqual([
       ...prevErrorDispatched,
       resetContentStatus(),
-      triggerContent({ speaker: ChatContentSpeakerType.bot }),
+      triggerContent({ speaker: ChatContentSpeakerType.interviewer }),
       updateContent({ content: 'response success' }),
     ]);
   });
@@ -241,7 +241,7 @@ describe('AI 응답 비동기 통신 에러 처리 테스트', () => {
     ).toPromise();
 
     const prevErrorDispatched = [
-      triggerContent({ speaker: ChatContentSpeakerType.bot }),
+      triggerContent({ speaker: ChatContentSpeakerType.interviewer }),
       removeContent(),
       errorContent(),
     ];

@@ -7,5 +7,5 @@ export enum ChatContentStatusType {
 
 export enum ChatContentSpeakerType {
   user = 'user',
-  bot = 'bot',
+  interviewer = 'interviewer',
 }
