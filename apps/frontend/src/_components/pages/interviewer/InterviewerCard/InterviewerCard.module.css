@@ -46,4 +46,5 @@
   width: 100%;
   display: flex;
   justify-content: flex-end;
+  gap: var(--space-2);
 }
