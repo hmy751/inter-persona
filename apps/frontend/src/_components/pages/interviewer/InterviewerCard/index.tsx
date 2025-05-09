@@ -1,7 +1,11 @@
+'use client';
+
+import { useState } from 'react';
 import Image from 'next/image';
 import styles from './InterviewerCard.module.css';
 import Text from '@repo/ui/Text';
 import StartInterviewButton from './StartInterviewButton';
+import { SelectRoot, SelectOption } from '@repo/ui/Select';
 
 interface InterviewerCardProps {
   id: number;
@@ -18,6 +22,8 @@ export default function InterviewerCard({
   mbti,
   description,
 }: InterviewerCardProps): React.ReactElement {
+  const [category, setCategory] = useState<string>('frontend');
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.imageWrapper}>
@@ -42,7 +48,11 @@ export default function InterviewerCard({
           {mbti}
         </Text>
         <div className={styles.buttonWrapper}>
-          <StartInterviewButton id={id} />
+          <SelectRoot value={category} onValueChange={setCategory} size="sm">
+            <SelectOption value="frontend">frontend</SelectOption>
+            <SelectOption value="backend">backend</SelectOption>
+          </SelectRoot>
+          <StartInterviewButton id={id} category={category} />
         </div>
       </div>
     </div>
