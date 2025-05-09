@@ -1,8 +1,8 @@
-import { forwardRef, MutableRefObject, useEffect, useRef, useCallback } from 'react';
+import { forwardRef, MutableRefObject, useEffect, useRef, useCallback, InputHTMLAttributes, FocusEvent } from 'react';
 import clsx from 'clsx';
 import styles from './Input.module.css';
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   isFocused?: boolean;
   isTouched?: boolean;
   isError?: string;
@@ -14,7 +14,20 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
   (
-    { isFocused, isTouched, isError, placeholder, isDisabled, onFocusChange, onTouchChange, ...restProps }: InputProps,
+    {
+      isFocused,
+      isTouched,
+      isError,
+      placeholder,
+      isDisabled,
+      onFocusChange,
+      onTouchChange,
+      className,
+      onFocus,
+      onBlur,
+      disabled,
+      ...restProps
+    }: InputProps,
     ref: React.Ref<HTMLInputElement>
   ): React.ReactElement => {
     const internalInputRef = useRef<HTMLInputElement>(null);
@@ -35,24 +48,24 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     );
 
     const handleFocus = useCallback(
-      (e: React.FocusEvent<HTMLInputElement>) => {
+      (e: FocusEvent<HTMLInputElement>) => {
         onFocusChange?.(true);
 
         if (!isTouched) {
           onTouchChange?.(true);
         }
 
-        restProps.onFocus?.(e);
+        onFocus?.(e);
       },
-      [isTouched, onTouchChange, onFocusChange, restProps]
+      [isTouched, onTouchChange, onFocusChange, onFocus]
     );
 
     const handleBlur = useCallback(
-      (e: React.FocusEvent<HTMLInputElement>) => {
+      (e: FocusEvent<HTMLInputElement>) => {
         onFocusChange?.(false);
-        restProps.onBlur?.(e);
+        onBlur?.(e);
       },
-      [onFocusChange, restProps]
+      [onFocusChange, onBlur]
     );
 
     useEffect(() => {
@@ -79,12 +92,14 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       <input
         ref={assignRef}
         placeholder={placeholder}
+        disabled={disabled}
         className={clsx(
           styles.input,
-          isFocused && styles.isFocused,
           isTouched && styles.isTouched,
           isError && styles.isError,
-          isDisabled && styles.isDisabled
+          disabled && styles.isDisabled,
+          isFocused && (isError ? 'global-focus-visible-error' : 'global-focus-visible-default'),
+          className
         )}
         onFocus={handleFocus}
         onBlur={handleBlur}
