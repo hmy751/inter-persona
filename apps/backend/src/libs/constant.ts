@@ -19,6 +19,8 @@ export const INTERVIEWER_ROUTE = {
 export const INTERVIEW_ROUTE = {
   notFoundInterviewer: '해당 인터뷰어를 찾을 수 없습니다.',
   invalidCategory: '카테고리가 올바르지 않습니다.',
+  notFoundInterview: '해당 인터뷰를 찾을 수 없습니다.',
+  notFoundUser: '해당 유저를 찾을 수 없습니다.',
 };
 
 export const SERVER_ERROR = {
