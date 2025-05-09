@@ -18,10 +18,12 @@ interface SelectContextProps {
 
 const SelectContext = createContext<SelectContextProps | undefined>(undefined);
 
-interface SelectRootProps extends SelectHTMLAttributes<HTMLSelectElement> {
+interface SelectRootProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'size'> {
   children: ReactNode;
   value?: string | number;
   onValueChange?: (value: string) => void;
+  fullWidth?: boolean;
+  size?: 'sm' | 'md' | 'lg';
   isError?: string;
   placeholder?: string;
 }
@@ -31,6 +33,8 @@ export const SelectRoot = forwardRef<HTMLSelectElement, SelectRootProps>(
     {
       children,
       value,
+      fullWidth,
+      size,
       onValueChange,
       isError,
       placeholder,
@@ -69,6 +73,8 @@ export const SelectRoot = forwardRef<HTMLSelectElement, SelectRootProps>(
           onBlur={handleBlur}
           className={clsx(
             styles.select,
+            styles[`size-${size}`],
+            fullWidth && styles.fullWidth,
             isError && styles.isError,
             isFocusedInternally && (isError ? 'global-focus-visible-error' : 'global-focus-visible-default'),
             className
