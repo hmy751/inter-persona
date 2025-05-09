@@ -46,7 +46,7 @@ export const useCreateInterview = (userId: number, interviewerId: number, catego
         return;
       }
 
-      router.push(`/interview/:${data.interviewId}`);
+      router.push(`/interview/${data.interviewId}`);
     },
     onError: error => {
       if (error instanceof APIError) {
