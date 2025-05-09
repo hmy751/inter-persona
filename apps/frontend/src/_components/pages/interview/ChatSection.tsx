@@ -1,7 +1,7 @@
 'use client';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { selectChatContents, selectChatLimit } from '@/_store/redux/features/chat/selector';
+import { selectChatContents } from '@/_store/redux/features/chat/selector';
 import ChatArticle from './ChatArticle';
 import { START_CHAT, initializeChatState } from '@/_store/redux/features/chat/slice';
 import { useEffect } from 'react';
@@ -18,8 +18,8 @@ export default function ChatSection() {
   const chatContents = useSelector(selectChatContents);
   const addToast = useToastStore(state => state.addToast);
 
-  const { data: interviewerData } = useGetInterviewInterviewer(Number(interviewId));
-  const { data: userData } = useGetInterviewUser(Number(interviewId));
+  const { data: interviewerData, isLoading: interviewerLoading } = useGetInterviewInterviewer(Number(interviewId));
+  const { data: userData, isLoading: userLoading } = useGetInterviewUser(Number(interviewId));
 
   useEffect(() => {
     try {
@@ -41,6 +41,10 @@ export default function ChatSection() {
     };
   }, [interviewId]);
 
+  if (interviewerLoading || userLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className={styles.chatSectionContainer}>
       {chatContents.map(({ speaker, content, status }, index) => {
@@ -48,13 +52,13 @@ export default function ChatSection() {
           <ChatArticle key={`${speaker}-${index}`} type={speaker} status={status} content={content}>
             {speaker === 'bot' ? (
               <>
-                <ChatArticle.Avatar src={interviewerData?.interviewer.imgUrl ?? ''} />
+                <ChatArticle.Avatar src={interviewerData?.interviewer.profileImageUrl ?? ''} />
                 <ChatArticle.Speech />
               </>
             ) : (
               <>
                 <ChatArticle.Speech />
-                <ChatArticle.Avatar src={userData?.user.imgUrl ?? ''} />
+                <ChatArticle.Avatar src={userData?.user.profileImageUrl ?? ''} />
                 <ChatArticle.RetryCancelSelector />
               </>
             )}
