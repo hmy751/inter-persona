@@ -1,11 +1,18 @@
 import { prisma } from '@/app';
 import { authenticate } from '@/middleware/auth';
 import { Router, Request, Response } from 'express';
-import { InterviewRequestSchema, InterviewResponseSchema } from '@repo/schema/interview';
-import { INTERVIEW_ROUTE, SERVER_ERROR } from '@/libs/constant';
+import {
+  InterviewRequestSchema,
+  InterviewResponseSchema,
+  InterviewInterviewerRequestSchema,
+  InterviewInterviewerResponseSchema,
+  InterviewUserRequestSchema,
+  InterviewUserResponseSchema,
+} from '@repo/schema/interview';
+import { INTERVIEW_ROUTE, SERVER_ERROR, VALIDATION_ERROR } from '@/libs/constant';
 const router: Router = Router();
 
-// 면접 시작
+// 인터뷰 생성
 router.post('/', authenticate, async (req: Request, res: Response) => {
   try {
     const validation = InterviewRequestSchema.safeParse({
@@ -15,7 +22,7 @@ router.post('/', authenticate, async (req: Request, res: Response) => {
     });
 
     if (!validation.success) {
-      res.status(400).json({ message: 'Invalid input', errors: validation.error.flatten().fieldErrors });
+      res.status(400).json({ message: VALIDATION_ERROR.invalidInput, errors: validation.error.flatten().fieldErrors });
       return;
     }
 
@@ -42,6 +49,81 @@ router.post('/', authenticate, async (req: Request, res: Response) => {
     res.status(200).json(response.data);
   } catch (error) {
     console.error('Start interview error:', error);
+    res.status(500).json({ message: SERVER_ERROR.internal });
+  }
+});
+
+router.get('/:id/interviewer', authenticate, async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    const { id: interviewId } = req.params;
+
+    const validation = InterviewInterviewerRequestSchema.safeParse({ interviewId: Number(interviewId) });
+
+    if (!validation.success) {
+      res.status(400).json({ message: VALIDATION_ERROR.invalidInput, errors: validation.error.flatten().fieldErrors });
+      return;
+    }
+
+    const interview = await prisma.interview.findUnique({ where: { id: Number(interviewId) } });
+
+    if (!interview) {
+      res.status(404).json({ message: INTERVIEW_ROUTE.notFoundInterview });
+      return;
+    }
+
+    if (interview?.userId !== userId) {
+      res.status(403).json({ message: INTERVIEW_ROUTE.notFoundUser });
+      return;
+    }
+
+    const interviewer = await prisma.interviewer.findUnique({ where: { id: interview.interviewerId } });
+
+    if (!interviewer) {
+      res.status(404).json({ message: INTERVIEW_ROUTE.notFoundInterviewer });
+      return;
+    }
+
+    const response = InterviewInterviewerResponseSchema.safeParse({ interviewer });
+
+    res.status(200).json(response.data);
+  } catch (error) {
+    console.error('Get interviewer error:', error);
+    res.status(500).json({ message: SERVER_ERROR.internal });
+  }
+});
+
+router.get('/:id/user', authenticate, async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    const { id: interviewId } = req.params;
+
+    const validation = InterviewUserRequestSchema.safeParse({ interviewId: Number(interviewId) });
+
+    if (!validation.success) {
+      res.status(400).json({ message: VALIDATION_ERROR.invalidInput, errors: validation.error.flatten().fieldErrors });
+      return;
+    }
+
+    const interview = await prisma.interview.findUnique({ where: { id: Number(interviewId) } });
+
+    if (!interview) {
+      res.status(404).json({ message: INTERVIEW_ROUTE.notFoundInterview });
+      return;
+    }
+
+    if (interview?.userId !== userId) {
+      res.status(403).json({ message: INTERVIEW_ROUTE.notFoundUser });
+      return;
+    }
+
+    const user = await prisma.user.findUnique({ where: { id: interview.userId } });
+
+    const response = InterviewUserResponseSchema.safeParse({ user });
+
+    res.status(200).json(response.data);
+  } catch (error) {
+    console.error('Get user error:', error);
     res.status(500).json({ message: SERVER_ERROR.internal });
   }
 });
