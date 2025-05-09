@@ -2,19 +2,24 @@
 
 import Button from '@repo/ui/Button';
 import { useRouter } from 'next/navigation';
-import useUserStore from '@/_store/zustand/useUserStore';
 import { useCreateInterview } from '@/_data/interview';
 import useConfirmDialogStore from '@repo/store/useConfirmDialogStore';
+import { useGetUser } from '@/_data/user';
 interface StartInterviewButtonProps {
   id: number;
+  category: string;
 }
 
-export default function StartInterviewButton({ id: interviewerId }: StartInterviewButtonProps): React.ReactElement {
+export default function StartInterviewButton({
+  id: interviewerId,
+  category,
+}: StartInterviewButtonProps): React.ReactElement {
   const router = useRouter();
-  const userId = useUserStore(state => state?.user?.id);
+  const { data: user } = useGetUser();
+  const userId = user?.id;
   const setConfirm = useConfirmDialogStore(state => state.setConfirm);
 
-  const { mutate, isPending } = useCreateInterview(userId!, interviewerId);
+  const { mutate, isPending } = useCreateInterview(userId!, interviewerId, category);
 
   const handleClick = async () => {
     if (!userId) {
