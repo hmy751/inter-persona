@@ -8,6 +8,7 @@ import {
   InterviewInterviewerResponseSchema,
   InterviewUserRequestSchema,
   InterviewUserResponseSchema,
+  InterviewContentsResponseSchema,
 } from '@repo/schema/interview';
 import { INTERVIEW_ROUTE, SERVER_ERROR, VALIDATION_ERROR } from '@/libs/constant';
 const router: Router = Router();
@@ -49,6 +50,28 @@ router.post('/', authenticate, async (req: Request, res: Response) => {
     res.status(200).json(response.data);
   } catch (error) {
     console.error('Start interview error:', error);
+    res.status(500).json({ message: SERVER_ERROR.internal });
+  }
+});
+
+router.get('/:id/contents', authenticate, async (req: Request, res: Response) => {
+  try {
+    const { id: interviewId } = req.params;
+
+    const interview = await prisma.interview.findUnique({ where: { id: Number(interviewId) } });
+
+    if (!interview) {
+      res.status(404).json({ message: INTERVIEW_ROUTE.notFoundInterview });
+      return;
+    }
+
+    const contents = await prisma.interviewContent.findMany({ where: { interviewId: Number(interviewId) } });
+
+    const response = InterviewContentsResponseSchema.safeParse({ contents });
+
+    res.status(200).json(response.data);
+  } catch (error) {
+    console.error('Get interview contents error:', error);
     res.status(500).json({ message: SERVER_ERROR.internal });
   }
 });
