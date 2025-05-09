@@ -4,9 +4,10 @@ import { PrismaClient } from '@prisma/client';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 
+import { authenticate } from '@/middleware/auth';
 import userRouter from '@/routes/user';
 import interviewerRouter from '@/routes/interviewer';
-import { authenticate } from '@/middleware/auth';
+import interviewRouter from '@/routes/interview';
 
 const prisma = new PrismaClient();
 
@@ -28,6 +29,7 @@ app.get('/', (req, res) => {
 
 app.use('/user', userRouter);
 app.use('/interviewer', authenticate, interviewerRouter);
+app.use('/interview', authenticate, interviewRouter);
 
 const server = app.listen(config.server.port, () => {
   console.log(`http://${config.server.host}:${config.server.port} 실행`);

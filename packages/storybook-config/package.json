@@ -41,7 +41,7 @@
     "build": "tsup"
   },
   "devDependencies": {
-    "@storybook/addon-viewport": "^8.6.12",
+    "@storybook/addon-viewport": "^8.4.3",
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^18.0.0"
   }

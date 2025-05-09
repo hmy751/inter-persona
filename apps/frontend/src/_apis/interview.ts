@@ -1,5 +1,8 @@
 import fetcher from './fetcher';
 import { Interviewer, User } from './model';
+import { z } from 'zod';
+import { InterviewRequestSchema, InterviewResponseSchema } from '@repo/schema/interview';
+
 /**
  * 인터뷰 조회
  */
@@ -19,18 +22,15 @@ export const fetchGetInterview = async ({ interviewId }: GetInterviewBody) => {
 /**
  * 인터뷰 생성
  */
-export interface CreateInterviewBody {
-  interviewerId: number;
-  userId: number;
-}
-export interface CreateInterviewResponse {
-  id: number;
-}
+type CreateInterviewBody = z.infer<typeof InterviewRequestSchema>;
 
-export const fetchCreateInterview = async ({ interviewerId, userId }: CreateInterviewBody) => {
+type CreateInterviewResponse = z.infer<typeof InterviewResponseSchema>;
+
+export const fetchCreateInterview = async ({ interviewerId, userId, category }: CreateInterviewBody) => {
   return fetcher.post<CreateInterviewResponse>('interview', {
     interviewerId,
     userId,
+    category,
   });
 };
 

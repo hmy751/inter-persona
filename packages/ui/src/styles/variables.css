@@ -75,11 +75,7 @@
      4. Effects & Interactions
      ================================= */
   /* Gradients */
-  --gradient-primary: linear-gradient(
-    135deg,
-    var(--color-secondary),
-    var(--color-info)
-  );
+  --gradient-primary: linear-gradient(135deg, var(--color-secondary), var(--color-info));
 
   /* Shadows */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -128,4 +124,22 @@
   --z-overlay: 900;
   --z-dropdown: 900;
   --z-header: 100;
+}
+
+/* =================================
+   7. Focus Visible Utilities
+   ================================= */
+
+/* 기본 포커스 스타일 유틸리티 */
+.global-focus-visible-default:focus-visible {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--color-primary) 25%, transparent);
+}
+
+/* 에러 상태 포커스 스타일 유틸리티 */
+.global-focus-visible-error:focus-visible {
+  outline: none;
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--color-error) 25%, transparent);
 }

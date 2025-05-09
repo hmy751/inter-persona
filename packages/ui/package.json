@@ -12,7 +12,8 @@
     "./Spinner": "./src/Spinner.tsx",
     "./Text": "./src/Text.tsx",
     "./Input": "./src/Input.tsx",
-    "./Field": "./src/Field.tsx"
+    "./Field": "./src/Field.tsx",
+    "./Select": "./src/Select.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
@@ -30,8 +31,8 @@
     "@storybook/addon-interactions": "^8.4.3",
     "@storybook/addon-onboarding": "^8.4.3",
     "@storybook/blocks": "^8.4.3",
-    "@storybook/nextjs": "^8.4.7",
-    "@storybook/react": "^8.3.6",
+    "@storybook/nextjs": "^8.4.3",
+    "@storybook/react": "^8.4.3",
     "@storybook/react-vite": "^8.4.3",
     "@storybook/test": "^8.4.3",
     "@turbo/gen": "^1.12.4",
