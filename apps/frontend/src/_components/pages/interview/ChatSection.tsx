@@ -10,7 +10,8 @@ import styles from './chat.module.css';
 import { AI_NETWORK_ERROR_TOAST } from '@/_store/redux/features/chat/constants';
 import useToastStore from '@repo/store/useToastStore';
 
-import { useGetInterviewInterviewer, useGetInterviewUser } from '@/_data/interview';
+import { useGetInterviewContents, useGetInterviewInterviewer, useGetInterviewUser } from '@/_data/interview';
+import { ChatContentSpeakerType, ChatContentStatusType } from '@/_store/redux/type';
 
 export default function ChatSection() {
   const interviewId = useParams().interviewId;
@@ -20,10 +21,29 @@ export default function ChatSection() {
 
   const { data: interviewerData, isLoading: interviewerLoading } = useGetInterviewInterviewer(Number(interviewId));
   const { data: userData, isLoading: userLoading } = useGetInterviewUser(Number(interviewId));
+  const { data: contentsData, isLoading: contentsLoading } = useGetInterviewContents(Number(interviewId));
 
   useEffect(() => {
     try {
       (async function init() {
+        if (contentsLoading) {
+          return;
+        }
+
+        if (contentsData?.contents?.length && contentsData.contents.length > 0) {
+          dispatch(
+            initializeChatState(
+              contentsData.contents.map(content => ({
+                status: ChatContentStatusType.loading,
+                speaker: content.speaker === 'user' ? ChatContentSpeakerType.user : ChatContentSpeakerType.interviewer,
+                content: content.content,
+                timeStamp: new Date(content.createdAt),
+              }))
+            )
+          );
+          return;
+        }
+
         dispatch({
           type: START_CHAT,
           payload: {
@@ -39,9 +59,9 @@ export default function ChatSection() {
     return () => {
       dispatch(initializeChatState(null));
     };
-  }, [interviewId]);
+  }, [interviewId, contentsLoading]);
 
-  if (interviewerLoading || userLoading) {
+  if (interviewerLoading || userLoading || contentsLoading) {
     return <div>Loading...</div>;
   }
 
@@ -50,7 +70,7 @@ export default function ChatSection() {
       {chatContents.map(({ speaker, content, status }, index) => {
         return (
           <ChatArticle key={`${speaker}-${index}`} type={speaker} status={status} content={content}>
-            {speaker === 'bot' ? (
+            {speaker === ChatContentSpeakerType.interviewer ? (
               <>
                 <ChatArticle.Avatar src={interviewerData?.interviewer.profileImageUrl ?? ''} />
                 <ChatArticle.Speech />
