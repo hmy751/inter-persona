@@ -8,22 +8,20 @@ import {
   InterviewInterviewerResponseSchema,
   InterviewUserRequestSchema,
   InterviewUserResponseSchema,
+  InterviewContentsResponseSchema,
+  InterviewContentsRequestSchema,
 } from '@repo/schema/interview';
 
 /**
- * 인터뷰 조회
+ * 인터뷰 컨텐츠 조회
  */
-export interface GetInterviewBody {
-  interviewId: number;
-}
-export interface GetInterviewResponse {
-  id: number;
-  interviewerId: number;
-  userId: number;
-}
 
-export const fetchGetInterview = async ({ interviewId }: GetInterviewBody) => {
-  return fetcher.get<GetInterviewResponse>(`interview/${interviewId}`);
+export type GetInterviewContentsBody = z.infer<typeof InterviewContentsRequestSchema>;
+
+export type GetInterviewContentsResponse = z.infer<typeof InterviewContentsResponseSchema>;
+
+export const fetchGetInterviewContents = async ({ interviewId }: GetInterviewContentsBody) => {
+  return fetcher.get<GetInterviewContentsResponse>(`interview/${interviewId}/contents`);
 };
 
 /**

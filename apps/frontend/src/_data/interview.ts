@@ -2,22 +2,22 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { delay } from '@/_libs/utils';
 import {
   fetchCreateInterview,
-  fetchGetInterview,
+  fetchGetInterviewContents,
   fetchGetInterviewInterviewer,
   fetchGetInterviewUser,
-  GetInterviewResponse,
   GetInterviewInterviewerResponse,
   GetInterviewUserResponse,
+  GetInterviewContentsResponse,
 } from '@/_apis/interview';
 import { APIError } from '@/_apis/fetcher';
 import useToastStore from '@repo/store/useToastStore';
 import { useRouter } from 'next/navigation';
 
-// 인터뷰 조회
-export const useGetInterview = (interviewId: number) => {
-  return useQuery<GetInterviewResponse, APIError>({
+// 인터뷰 컨텐츠 조회
+export const useGetInterviewContents = (interviewId: number) => {
+  return useQuery<GetInterviewContentsResponse, APIError>({
     queryKey: ['interview', interviewId],
-    queryFn: () => fetchGetInterview({ interviewId }),
+    queryFn: () => fetchGetInterviewContents({ interviewId }),
     enabled: !!interviewId,
   });
 };
