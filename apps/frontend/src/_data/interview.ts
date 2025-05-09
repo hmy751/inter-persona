@@ -23,7 +23,7 @@ export const useGetInterview = (interviewId: number) => {
 };
 
 // 인터뷰 생성
-export const useCreateInterview = (userId: number, interviewerId: number) => {
+export const useCreateInterview = (userId: number, interviewerId: number, category: string) => {
   const router = useRouter();
   const addToast = useToastStore(state => state.addToast);
 
@@ -34,10 +34,11 @@ export const useCreateInterview = (userId: number, interviewerId: number) => {
       return await fetchCreateInterview({
         interviewerId,
         userId,
+        category,
       });
     },
     onSuccess: data => {
-      if (!data?.id) {
+      if (!data?.interviewId) {
         addToast({
           title: '인터뷰 생성 실패',
           description: '인터뷰 생성에 실패했습니다. 다시 시도해주세요.',
@@ -45,7 +46,7 @@ export const useCreateInterview = (userId: number, interviewerId: number) => {
         return;
       }
 
-      router.push(`/interview/${data.id}`);
+      router.push(`/interview/:${data.interviewId}`);
     },
     onError: error => {
       if (error instanceof APIError) {
