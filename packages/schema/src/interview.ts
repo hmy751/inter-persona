@@ -36,7 +36,7 @@ export const InterviewContentSchema = z.object({
   id: z.number().int().positive(),
   content: z.string(),
   speaker: z.enum(['interviewer', 'user']),
-  createdAt: z.string().datetime(),
+  createdAt: z.date(),
 });
 
 export const InterviewContentsResponseSchema = z.object({
