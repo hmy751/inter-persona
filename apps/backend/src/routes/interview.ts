@@ -60,7 +60,7 @@ router.get('/:id/contents', authenticate, async (req: Request, res: Response) =>
   try {
     const { id: interviewId } = req.params;
 
-    const interview = await prisma.interview.findUnique({ where: { id: Number(interviewId) } });
+    const interview = await prisma.interview.findUnique({ where: { id: Number(interviewId) }, select: { id: true } });
 
     if (!interview) {
       res.status(404).json({ message: INTERVIEW_ROUTE.error.notFoundInterview });
@@ -89,7 +89,11 @@ router.post('/:id/start', authenticate, async (req: Request, res: Response) => {
       return;
     }
 
-    const interview = await prisma.interview.findUnique({ where: { id: Number(interviewId) } });
+    const interview = await prisma.interview.findUnique({
+      where: { id: Number(interviewId) }, select: {
+        id: true,
+      }
+    });
 
     if (!interview) {
       res.status(404).json({ message: INTERVIEW_ROUTE.error.notFoundInterview });
@@ -119,7 +123,6 @@ router.post('/:id/start', authenticate, async (req: Request, res: Response) => {
 
 router.get('/:id/interviewer', authenticate, async (req: Request, res: Response) => {
   try {
-    const userId = req.user?.id;
     const { id: interviewId } = req.params;
 
     const validation = InterviewInterviewerRequestSchema.safeParse({ interviewId: Number(interviewId) });
@@ -129,15 +132,10 @@ router.get('/:id/interviewer', authenticate, async (req: Request, res: Response)
       return;
     }
 
-    const interview = await prisma.interview.findUnique({ where: { id: Number(interviewId) } });
+    const interview = await prisma.interview.findUnique({ where: { id: Number(interviewId) }, select: { interviewerId: true } });
 
     if (!interview) {
       res.status(404).json({ message: INTERVIEW_ROUTE.error.notFoundInterview });
-      return;
-    }
-
-    if (interview?.userId !== userId) {
-      res.status(403).json({ message: INTERVIEW_ROUTE.error.notFoundUser });
       return;
     }
 
@@ -169,7 +167,7 @@ router.get('/:id/user', authenticate, async (req: Request, res: Response) => {
       return;
     }
 
-    const interview = await prisma.interview.findUnique({ where: { id: Number(interviewId) } });
+    const interview = await prisma.interview.findUnique({ where: { id: Number(interviewId) }, select: { userId: true } });
 
     if (!interview) {
       res.status(404).json({ message: INTERVIEW_ROUTE.error.notFoundInterview });
