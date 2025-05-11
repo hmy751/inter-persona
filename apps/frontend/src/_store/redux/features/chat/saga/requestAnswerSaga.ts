@@ -12,7 +12,7 @@ import {
 } from '../slice';
 import { delay } from '../../../utils';
 import { RootState } from '@/_store/redux/rootStore';
-import { fetchAnswer, AnswerData } from '@/_apis/interview';
+import { fetchAnswer, AnswerData, fetchStartInterview } from '@/_apis/interview';
 import { ChatContentSpeakerType } from '@/_store/redux/type';
 import { useToastStore } from '@repo/store/useToastStore';
 import { AI_ERROR_TOAST, AI_NETWORK_ERROR_TOAST } from '../constants';
@@ -42,10 +42,18 @@ export function* requestAnswerSaga(action: RequestAnswerAction): Generator<any, 
     yield put(triggerContent({ speaker: ChatContentSpeakerType.interviewer }));
     yield call(delay, 500);
 
-    const data: AnswerData = yield call(fetchAnswer, {
-      interviewId,
-      content: action.payload.content,
-    });
+    let data: AnswerData;
+
+    if (action.type === START_CHAT) {
+      data = yield call(fetchStartInterview, {
+        interviewId,
+      });
+    } else {
+      data = yield call(fetchAnswer, {
+        interviewId,
+        content: action.payload.content,
+      });
+    }
 
     if (data.content) {
       yield put(updateContent({ content: data.content as unknown as string }));
