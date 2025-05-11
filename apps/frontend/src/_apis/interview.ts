@@ -10,34 +10,9 @@ import {
   InterviewUserResponseSchema,
   InterviewContentsResponseSchema,
   InterviewContentsRequestSchema,
+  InterviewStartRequestSchema,
+  InterviewStartResponseSchema,
 } from '@repo/schema/interview';
-
-/**
- * 인터뷰 컨텐츠 조회
- */
-
-export type GetInterviewContentsBody = z.infer<typeof InterviewContentsRequestSchema>;
-
-export type GetInterviewContentsResponse = z.infer<typeof InterviewContentsResponseSchema>;
-
-export const fetchGetInterviewContents = async ({ interviewId }: GetInterviewContentsBody) => {
-  return fetcher.get<GetInterviewContentsResponse>(`interview/${interviewId}/contents`);
-};
-
-/**
- * 인터뷰 생성
- */
-type CreateInterviewBody = z.infer<typeof InterviewRequestSchema>;
-
-type CreateInterviewResponse = z.infer<typeof InterviewResponseSchema>;
-
-export const fetchCreateInterview = async ({ interviewerId, userId, category }: CreateInterviewBody) => {
-  return fetcher.post<CreateInterviewResponse>('interview', {
-    interviewerId,
-    userId,
-    category,
-  });
-};
 
 /**
  * 인터뷰, 인터뷰어 조회
@@ -59,6 +34,43 @@ export type GetInterviewUserResponse = z.infer<typeof InterviewUserResponseSchem
 
 export const fetchGetInterviewUser = async ({ interviewId }: GetInterviewUserBody) => {
   return fetcher.get<GetInterviewUserResponse>(`interview/${interviewId}/user`);
+};
+
+/**
+ * 인터뷰 생성
+ */
+type CreateInterviewBody = z.infer<typeof InterviewRequestSchema>;
+
+type CreateInterviewResponse = z.infer<typeof InterviewResponseSchema>;
+
+export const fetchCreateInterview = async ({ interviewerId, userId, category }: CreateInterviewBody) => {
+  return fetcher.post<CreateInterviewResponse>('interview', {
+    interviewerId,
+    userId,
+    category,
+  });
+};
+
+/**
+ * 인터뷰 컨텐츠 조회
+ */
+export type GetInterviewContentsBody = z.infer<typeof InterviewContentsRequestSchema>;
+
+export type GetInterviewContentsResponse = z.infer<typeof InterviewContentsResponseSchema>;
+
+export const fetchGetInterviewContents = async ({ interviewId }: GetInterviewContentsBody) => {
+  return fetcher.get<GetInterviewContentsResponse>(`interview/${interviewId}/contents`);
+};
+
+/**
+ * 인터뷰 시작
+ */
+export type StartInterviewBody = z.infer<typeof InterviewStartRequestSchema>;
+
+export type StartInterviewResponse = z.infer<typeof InterviewStartResponseSchema>;
+
+export const fetchStartInterview = async ({ interviewId }: StartInterviewBody) => {
+  return fetcher.post<StartInterviewResponse>(`interview/${interviewId}/start`);
 };
 
 /**
