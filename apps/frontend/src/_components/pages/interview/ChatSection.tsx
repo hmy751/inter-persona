@@ -34,7 +34,7 @@ export default function ChatSection() {
           dispatch(
             initializeChatState(
               contentsData.contents.map(content => ({
-                status: ChatContentStatusType.loading,
+                status: ChatContentStatusType.success,
                 speaker: content.speaker === 'user' ? ChatContentSpeakerType.user : ChatContentSpeakerType.interviewer,
                 content: content.content,
                 timeStamp: new Date(content.createdAt),
