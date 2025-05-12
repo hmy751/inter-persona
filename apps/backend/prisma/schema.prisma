@@ -29,10 +29,15 @@ model Interviewer {
   interviews          Interview[]     @relation("InterviewerInterviews")
 }
 
+enum Status {
+  ongoing
+  completed
+}
+
 model Interview {
   id            Int                   @id @default(autoincrement())
   category      String    // 예: "프론트엔드", "백엔드"
-  status        String                @default("ongoing")
+  status        Status
   createdAt     DateTime              @default(now())
   updatedAt     DateTime              @updatedAt
   contents      InterviewContent[]    @relation("InterviewContents")
