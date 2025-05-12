@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useEffect, useCallback, useMemo } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import Button from '@repo/ui/Button';
 import { detectSilence } from './utils';
 import Image from 'next/image';
@@ -9,13 +9,14 @@ import Recorder from 'recorder-js';
 import { useDispatch, useSelector } from 'react-redux';
 import { SEND_RECORD } from '@/_store/redux/features/chat/slice';
 import { ChatContentStatusType } from '@/_store/redux/type';
-import { selectChatLimit, selectCurrentRecordingAnswer } from '@/_store/redux/features/chat/selector';
+import { selectCurrentRecordingAnswer, selectInterviewStatus } from '@/_store/redux/features/chat/selector';
 import clsx from 'clsx';
 import { IDLE_ICON_SRC, RECORDING_ICON_SRC, DISABLED_ICON_SRC } from './constants';
-import { RecordError, handleRecordError } from './_error';
-import { createRecordError, RecordErrorType } from './_error';
+import { RecordError, handleRecordError, createRecordError, RecordErrorType } from './_error';
 import useToastStore from '@repo/store/useToastStore';
 import { useCreateResult } from '@/_data/result';
+import { useParams } from 'next/navigation';
+import { useGetInterview } from '@/_data/interview';
 
 export enum RecordingStatusType {
   idle = 'idle',
@@ -24,10 +25,11 @@ export enum RecordingStatusType {
 }
 
 export default function RecordButton() {
+  const interviewId = useParams().interviewId;
   const recorderRef = useRef<Recorder | null>(null);
   const [recordingStatus, setRecordingStatus] = useState<RecordingStatusType>(RecordingStatusType.idle);
   const [buttonIconSrc, setButtonIconSrc] = useState<string>('/assets/images/record-button.svg');
-  const chatLimit = useSelector(selectChatLimit);
+  const interviewStatus = useSelector(selectInterviewStatus);
 
   const dispatch = useDispatch();
   const currentRecordingAnswer = useSelector(selectCurrentRecordingAnswer);
@@ -35,6 +37,9 @@ export default function RecordButton() {
   const cleanupRef = useRef<() => void>(() => {});
   const { addToast } = useToastStore();
   const { mutate, isPending } = useCreateResult();
+  const { data, isLoading: interviewStatusLoading } = useGetInterview(Number(interviewId));
+
+  const isCompletedInterview = data?.interview.status === 'completed' || interviewStatus === 'completed';
 
   const handleRecord = async () => {
     try {
@@ -42,15 +47,19 @@ export default function RecordButton() {
 
       const isRecordingOrDisabled = recordingStatus === RecordingStatusType.recording || isDisabledRecord;
 
-      if (isRecordingOrDisabled) return;
+      if (isRecordingOrDisabled) {
+        return;
+      }
 
       // 1. 오디오 스트림 가져오기
       const { mediaDevices } = navigator;
+
       if (!mediaDevices?.getUserMedia) {
         throw createRecordError(RecordErrorType.API_NOT_SUPPORTED);
       }
 
       let stream: MediaStream;
+
       try {
         stream = await mediaDevices.getUserMedia({ audio: true });
       } catch (error: any) {
@@ -71,6 +80,7 @@ export default function RecordButton() {
 
       // 2. 음량 감지를 위한 analyser 생성
       let audioContext: AudioContext;
+
       try {
         audioContext = new window.AudioContext();
       } catch (error: any) {
@@ -83,6 +93,7 @@ export default function RecordButton() {
 
       // 3. stream을 source로 변환하고 analyser에 연결
       let source: MediaStreamAudioSourceNode;
+
       try {
         source = audioContext.createMediaStreamSource(stream);
         source.connect(analyserNode);
@@ -185,11 +196,15 @@ export default function RecordButton() {
 
   useEffect(() => {
     (function checkFinishedRecording() {
-      if (recorderRef.current === null) return;
+      if (recorderRef.current === null) {
+        return;
+      }
 
       const isIdleRecordingOrDisabled = recordingStatus === RecordingStatusType.idle || isDisabledRecord;
 
-      if (isIdleRecordingOrDisabled) return;
+      if (isIdleRecordingOrDisabled) {
+        return;
+      }
 
       const isFinishedRecording = recordingStatus === RecordingStatusType.finished;
 
@@ -201,7 +216,9 @@ export default function RecordButton() {
 
   useEffect(() => {
     (function checkAvailableRecordingIdle() {
-      if (!currentRecordingAnswer) return;
+      if (!currentRecordingAnswer) {
+        return;
+      }
 
       const isSuccessOrIdleRecording =
         currentRecordingAnswer?.status === ChatContentStatusType.success ||
@@ -234,7 +251,7 @@ export default function RecordButton() {
   }, [isDisabledRecord, recordingStatus]);
 
   const handleClickResultButton = async () => {
-    if (!chatLimit) {
+    if (!isCompletedInterview) {
       addToast({
         title: '인터뷰 아직 완료되지 않았습니다.',
         description: '인터뷰가 완료되면 결과를 확인할 수 있습니다.',
@@ -246,9 +263,13 @@ export default function RecordButton() {
     mutate();
   };
 
+  if (interviewStatusLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <>
-      {chatLimit ? (
+      {isCompletedInterview ? (
         <Button onClick={handleClickResultButton} variant="primary" size="lg" isLoading={isPending}>
           결과 보기
         </Button>

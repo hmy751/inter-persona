@@ -12,7 +12,7 @@ import {
 } from '../slice';
 import { delay } from '../../../utils';
 import { RootState } from '@/_store/redux/rootStore';
-import { fetchAnswer, AnswerData, fetchStartInterview } from '@/_apis/interview';
+import { fetchAnswer, AnswerData, fetchStartInterview, fetchGetInterviewStatus } from '@/_apis/interview';
 import { ChatContentSpeakerType } from '@/_store/redux/type';
 import { useToastStore } from '@repo/store/useToastStore';
 import { AI_ERROR_TOAST, AI_NETWORK_ERROR_TOAST } from '../constants';
@@ -60,6 +60,14 @@ export function* requestAnswerSaga(action: RequestAnswerAction): Generator<any, 
     } else {
       yield put(removeContent());
       yield put(errorContent());
+    }
+
+    const statusData = yield call(fetchGetInterviewStatus, {
+      interviewId,
+    });
+
+    if (statusData.status === 'completed') {
+      yield put(resetContentStatus());
     }
   } catch (err) {
     useToastStore.getState().addToast(AI_NETWORK_ERROR_TOAST);

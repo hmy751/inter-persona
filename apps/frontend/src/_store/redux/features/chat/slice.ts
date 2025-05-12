@@ -11,12 +11,14 @@ export interface ChatContent {
 
 export interface ChatState {
   interviewId: number | null;
+  interviewStatus: 'completed' | 'ongoing';
   contents: ChatContent[];
   trySpeechCount: number;
 }
 
 const initialState: ChatState = {
   interviewId: null,
+  interviewStatus: 'ongoing',
   contents: [],
   trySpeechCount: 0,
 };
@@ -25,13 +27,22 @@ const slice = createSlice({
   name: 'chat',
   initialState,
   reducers: {
-    initializeChatState: (state, action: PayloadAction<{ contents: ChatContent[]; interviewId: number } | null>) => {
+    initializeChatState: (
+      state,
+      action: PayloadAction<{
+        contents: ChatContent[];
+        interviewId: number;
+        interviewStatus: 'completed' | 'ongoing';
+      } | null>
+    ) => {
       if (action.payload?.contents?.length) {
         state.contents = [...action.payload.contents];
         state.interviewId = action.payload.interviewId;
+        state.interviewStatus = action.payload.interviewStatus;
       } else {
         state.contents = [];
         state.interviewId = null;
+        state.interviewStatus = 'ongoing';
       }
     },
     startChat: (state, action: PayloadAction<{ interviewId: number }>) => {
