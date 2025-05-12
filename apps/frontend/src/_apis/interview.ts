@@ -12,6 +12,8 @@ import {
   InterviewContentsRequestSchema,
   InterviewStartRequestSchema,
   InterviewStartResponseSchema,
+  InterviewAnswerRequestSchema,
+  InterviewAnswerResponseSchema,
 } from '@repo/schema/interview';
 
 /**
@@ -104,14 +106,9 @@ export const fetchSpeechToText = async ({ formData }: SpeechToTextProps): Promis
 /**
  * 인터뷰 답변
  */
-export interface AnswerBody {
-  interviewId: number;
-  content: string;
-}
+export type AnswerBody = z.infer<typeof InterviewAnswerRequestSchema>;
 
-export interface AnswerData {
-  content: string;
-}
+export type AnswerData = z.infer<typeof InterviewAnswerResponseSchema>;
 
 export const fetchAnswer = async ({ interviewId, content }: AnswerBody) => {
   return fetcher.post<AnswerData>(`interview/${interviewId}/contents/answer`, {
