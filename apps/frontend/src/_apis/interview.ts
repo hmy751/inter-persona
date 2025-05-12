@@ -16,7 +16,20 @@ import {
   InterviewAnswerResponseSchema,
   InterviewStatusResponseSchema,
   InterviewStatusRequestSchema,
+  InterviewCreateRequestSchema,
+  InterviewCreateResponseSchema,
 } from '@repo/schema/interview';
+
+/**
+ * 인터뷰 조회
+ */
+export type GetInterviewBody = z.infer<typeof InterviewRequestSchema>;
+
+export type GetInterviewResponse = z.infer<typeof InterviewResponseSchema>;
+
+export const fetchGetInterview = async ({ interviewId }: GetInterviewBody) => {
+  return fetcher.get<GetInterviewResponse>(`interview/${interviewId}`);
+};
 
 /**
  * 인터뷰, 인터뷰어 조회
@@ -43,9 +56,9 @@ export const fetchGetInterviewUser = async ({ interviewId }: GetInterviewUserBod
 /**
  * 인터뷰 생성
  */
-type CreateInterviewBody = z.infer<typeof InterviewRequestSchema>;
+export type CreateInterviewBody = z.infer<typeof InterviewCreateRequestSchema>;
 
-type CreateInterviewResponse = z.infer<typeof InterviewResponseSchema>;
+export type CreateInterviewResponse = z.infer<typeof InterviewCreateResponseSchema>;
 
 export const fetchCreateInterview = async ({ interviewerId, userId, category }: CreateInterviewBody) => {
   return fetcher.post<CreateInterviewResponse>('interview', {

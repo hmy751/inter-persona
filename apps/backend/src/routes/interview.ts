@@ -2,6 +2,8 @@ import { prisma } from '@/app';
 import { authenticate } from '@/middleware/auth';
 import { Router, Request, Response } from 'express';
 import {
+  InterviewRequestSchema,
+  InterviewResponseSchema,
   InterviewCreateRequestSchema,
   InterviewCreateResponseSchema,
   InterviewInterviewerRequestSchema,
@@ -59,6 +61,33 @@ router.post('/', authenticate, async (req: Request, res: Response) => {
     res.status(200).json(response.data);
   } catch (error) {
     console.error('Start interview error:', error);
+    res.status(500).json({ message: SERVER_ERROR.internal });
+  }
+});
+
+router.get('/:id', authenticate, async (req: Request, res: Response) => {
+  try {
+    const { id: interviewId } = req.params;
+
+    const validation = InterviewRequestSchema.safeParse({ interviewId: Number(interviewId) });
+
+    if (!validation.success) {
+      res.status(400).json({ message: VALIDATION_ERROR.invalidInput, errors: validation.error.flatten().fieldErrors });
+      return;
+    }
+
+    const interview = await prisma.interview.findUnique({ where: { id: Number(interviewId) } });
+
+    if (!interview) {
+      res.status(404).json({ message: INTERVIEW_ROUTE.error.notFoundInterview });
+      return;
+    }
+
+    const response = InterviewResponseSchema.safeParse({ interview });
+
+    res.status(200).json(response.data);
+  } catch (error) {
+    console.error('Get interview error:', error);
     res.status(500).json({ message: SERVER_ERROR.internal });
   }
 });
