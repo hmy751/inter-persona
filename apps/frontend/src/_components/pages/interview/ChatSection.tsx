@@ -32,14 +32,15 @@ export default function ChatSection() {
 
         if (contentsData?.contents?.length && contentsData.contents.length > 0) {
           dispatch(
-            initializeChatState(
-              contentsData.contents.map(content => ({
+            initializeChatState({
+              contents: contentsData.contents.map(content => ({
                 status: ChatContentStatusType.success,
                 speaker: content.speaker === 'user' ? ChatContentSpeakerType.user : ChatContentSpeakerType.interviewer,
                 content: content.content,
                 timeStamp: new Date(content.createdAt),
-              }))
-            )
+              })),
+              interviewId: Number(interviewId),
+            })
           );
           return;
         }
@@ -48,7 +49,6 @@ export default function ChatSection() {
           type: START_CHAT,
           payload: {
             interviewId: interviewId,
-            content: '안녕하세요. 간단히 자기소개 부탁드립니다.',
           },
         });
       })();

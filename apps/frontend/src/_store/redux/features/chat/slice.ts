@@ -25,9 +25,10 @@ const slice = createSlice({
   name: 'chat',
   initialState,
   reducers: {
-    initializeChatState: (state, action: PayloadAction<ChatContent[] | null>) => {
-      if (action.payload?.length) {
-        state.contents = [...action.payload];
+    initializeChatState: (state, action: PayloadAction<{ contents: ChatContent[]; interviewId: number } | null>) => {
+      if (action.payload?.contents?.length) {
+        state.contents = [...action.payload.contents];
+        state.interviewId = action.payload.interviewId;
       } else {
         state.contents = [];
         state.interviewId = null;
