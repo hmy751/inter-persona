@@ -2,8 +2,8 @@ import { prisma } from '@/app';
 import { authenticate } from '@/middleware/auth';
 import { Router, Request, Response } from 'express';
 import {
-  InterviewRequestSchema,
-  InterviewResponseSchema,
+  InterviewCreateRequestSchema,
+  InterviewCreateResponseSchema,
   InterviewInterviewerRequestSchema,
   InterviewInterviewerResponseSchema,
   InterviewUserRequestSchema,
@@ -25,7 +25,7 @@ const router: Router = Router();
 // 인터뷰 생성
 router.post('/', authenticate, async (req: Request, res: Response) => {
   try {
-    const validation = InterviewRequestSchema.safeParse({
+    const validation = InterviewCreateRequestSchema.safeParse({
       interviewerId: req.body.interviewerId,
       userId: req.user?.id,
       category: req.body.category,
@@ -54,7 +54,7 @@ router.post('/', authenticate, async (req: Request, res: Response) => {
       data: { userId, interviewerId, status: 'ongoing', category },
     });
 
-    const response = InterviewResponseSchema.safeParse({ interviewId: interview.id });
+    const response = InterviewCreateResponseSchema.safeParse({ interviewId: interview.id });
 
     res.status(200).json(response.data);
   } catch (error) {

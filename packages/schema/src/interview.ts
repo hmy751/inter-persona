@@ -2,13 +2,13 @@ import { z } from 'zod';
 import { InterviewerResponseSchema } from './interviewer';
 import { UserInfoResponseSchema } from './user';
 
-export const InterviewRequestSchema = z.object({
+export const InterviewCreateRequestSchema = z.object({
   interviewerId: z.number().int().positive(),
   userId: z.number().int().positive(),
   category: z.string(),
 });
 
-export const InterviewResponseSchema = z.object({
+export const InterviewCreateResponseSchema = z.object({
   interviewId: z.number().int().positive(),
 });
 
