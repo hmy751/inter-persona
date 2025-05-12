@@ -10,7 +10,7 @@ import styles from './chat.module.css';
 import { AI_NETWORK_ERROR_TOAST } from '@/_store/redux/features/chat/constants';
 import useToastStore from '@repo/store/useToastStore';
 
-import { useGetInterview, useGetInterviewInterviewer, useGetInterviewUser } from '@/_data/interview';
+import { useGetInterview } from '@/_data/interview';
 import { ChatContentSpeakerType, ChatContentStatusType } from '@/_store/redux/type';
 
 export default function ChatSection() {
@@ -30,25 +30,25 @@ export default function ChatSection() {
           return;
         }
 
-        const isAlreadyStarted = interviewData?.contents?.length && interviewData.contents.length > 0;
-
-        if (isAlreadyStarted) {
+        // 이미 인터뷰가 진행된 경우
+        if (interviewData?.contents?.length && interviewData.contents.length > 0) {
           dispatch(
             initializeChatState({
-              contents: interviewData!.contents!.map(content => ({
+              contents: interviewData?.contents?.map(content => ({
                 status: ChatContentStatusType.success,
                 speaker: content.speaker === 'user' ? ChatContentSpeakerType.user : ChatContentSpeakerType.interviewer,
                 content: content.content,
                 timeStamp: new Date(content.createdAt),
               })),
               interviewId: Number(interviewId),
-              interviewStatus: interviewData!.status,
+              interviewStatus: interviewData?.status,
             })
           );
 
           return;
         }
 
+        // 인터뷰가 진행되지 않은 경우
         dispatch({
           type: START_CHAT,
           payload: {
