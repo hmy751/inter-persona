@@ -30,6 +30,16 @@ export const INTERVIEW_ROUTE = {
   }
 };
 
+export const RESULT_ROUTE = {
+  error: {
+    notFoundInterview: '해당 인터뷰를 찾을 수 없습니다.',
+    failedToCreateResult: '결과 생성에 실패했습니다.',
+  },
+  message: {
+    alreadyExists: '이미 인터뷰 결과가 존재합니다.',
+  },
+};
+
 export const SERVER_ERROR = {
   internal: '서버에 문제가 발생했습니다.',
 };
@@ -38,4 +48,4 @@ export const VALIDATION_ERROR = {
   invalidInput: '입력값이 올바르지 않습니다.',
 };
 
-export const INTERVIEW_CHAT_LIMIT = 20;
+export const INTERVIEW_CHAT_LIMIT = 2;

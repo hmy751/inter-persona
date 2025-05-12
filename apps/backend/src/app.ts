@@ -8,7 +8,7 @@ import { authenticate } from '@/middleware/auth';
 import userRouter from '@/routes/user';
 import interviewerRouter from '@/routes/interviewer';
 import interviewRouter from '@/routes/interview';
-
+import resultRouter from '@/routes/result';
 const prisma = new PrismaClient();
 
 const app: Application = express();
@@ -30,6 +30,7 @@ app.get('/', (req, res) => {
 app.use('/user', userRouter);
 app.use('/interviewer', authenticate, interviewerRouter);
 app.use('/interview', authenticate, interviewRouter);
+app.use('/result', authenticate, resultRouter);
 
 const server = app.listen(config.server.port, () => {
   console.log(`http://${config.server.host}:${config.server.port} 실행`);
