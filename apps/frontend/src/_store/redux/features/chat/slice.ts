@@ -85,6 +85,9 @@ const slice = createSlice({
     resetTrySpeechCount: state => {
       state.trySpeechCount = 0;
     },
+    setInterviewStatus: (state, action: PayloadAction<'completed' | 'ongoing'>) => {
+      state.interviewStatus = action.payload;
+    },
   },
 });
 
@@ -98,6 +101,7 @@ export const {
   increaseTrySpeechCount,
   resetTrySpeechCount,
   resetContentStatus,
+  setInterviewStatus,
 } = slice.actions;
 
 export const SEND_RECORD = 'SEND_RECORD' as const;
