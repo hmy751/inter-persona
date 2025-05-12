@@ -51,3 +51,13 @@ export const InterviewStartResponseSchema = z.object({
   content: z.string(),
   speaker: z.enum(['interviewer', 'user']),
 });
+
+export const InterviewAnswerRequestSchema = z.object({
+  interviewId: z.number().int().positive(),
+  content: z.string(),
+});
+
+export const InterviewAnswerResponseSchema = z.object({
+  content: z.string(),
+  speaker: z.enum(['interviewer', 'user']),
+});
