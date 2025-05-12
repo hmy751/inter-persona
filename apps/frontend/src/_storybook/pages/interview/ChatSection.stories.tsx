@@ -23,14 +23,14 @@ const mockUser = {
 
 const mockInterviewerChatContent = {
   status: ChatContentStatusType.success,
-  speaker: ChatContentSpeakerType.bot,
+  speaker: ChatContentSpeakerType.interviewer,
   content: '안녕하세요. 간단히 자기소개 부탁드립니다.',
   timeStamp: new Date(),
 };
 
 const mockLoadingInterviewerChatContent = {
   status: ChatContentStatusType.loading,
-  speaker: ChatContentSpeakerType.bot,
+  speaker: ChatContentSpeakerType.interviewer,
   content: '',
   timeStamp: new Date(),
 };

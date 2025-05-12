@@ -13,13 +13,17 @@ export default function InterviewerProfileSection({}: InterviewerProfileSectionP
 
   const { data, isLoading, isError } = useGetInterviewInterviewer(Number(interviewId));
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
-  if (!data || isError) return <div>No data</div>;
+  if (!data || isError) {
+    return <div>No data</div>;
+  }
 
   return (
     <div className={styles.profileContainer}>
-      <Avatar src={data?.interviewer.imgUrl ?? ''} size="md" />
+      <Avatar src={data?.interviewer.profileImageUrl ?? ''} size="xl" />
       <div className={styles.profileInfo}>
         <Text as="p" size="md">
           {data?.interviewer.name}

@@ -2,22 +2,34 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { delay } from '@/_libs/utils';
 import {
   fetchCreateInterview,
-  fetchGetInterview,
+  fetchGetInterviewContents,
   fetchGetInterviewInterviewer,
   fetchGetInterviewUser,
-  GetInterviewResponse,
+  fetchGetInterviewStatus,
   GetInterviewInterviewerResponse,
   GetInterviewUserResponse,
+  GetInterviewContentsResponse,
+  GetInterviewStatusResponse,
+  fetchGetInterview,
+  GetInterviewResponse,
 } from '@/_apis/interview';
 import { APIError } from '@/_apis/fetcher';
 import useToastStore from '@repo/store/useToastStore';
 import { useRouter } from 'next/navigation';
 
-// 인터뷰 조회
 export const useGetInterview = (interviewId: number) => {
   return useQuery<GetInterviewResponse, APIError>({
     queryKey: ['interview', interviewId],
     queryFn: () => fetchGetInterview({ interviewId }),
+    enabled: !!interviewId,
+  });
+};
+
+// 인터뷰 컨텐츠 조회
+export const useGetInterviewContents = (interviewId: number) => {
+  return useQuery<GetInterviewContentsResponse, APIError>({
+    queryKey: ['interview', interviewId],
+    queryFn: () => fetchGetInterviewContents({ interviewId }),
     enabled: !!interviewId,
   });
 };
@@ -46,7 +58,7 @@ export const useCreateInterview = (userId: number, interviewerId: number, catego
         return;
       }
 
-      router.push(`/interview/:${data.interviewId}`);
+      router.push(`/interview/${data.interviewId}`);
     },
     onError: error => {
       if (error instanceof APIError) {
@@ -82,5 +94,13 @@ export const useGetInterviewUser = (interviewId: number) => {
     queryKey: ['interview', interviewId, 'user'],
     queryFn: () => fetchGetInterviewUser({ interviewId }),
     enabled: !!interviewId,
+  });
+};
+
+// 인터뷰 상태 조회
+export const useGetInterviewStatus = (interviewId: number) => {
+  return useQuery<GetInterviewStatusResponse, APIError>({
+    queryKey: ['interview', interviewId, 'status'],
+    queryFn: () => fetchGetInterviewStatus({ interviewId }),
   });
 };

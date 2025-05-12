@@ -7,7 +7,7 @@ export const selectChatContents = (state: RootState) => state.chat.contents;
 export const selectLastBotChatStatus = (state: RootState) => {
   const lastChat = state.chat.contents[state.chat.contents.length - 1];
 
-  if (lastChat?.speaker === ChatContentSpeakerType.bot) {
+  if (lastChat?.speaker === ChatContentSpeakerType.interviewer) {
     return lastChat.status;
   }
 
@@ -27,4 +27,8 @@ export const selectInterviewId = (state: RootState) => {
 };
 export const selectChatLimit = (state: RootState) => {
   return state.chat.contents.length >= CHAT_LIMIT;
+};
+
+export const selectInterviewStatus = (state: RootState) => {
+  return state.chat.interviewStatus;
 };
