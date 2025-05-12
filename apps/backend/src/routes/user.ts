@@ -55,7 +55,7 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
       httpOnly: true,
       secure: config.env === 'production',
       sameSite: 'lax',
-      maxAge: 20 * 60 * 1000,
+      maxAge: 60 * 60 * 1000,
     });
 
     const responseData = LoginResponseSchema.safeParse({

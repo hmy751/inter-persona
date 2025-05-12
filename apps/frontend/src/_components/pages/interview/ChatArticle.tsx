@@ -7,7 +7,7 @@ import { ChatContentStatusType } from '@/_store/redux/type';
 import { useDispatch } from 'react-redux';
 import { RETRY_ANSWER, CANCEL_CURRENT_REQUEST_ANSWER } from '@/_store/redux/features/chat/slice';
 
-export type ChatType = 'user' | 'bot' | '';
+export type ChatType = 'user' | 'interviewer' | '';
 
 interface ChatArticleProps {
   type: ChatType;
@@ -26,7 +26,9 @@ function ChatRetryCancelSelector() {
   const { status, content } = useContext(ChatArticleContext);
   const dispatch = useDispatch();
 
-  if (status !== ChatContentStatusType.fail) return null;
+  if (status !== ChatContentStatusType.fail) {
+    return null;
+  }
 
   const handleRetry = () => {
     dispatch({
