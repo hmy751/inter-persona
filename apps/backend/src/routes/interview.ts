@@ -13,6 +13,8 @@ import {
   InterviewStartRequestSchema,
   InterviewAnswerRequestSchema,
   InterviewAnswerResponseSchema,
+  InterviewStatusRequestSchema,
+  InterviewStatusResponseSchema,
 } from '@repo/schema/interview';
 import { INTERVIEW_ROUTE, SERVER_ERROR, VALIDATION_ERROR } from '@/libs/constant';
 import { Interviewer } from '@/libs/utils/prompt';
@@ -193,6 +195,33 @@ router.post('/:id/contents/answer', authenticate, async (req: Request, res: Resp
     res.status(200).json(response.data);
   } catch (error) {
     console.error('Answer interview error:', error);
+    res.status(500).json({ message: SERVER_ERROR.internal });
+  }
+});
+
+router.get('/:id/status', authenticate, async (req: Request, res: Response) => {
+  try {
+    const { id: interviewId } = req.params;
+
+    const validation = InterviewStatusRequestSchema.safeParse({ interviewId: Number(interviewId) });
+
+    if (!validation.success) {
+      res.status(400).json({ message: VALIDATION_ERROR.invalidInput, errors: validation.error.flatten().fieldErrors });
+      return;
+    }
+
+    const interview = await prisma.interview.findUnique({ where: { id: Number(interviewId) }, select: { status: true } });
+
+    if (!interview) {
+      res.status(404).json({ message: INTERVIEW_ROUTE.error.notFoundInterview });
+      return;
+    }
+
+    const response = InterviewStatusResponseSchema.safeParse({ status: interview.status });
+
+    res.status(200).json(response.data);
+  } catch (error) {
+    console.error('Get interview status error:', error);
     res.status(500).json({ message: SERVER_ERROR.internal });
   }
 });
