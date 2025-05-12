@@ -2,6 +2,37 @@ import { z } from 'zod';
 import { InterviewerResponseSchema } from './interviewer';
 import { UserInfoResponseSchema } from './user';
 
+/**
+ * 모델 스키마
+ */
+export const InterviewContentSchema = z.object({
+  id: z.number().int().positive(),
+  content: z.string(),
+  speaker: z.enum(['interviewer', 'user']),
+  createdAt: z.date(),
+});
+
+export const InterviewSchema = z.object({
+  id: z.number().int().positive(),
+  interviewerId: z.number().int().positive(),
+  userId: z.number().int().positive(),
+  category: z.string(),
+  contents: z.array(InterviewContentSchema),
+  status: z.enum(['ongoing', 'completed']),
+});
+
+/**
+ * 요청, 응답 스키마
+ */
+
+export const InterviewRequestSchema = z.object({
+  interviewId: z.number().int().positive(),
+});
+
+export const InterviewResponseSchema = z.object({
+  interview: InterviewSchema,
+});
+
 export const InterviewCreateRequestSchema = z.object({
   interviewerId: z.number().int().positive(),
   userId: z.number().int().positive(),
@@ -30,13 +61,6 @@ export const InterviewUserResponseSchema = z.object({
 
 export const InterviewContentsRequestSchema = z.object({
   interviewId: z.number().int().positive(),
-});
-
-export const InterviewContentSchema = z.object({
-  id: z.number().int().positive(),
-  content: z.string(),
-  speaker: z.enum(['interviewer', 'user']),
-  createdAt: z.date(),
 });
 
 export const InterviewContentsResponseSchema = z.object({

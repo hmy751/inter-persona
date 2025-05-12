@@ -8,10 +8,20 @@ import {
   GetInterviewInterviewerResponse,
   GetInterviewUserResponse,
   GetInterviewContentsResponse,
+  fetchGetInterview,
+  GetInterviewResponse,
 } from '@/_apis/interview';
 import { APIError } from '@/_apis/fetcher';
 import useToastStore from '@repo/store/useToastStore';
 import { useRouter } from 'next/navigation';
+
+export const useGetInterview = (interviewId: number) => {
+  return useQuery<GetInterviewResponse, APIError>({
+    queryKey: ['interview', interviewId],
+    queryFn: () => fetchGetInterview({ interviewId }),
+    enabled: !!interviewId,
+  });
+};
 
 // 인터뷰 컨텐츠 조회
 export const useGetInterviewContents = (interviewId: number) => {
