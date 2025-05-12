@@ -10,9 +10,13 @@ import {
   InterviewUserResponseSchema,
   InterviewContentsResponseSchema,
   InterviewStartResponseSchema,
-  InterviewStartRequestSchema
+  InterviewStartRequestSchema,
+  InterviewAnswerRequestSchema,
+  InterviewAnswerResponseSchema,
 } from '@repo/schema/interview';
 import { INTERVIEW_ROUTE, SERVER_ERROR, VALIDATION_ERROR } from '@/libs/constant';
+import { askQuestion, checkNextQuestionRelated, Interviewer } from '@/libs/utils/prompt';
+
 const router: Router = Router();
 
 // 인터뷰 생성
@@ -117,6 +121,76 @@ router.post('/:id/start', authenticate, async (req: Request, res: Response) => {
     res.status(200).json(response.data);
   } catch (error) {
     console.error('Start interview error:', error);
+    res.status(500).json({ message: SERVER_ERROR.internal });
+  }
+});
+
+router.post('/:id/contents/answer', authenticate, async (req: Request, res: Response) => {
+  try {
+    const { id: interviewId } = req.params;
+    const { content } = req.body;
+
+    const validation = InterviewAnswerRequestSchema.safeParse({
+      interviewId: Number(interviewId),
+      content,
+    });
+
+    if (!validation.success) {
+      res.status(400).json({ message: VALIDATION_ERROR.invalidInput, errors: validation.error.flatten().fieldErrors });
+      return;
+    }
+
+    const { interviewId: validatedInterviewId, content: validatedAnswer } = validation.data;
+
+    const interview = await prisma.interview.findUnique({
+      where: { id: validatedInterviewId },
+      include: { interviewer: true },
+    });
+
+    if (!interview) {
+      res.status(404).json({ message: INTERVIEW_ROUTE.error.notFoundInterview });
+      return;
+    }
+
+    const interviewer = interview.interviewer;
+    if (!interviewer) {
+      res.status(404).json({ message: INTERVIEW_ROUTE.error.notFoundInterviewer });
+      return;
+    }
+
+    await prisma.interviewContent.create({
+      data: {
+        interviewId: validatedInterviewId,
+        content: validatedAnswer,
+        speaker: 'user',
+      },
+    });
+
+    const contents = await prisma.interviewContent.findMany({
+      where: { interviewId: validatedInterviewId },
+      orderBy: { createdAt: 'asc' },
+    });
+
+    const isRelated = await checkNextQuestionRelated(contents);
+
+    const nextQuestion = await askQuestion(interviewer as unknown as Interviewer, contents, isRelated);
+
+    const savedQuestion = await prisma.interviewContent.create({
+      data: {
+        interviewId: validatedInterviewId,
+        content: nextQuestion,
+        speaker: 'interviewer',
+      },
+    });
+
+    const response = InterviewAnswerResponseSchema.safeParse({
+      content: savedQuestion.content,
+      speaker: savedQuestion.speaker,
+    });
+
+    res.status(200).json(response.data);
+  } catch (error) {
+    console.error('Answer interview error:', error);
     res.status(500).json({ message: SERVER_ERROR.internal });
   }
 });
