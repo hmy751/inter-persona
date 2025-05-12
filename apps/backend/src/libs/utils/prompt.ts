@@ -1,10 +1,32 @@
 import { z } from 'zod';
 import { InterviewContentSchema } from '@repo/schema/interview';
 import config from '@/config';
-
+import { prisma } from '@/app';
 const GROK_API_KEY = config.grok.apiKey;
+import { INTERVIEW_CHAT_LIMIT } from '@/libs/constant';
 
 type InterviewContent = z.infer<typeof InterviewContentSchema>;
+
+const ScoreSchema = z.object({
+  scores: z.array(
+    z.object({
+      standard: z.string(),
+      score: z.number(),
+      summary: z.string(),
+    })
+  ),
+});
+
+const ContentFeedbackSchema = z.object({
+  feedback: z.array(
+    z.object({
+      question: z.string(),
+      feedback: z.string(),
+    })
+  ),
+});
+
+const FeedbackSchema = z.string();
 
 export type Interviewer = {
   persona: {
@@ -119,4 +141,97 @@ export const askQuestion = async (
   };
   const response = await xAIRequest(config);
   return response.choices[0]?.message?.content || '질문 생성 실패';
+}
+
+export const generateEvaluation = async (contents: InterviewContent[]): Promise<{
+  success: boolean;
+  scores: Array<{ standard: string; score: number; summary: string }>;
+  contentFeedback: Array<{ question: string; feedback: string }>;
+  feedback: string;
+}> => {
+  const messages = getAiMessageFormat(contents).slice(0, INTERVIEW_CHAT_LIMIT);
+
+  try {
+    const scoreConfig: XAIRequestConfig = {
+      model: 'grok-beta',
+      messages: [
+        ...messages,
+        {
+          role: 'system',
+          content: `면접을 다음 기준으로 평가하세요:
+          1. 기술적 전문성
+          2. 문제 해결 능력
+          3. 의사소통
+          4. 적응력
+          5. 팀워크
+          JSON 형식으로 반환: { "scores": [{ "standard": string, "score": number (1-20), "summary": string }] }.
+          응답은 정확하고 자연스러운 한국어로 작성하세요.
+        `,
+        },
+      ],
+    };
+
+    const scoreResponse = await xAIRequest(scoreConfig);
+
+    // 각 질문에 대한 피드백
+    const contentFeedbackConfig: XAIRequestConfig = {
+      model: 'grok-beta',
+      messages: [
+        ...messages,
+        {
+          role: 'system',
+          content: `각 면접 질문에 대해 간단한 피드백을 제공하세요. 한국어로 1-2문장으로 작성하고, JSON 배열로 반환: { "feedback": [{ "question": string, "feedback": string }] }.
+          응답은 정확하고 자연스러운 한국어로 작성하세요.
+        `,
+        },
+      ],
+    };
+
+    const contentFeedbackResponse = await xAIRequest(contentFeedbackConfig);
+
+    // 전체 피드백
+    const feedbackConfig: XAIRequestConfig = {
+      model: 'grok-beta',
+      messages: [
+        ...messages,
+        {
+          role: 'system',
+          content: '면접 성과를 요약하는 피드백을 한국어로 3문장 이상 작성하세요. 응답은 정확하고 자연스러운 한국어로 작성하세요.',
+        },
+      ],
+    };
+
+    const feedbackResponse = await xAIRequest(feedbackConfig);
+
+    const scoresResult = ScoreSchema.safeParse(JSON.parse(scoreResponse.choices[0]?.message?.content?.replace(/```json\n|\n```/g, '') || '{}'));
+    const contentFeedbackResult = ContentFeedbackSchema.safeParse(
+      JSON.parse(contentFeedbackResponse.choices[0]?.message?.content?.replace(/```json\n|\n```/g, '') || '{}')
+    );
+    const feedback = FeedbackSchema.safeParse(feedbackResponse.choices[0]?.message?.content);
+
+    if (!scoresResult.success || !contentFeedbackResult.success || !feedback.success) {
+      return {
+        success: false,
+        scores: [],
+        contentFeedback: [],
+        feedback: '',
+      };
+    }
+
+    return {
+      success: true,
+      scores: scoresResult.data.scores,
+      contentFeedback: contentFeedbackResult.data.feedback,
+      feedback: feedback.data,
+    };
+  } catch (error) {
+    console.log('error', error);
+
+    return {
+      success: false,
+      scores: [],
+      contentFeedback: [],
+      feedback: '',
+    };
+  }
 }
