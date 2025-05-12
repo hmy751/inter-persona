@@ -5,9 +5,11 @@ import {
   fetchGetInterviewContents,
   fetchGetInterviewInterviewer,
   fetchGetInterviewUser,
+  fetchGetInterviewStatus,
   GetInterviewInterviewerResponse,
   GetInterviewUserResponse,
   GetInterviewContentsResponse,
+  GetInterviewStatusResponse,
   fetchGetInterview,
   GetInterviewResponse,
 } from '@/_apis/interview';
@@ -92,5 +94,13 @@ export const useGetInterviewUser = (interviewId: number) => {
     queryKey: ['interview', interviewId, 'user'],
     queryFn: () => fetchGetInterviewUser({ interviewId }),
     enabled: !!interviewId,
+  });
+};
+
+// 인터뷰 상태 조회
+export const useGetInterviewStatus = (interviewId: number) => {
+  return useQuery<GetInterviewStatusResponse, APIError>({
+    queryKey: ['interview', interviewId, 'status'],
+    queryFn: () => fetchGetInterviewStatus({ interviewId }),
   });
 };
