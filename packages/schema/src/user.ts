@@ -1,6 +1,19 @@
 import { z } from 'zod';
 import { VALIDATION } from '@repo/constant/message';
 
+/**
+ * 모델 스키마
+ */
+export const UserSchema = z.object({
+  id: z.number(),
+  email: z.string(),
+  name: z.string(),
+  profileImageUrl: z.string(),
+});
+
+/**
+ * 요청, 응답 스키마
+ */
 export const LoginRequestSchema = z.object({
   email: z
     .string()
@@ -98,9 +111,4 @@ export const RegisterResponseSchema = z.object({
   message: z.string(),
 });
 
-export const UserInfoResponseSchema = z.object({
-  id: z.number(),
-  email: z.string(),
-  name: z.string(),
-  profileImageUrl: z.string(),
-});
+export const UserInfoResponseSchema = UserSchema;

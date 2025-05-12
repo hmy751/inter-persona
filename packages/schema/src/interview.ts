@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { InterviewerResponseSchema } from './interviewer';
-import { UserInfoResponseSchema } from './user';
+import { InterviewerSchema } from './interviewer';
+import { UserSchema } from './user';
 
 /**
  * 모델 스키마
@@ -16,15 +16,16 @@ export const InterviewSchema = z.object({
   id: z.number().int().positive(),
   interviewerId: z.number().int().positive(),
   userId: z.number().int().positive(),
+  user: UserSchema,
+  interviewer: InterviewerSchema,
   category: z.string(),
-  contents: z.array(InterviewContentSchema),
+  contents: z.array(InterviewContentSchema).optional(),
   status: z.enum(['ongoing', 'completed']),
 });
 
 /**
  * 요청, 응답 스키마
  */
-
 export const InterviewRequestSchema = z.object({
   interviewId: z.number().int().positive(),
 });
@@ -48,7 +49,7 @@ export const InterviewInterviewerRequestSchema = z.object({
 });
 
 export const InterviewInterviewerResponseSchema = z.object({
-  interviewer: InterviewerResponseSchema,
+  interviewer: InterviewerSchema,
 });
 
 export const InterviewUserRequestSchema = z.object({
@@ -56,7 +57,7 @@ export const InterviewUserRequestSchema = z.object({
 });
 
 export const InterviewUserResponseSchema = z.object({
-  user: UserInfoResponseSchema,
+  user: UserSchema,
 });
 
 export const InterviewContentsRequestSchema = z.object({
