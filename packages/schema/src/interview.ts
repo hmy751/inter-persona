@@ -61,3 +61,11 @@ export const InterviewAnswerResponseSchema = z.object({
   content: z.string(),
   speaker: z.enum(['interviewer', 'user']),
 });
+
+export const InterviewStatusRequestSchema = z.object({
+  interviewId: z.number().int().positive(),
+});
+
+export const InterviewStatusResponseSchema = z.object({
+  status: z.enum(['ongoing', 'completed']),
+});
