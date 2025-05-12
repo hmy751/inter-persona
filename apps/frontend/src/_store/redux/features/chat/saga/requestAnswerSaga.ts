@@ -8,6 +8,7 @@ import {
   resetTrySpeechCount,
   CANCEL_CURRENT_REQUEST_ANSWER,
   resetContentStatus,
+  setInterviewStatus,
   errorContent,
 } from '../slice';
 import { delay } from '../../../utils';
@@ -67,7 +68,7 @@ export function* requestAnswerSaga(action: RequestAnswerAction): Generator<any, 
     });
 
     if (statusData.status === 'completed') {
-      yield put(resetContentStatus());
+      yield put(setInterviewStatus('completed'));
     }
   } catch (err) {
     useToastStore.getState().addToast(AI_NETWORK_ERROR_TOAST);
