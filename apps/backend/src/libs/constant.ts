@@ -22,9 +22,11 @@ export const INTERVIEW_ROUTE = {
     invalidCategory: '카테고리가 올바르지 않습니다.',
     notFoundInterview: '해당 인터뷰를 찾을 수 없습니다.',
     notFoundUser: '해당 유저를 찾을 수 없습니다.',
+    chatLimit: '면접 채팅 제한 개수를 초과했습니다.',
   },
   message: {
-    firstQuestion: '안녕하세요. 간단히 자기소개 부탁드립니다.'
+    firstQuestion: '안녕하세요. 간단히 자기소개 부탁드립니다.',
+    lastQuestion: '면접보시느라 수고하셨습니다.',
   }
 };
 
@@ -35,3 +37,5 @@ export const SERVER_ERROR = {
 export const VALIDATION_ERROR = {
   invalidInput: '입력값이 올바르지 않습니다.',
 };
+
+export const INTERVIEW_CHAT_LIMIT = 20;

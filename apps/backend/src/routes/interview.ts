@@ -15,7 +15,8 @@ import {
   InterviewAnswerResponseSchema,
 } from '@repo/schema/interview';
 import { INTERVIEW_ROUTE, SERVER_ERROR, VALIDATION_ERROR } from '@/libs/constant';
-import { askQuestion, checkNextQuestionRelated, Interviewer } from '@/libs/utils/prompt';
+import { Interviewer } from '@/libs/utils/prompt';
+import { checkInterviewChatLimit, handleAnswer } from '@/service/interview';
 
 const router: Router = Router();
 
@@ -144,7 +145,7 @@ router.post('/:id/contents/answer', authenticate, async (req: Request, res: Resp
 
     const interview = await prisma.interview.findUnique({
       where: { id: validatedInterviewId },
-      include: { interviewer: true },
+      select: { interviewer: true },
     });
 
     if (!interview) {
@@ -153,6 +154,7 @@ router.post('/:id/contents/answer', authenticate, async (req: Request, res: Resp
     }
 
     const interviewer = interview.interviewer;
+
     if (!interviewer) {
       res.status(404).json({ message: INTERVIEW_ROUTE.error.notFoundInterviewer });
       return;
@@ -166,27 +168,27 @@ router.post('/:id/contents/answer', authenticate, async (req: Request, res: Resp
       },
     });
 
-    const contents = await prisma.interviewContent.findMany({
-      where: { interviewId: validatedInterviewId },
-      orderBy: { createdAt: 'asc' },
-    });
+    const chatLimitResult = await checkInterviewChatLimit(validatedInterviewId);
 
-    const isRelated = await checkNextQuestionRelated(contents);
+    if (!chatLimitResult.isValid) {
+      if (chatLimitResult.data) {
+        const response = InterviewAnswerResponseSchema.safeParse(chatLimitResult.data);
+        res.status(200).json(response.data);
+        return;
+      }
 
-    const nextQuestion = await askQuestion(interviewer as unknown as Interviewer, contents, isRelated);
+      res.status(chatLimitResult.error?.statusCode || 500).json({ message: chatLimitResult.error?.message || SERVER_ERROR.internal });
+      return;
+    }
 
-    const savedQuestion = await prisma.interviewContent.create({
-      data: {
-        interviewId: validatedInterviewId,
-        content: nextQuestion,
-        speaker: 'interviewer',
-      },
-    });
+    const answerResult = await handleAnswer(validatedInterviewId, interviewer as unknown as Interviewer);
 
-    const response = InterviewAnswerResponseSchema.safeParse({
-      content: savedQuestion.content,
-      speaker: savedQuestion.speaker,
-    });
+    if (!answerResult.isValid) {
+      res.status(answerResult.error?.statusCode || 500).json({ message: answerResult.error?.message || SERVER_ERROR.internal });
+      return;
+    }
+
+    const response = InterviewAnswerResponseSchema.safeParse(answerResult.data);
 
     res.status(200).json(response.data);
   } catch (error) {
