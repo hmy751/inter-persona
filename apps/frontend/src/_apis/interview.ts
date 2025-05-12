@@ -14,6 +14,8 @@ import {
   InterviewStartResponseSchema,
   InterviewAnswerRequestSchema,
   InterviewAnswerResponseSchema,
+  InterviewStatusResponseSchema,
+  InterviewStatusRequestSchema,
 } from '@repo/schema/interview';
 
 /**
@@ -114,4 +116,15 @@ export const fetchAnswer = async ({ interviewId, content }: AnswerBody) => {
   return fetcher.post<AnswerData>(`interview/${interviewId}/contents/answer`, {
     content,
   });
+};
+
+/**
+ * 인터뷰 상태 조회
+ */
+export type GetInterviewStatusBody = z.infer<typeof InterviewStatusRequestSchema>;
+
+export type GetInterviewStatusResponse = z.infer<typeof InterviewStatusResponseSchema>;
+
+export const fetchGetInterviewStatus = async ({ interviewId }: GetInterviewStatusBody) => {
+  return fetcher.get<GetInterviewStatusResponse>(`interview/${interviewId}/status`);
 };
