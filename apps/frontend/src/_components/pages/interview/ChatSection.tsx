@@ -10,7 +10,7 @@ import styles from './chat.module.css';
 import { AI_NETWORK_ERROR_TOAST } from '@/_store/redux/features/chat/constants';
 import useToastStore from '@repo/store/useToastStore';
 
-import { useGetInterviewContents, useGetInterviewInterviewer, useGetInterviewUser } from '@/_data/interview';
+import { useGetInterview, useGetInterviewInterviewer, useGetInterviewUser } from '@/_data/interview';
 import { ChatContentSpeakerType, ChatContentStatusType } from '@/_store/redux/type';
 
 export default function ChatSection() {
@@ -19,29 +19,33 @@ export default function ChatSection() {
   const chatContents = useSelector(selectChatContents);
   const addToast = useToastStore(state => state.addToast);
 
-  const { data: interviewerData, isLoading: interviewerLoading } = useGetInterviewInterviewer(Number(interviewId));
-  const { data: userData, isLoading: userLoading } = useGetInterviewUser(Number(interviewId));
-  const { data: contentsData, isLoading: contentsLoading } = useGetInterviewContents(Number(interviewId));
+  const { data, isLoading: interviewLoading } = useGetInterview(Number(interviewId));
+
+  const interviewData = data?.interview;
 
   useEffect(() => {
     try {
       (async function init() {
-        if (contentsLoading) {
+        if (interviewLoading) {
           return;
         }
 
-        if (contentsData?.contents?.length && contentsData.contents.length > 0) {
+        const isAlreadyStarted = interviewData?.contents?.length && interviewData.contents.length > 0;
+
+        if (isAlreadyStarted) {
           dispatch(
             initializeChatState({
-              contents: contentsData.contents.map(content => ({
+              contents: interviewData!.contents!.map(content => ({
                 status: ChatContentStatusType.success,
                 speaker: content.speaker === 'user' ? ChatContentSpeakerType.user : ChatContentSpeakerType.interviewer,
                 content: content.content,
                 timeStamp: new Date(content.createdAt),
               })),
               interviewId: Number(interviewId),
+              interviewStatus: interviewData!.status,
             })
           );
+
           return;
         }
 
@@ -59,9 +63,9 @@ export default function ChatSection() {
     return () => {
       dispatch(initializeChatState(null));
     };
-  }, [interviewId, contentsLoading]);
+  }, [interviewId, interviewLoading]);
 
-  if (interviewerLoading || userLoading || contentsLoading) {
+  if (interviewLoading) {
     return <div>Loading...</div>;
   }
 
@@ -72,13 +76,13 @@ export default function ChatSection() {
           <ChatArticle key={`${speaker}-${index}`} type={speaker} status={status} content={content}>
             {speaker === ChatContentSpeakerType.interviewer ? (
               <>
-                <ChatArticle.Avatar src={interviewerData?.interviewer.profileImageUrl ?? ''} />
+                <ChatArticle.Avatar src={interviewData?.interviewer?.profileImageUrl ?? ''} />
                 <ChatArticle.Speech />
               </>
             ) : (
               <>
                 <ChatArticle.Speech />
-                <ChatArticle.Avatar src={userData?.user.profileImageUrl ?? ''} />
+                <ChatArticle.Avatar src={interviewData?.user?.profileImageUrl ?? ''} />
                 <ChatArticle.RetryCancelSelector />
               </>
             )}
