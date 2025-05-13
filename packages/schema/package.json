@@ -22,6 +22,11 @@
       "import": "./dist/interview.js",
       "require": "./dist/interview.cjs",
       "types": "./dist/interview.d.ts"
+    },
+    "./result": {
+      "import": "./dist/result.js",
+      "require": "./dist/result.cjs",
+      "types": "./dist/result.d.ts"
     }
   },
   "dependencies": {

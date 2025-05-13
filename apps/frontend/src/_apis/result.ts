@@ -1,36 +1,40 @@
+import { z } from 'zod';
 import fetcher from './fetcher';
+import {
+  CreateResultRequestSchema,
+  CreateResultResponseSchema,
+  GetResultRequestSchema,
+  GetResultResponseSchema,
+} from '@repo/schema/result';
 
 /**
  * 인터뷰 결과 생성
  */
-export interface CreateResultBody {
-  interviewId: number;
-}
-export interface CreateResultResponse {
-  id: number;
-}
+type CreateResultBody = z.infer<typeof CreateResultRequestSchema>;
+
+type CreateResultResponse = z.infer<typeof CreateResultResponseSchema>;
 
 export const fetchCreateResult = async ({ interviewId }: CreateResultBody) => {
-  return fetcher.post<CreateResultResponse>('result', {
-    interviewId,
-  });
+  return fetcher.post<CreateResultResponse>(
+    'result',
+    {
+      interviewId,
+    },
+    {
+      timeout: 50000,
+    }
+  );
 };
 
 /**
  * 인터뷰 결과 조회
  */
-export interface GetResultBody {
-  resultId: number;
-}
-export interface GetResultResponse {
-  id: number;
-  interviewId: number;
-  interviewerId: number;
-  userId: number;
-}
+type GetResultBody = z.infer<typeof GetResultRequestSchema>;
 
-export const fetchGetResult = async ({ resultId }: GetResultBody) => {
-  return fetcher.get<GetResultResponse>(`result/${resultId}`);
+type GetResultResponse = z.infer<typeof GetResultResponseSchema>;
+
+export const fetchGetResult = async ({ id }: GetResultBody) => {
+  return fetcher.get<GetResultResponse>(`result/${id}`);
 };
 
 /**

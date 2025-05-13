@@ -1,12 +1,14 @@
 import Text from '@repo/ui/Text';
 import styles from './ScoreSection.module.css';
 import ProgressBar from './ProgressBar';
-import { useGetResultScore } from '@/_data/result';
+import { useGetResult } from '@/_data/result';
+import { useParams } from 'next/navigation';
 
 interface ScoreSectionProps {}
 
 export default function ScoreSection({}: ScoreSectionProps): React.ReactElement {
-  const { data, isLoading, error } = useGetResultScore();
+  const resultId = useParams().resultId;
+  const { data, isLoading, error } = useGetResult(Number(resultId));
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -16,6 +18,9 @@ export default function ScoreSection({}: ScoreSectionProps): React.ReactElement 
     return <div>no data</div>;
   }
 
+  const score = data?.scores.reduce((acc, curr) => acc + curr.score, 0) / data.scores.length;
+  const questionCount = data?.contentFeedback.length ?? 0;
+
   return (
     <div className={styles.container}>
       <div className={styles.wrapper}>
@@ -24,7 +29,7 @@ export default function ScoreSection({}: ScoreSectionProps): React.ReactElement 
             Score
           </Text>
           <Text size="lg" align="right" weight="bold">
-            {data?.score}%
+            {score}%
           </Text>
         </div>
         <div className={styles.scoreWrapper}>
@@ -32,11 +37,11 @@ export default function ScoreSection({}: ScoreSectionProps): React.ReactElement 
             Question
           </Text>
           <Text size="lg" align="right" weight="bold">
-            {data?.questionCount}
+            {questionCount}
           </Text>
         </div>
       </div>
-      <ProgressBar score={data?.score ?? 0} duration={1500} />
+      <ProgressBar score={score} duration={1500} />
     </div>
   );
 }
