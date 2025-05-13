@@ -1,16 +1,18 @@
 import { z } from 'zod';
 import fetcher from './fetcher';
-import { GetResultRequestSchema, GetResultResponseSchema } from '@repo/schema/result';
+import {
+  CreateResultRequestSchema,
+  CreateResultResponseSchema,
+  GetResultRequestSchema,
+  GetResultResponseSchema,
+} from '@repo/schema/result';
 
 /**
  * 인터뷰 결과 생성
  */
-export interface CreateResultBody {
-  interviewId: number;
-}
-export interface CreateResultResponse {
-  id: number;
-}
+type CreateResultBody = z.infer<typeof CreateResultRequestSchema>;
+
+type CreateResultResponse = z.infer<typeof CreateResultResponseSchema>;
 
 export const fetchCreateResult = async ({ interviewId }: CreateResultBody) => {
   return fetcher.post<CreateResultResponse>('result', {
