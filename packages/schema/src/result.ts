@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { InterviewSchema } from './interview';
 import { InterviewerSchema } from './interviewer';
 import { UserSchema } from './user';
 
@@ -31,8 +32,6 @@ export const CreateResultRequestSchema = z.object({
 
 export const CreateResultResponseSchema = z.object({
   id: z.number(),
-  interviewId: z.number(),
-  interviewerId: z.number(),
 });
 
 export const GetResultRequestSchema = z.object({
@@ -42,6 +41,7 @@ export const GetResultRequestSchema = z.object({
 export const GetResultResponseSchema = z.object({
   id: z.number(),
   interviewId: z.number(),
+  interview: InterviewSchema,
   interviewerId: z.number(),
   interviewer: InterviewerSchema,
   userId: z.number(),
