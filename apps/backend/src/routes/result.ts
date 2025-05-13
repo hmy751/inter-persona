@@ -39,7 +39,7 @@ router.post('/', authenticate, async (req: Request, res: Response, next: NextFun
     }
 
     if (interview?.result) {
-      res.status(409).json({ data: interview, message: RESULT_ROUTE.message.alreadyExists });
+      res.status(409).json({ id: interview.result.id, message: RESULT_ROUTE.message.alreadyExists });
       return;
     }
 
