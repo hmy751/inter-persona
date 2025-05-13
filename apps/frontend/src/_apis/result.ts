@@ -21,7 +21,7 @@ export const fetchCreateResult = async ({ interviewId }: CreateResultBody) => {
       interviewId,
     },
     {
-      timeout: 20000,
+      timeout: 50000,
     }
   );
 };
