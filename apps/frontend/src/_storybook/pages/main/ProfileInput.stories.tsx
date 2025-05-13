@@ -1,17 +1,17 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import ProfileInput from '@/_components/pages/main/ProfileInput';
 
-const meta = {
+const meta: Meta<typeof ProfileInput> = {
   title: 'Pages/Main/ProfileInput',
   component: ProfileInput,
   parameters: {
     layout: 'centered',
   },
   tags: ['autodocs'],
-} satisfies Meta<typeof ProfileInput>;
+};
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof ProfileInput>;
 
 export const Primary = {
   render() {

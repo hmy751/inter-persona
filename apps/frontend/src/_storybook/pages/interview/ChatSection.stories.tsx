@@ -4,7 +4,7 @@ import { ChatContentSpeakerType, ChatContentStatusType } from '@/_store/redux/ty
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import useUserStore from '@/_store/zustand/useUserStore';
-import chatReducer from '@/_store/redux/features/chat/slice';
+import chatReducer, { ChatState } from '@/_store/redux/features/chat/slice';
 
 const mockInterviewer = {
   id: 1,
@@ -56,7 +56,15 @@ const mockUserChatContentWithInterviewerError = {
   timeStamp: new Date(),
 };
 
-const withMockStore = (Story: React.ComponentType, contents: any[] = [mockInterviewerChatContent]) => {
+// Define a type for individual chat content items based on your mocks
+interface ChatContentItem {
+  status: ChatContentStatusType;
+  speaker: ChatContentSpeakerType;
+  content: string;
+  timeStamp: Date;
+}
+
+const withMockStore = (Story: React.ComponentType, contents: ChatContentItem[] = [mockInterviewerChatContent]) => {
   const store = configureStore({
     reducer: {
       chat: chatReducer,
@@ -67,7 +75,8 @@ const withMockStore = (Story: React.ComponentType, contents: any[] = [mockInterv
         contents,
         trySpeechCount: 0,
         isAIResponseError: false,
-      },
+        interviewStatus: 'ongoing',
+      } as ChatState,
     },
   });
 
