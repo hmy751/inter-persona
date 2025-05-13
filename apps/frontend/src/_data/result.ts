@@ -50,7 +50,7 @@ export const useGetResult = () => {
 
   return useQuery({
     queryKey: ['result', resultId],
-    queryFn: () => fetchGetResult({ resultId: Number(resultId) }),
+    queryFn: () => fetchGetResult({ id: Number(resultId) }),
   });
 };
 
