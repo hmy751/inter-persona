@@ -10,11 +10,19 @@ interface ButtonGroupSectionProps {}
 
 export default function ButtonGroupSection({}: ButtonGroupSectionProps): React.ReactElement {
   const router = useRouter();
-  const { data } = useGetResult();
-
-  const { mutate, isPending } = useCreateInterview(data?.userId!, data?.interviewerId!);
+  const resultId = useParams().resultId;
+  const { data, isLoading, error } = useGetResult(Number(resultId));
+  const { mutate, isPending } = useCreateInterview(
+    data?.userId ?? 0,
+    data?.interviewerId ?? 0,
+    data?.interview?.category ?? ''
+  );
 
   const handleClickRetryInterview = async () => {
+    if (error || isLoading) {
+      return;
+    }
+
     mutate();
   };
 

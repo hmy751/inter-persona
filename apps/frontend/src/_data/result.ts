@@ -45,12 +45,10 @@ export const useCreateResult = () => {
   });
 };
 
-export const useGetResult = () => {
-  const resultId = useParams().resultId;
-
+export const useGetResult = (resultId: number) => {
   return useQuery({
     queryKey: ['result', resultId],
-    queryFn: () => fetchGetResult({ id: Number(resultId) }),
+    queryFn: () => fetchGetResult({ id: resultId }),
   });
 };
 
