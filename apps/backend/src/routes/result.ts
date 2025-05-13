@@ -110,7 +110,18 @@ router.get('/:id', authenticate, async (req: Request, res: Response, next: NextF
       return;
     }
 
-    const response = GetResultResponseSchema.safeParse({ result });
+    const response = GetResultResponseSchema.safeParse({
+      id: result.id,
+      scores: result.scores,
+      contentFeedback: result.contentFeedback,
+      feedback: result.feedback,
+      interviewId: result.interviewId,
+      interview: result.interview,
+      userId: result.interview.userId,
+      user: result.interview.user,
+      interviewerId: result.interview.interviewerId,
+      interviewer: result.interview.interviewer,
+    });
 
     if (!response.success) {
       res.status(400).json({ message: VALIDATION_ERROR.invalidInput, errors: response.error.flatten().fieldErrors });
