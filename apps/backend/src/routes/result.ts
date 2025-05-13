@@ -3,14 +3,22 @@ import { authenticate } from '@/middleware/auth';
 import { Router, Request, Response, NextFunction } from 'express';
 import { RESULT_ROUTE, VALIDATION_ERROR } from '@/libs/constant';
 import { generateEvaluation } from '@/libs/utils/prompt';
+import {
+  CreateResultRequestSchema,
+  CreateResultResponseSchema,
+  GetResultRequestSchema,
+  GetResultResponseSchema,
+} from '@repo/schema/result';
 
 const router: Router = Router();
 
 router.post('/', authenticate, async (req: Request, res: Response, next: NextFunction) => {
   const { interviewId } = req.body;
 
-  if (!interviewId) {
-    res.status(400).json({ message: VALIDATION_ERROR.invalidInput });
+  const validation = CreateResultRequestSchema.safeParse({ interviewId: Number(interviewId) });
+
+  if (!validation.success) {
+    res.status(400).json({ message: VALIDATION_ERROR.invalidInput, errors: validation.error.flatten().fieldErrors });
     return;
   }
 
@@ -60,7 +68,14 @@ router.post('/', authenticate, async (req: Request, res: Response, next: NextFun
       },
     });
 
-    res.status(201).json(result);
+    const response = CreateResultResponseSchema.safeParse({ id: result.id });
+
+    if (!response.success) {
+      res.status(400).json({ message: VALIDATION_ERROR.invalidInput, errors: response.error.flatten().fieldErrors });
+      return;
+    }
+
+    res.status(201).json(response.data);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to create result' });
@@ -70,9 +85,24 @@ router.post('/', authenticate, async (req: Request, res: Response, next: NextFun
 router.get('/:id', authenticate, async (req: Request, res: Response, next: NextFunction) => {
   const { id: resultId } = req.params;
 
+  const validation = GetResultRequestSchema.safeParse({ id: Number(resultId) });
+
+  if (!validation.success) {
+    res.status(400).json({ message: VALIDATION_ERROR.invalidInput, errors: validation.error.flatten().fieldErrors });
+    return;
+  }
+
   try {
     const result = await prisma.result.findUnique({
       where: { id: Number(resultId) },
+      include: {
+        interview: {
+          include: {
+            interviewer: true,
+            user: true,
+          },
+        },
+      },
     });
 
     if (!result) {
@@ -80,7 +110,14 @@ router.get('/:id', authenticate, async (req: Request, res: Response, next: NextF
       return;
     }
 
-    res.status(200).json(result);
+    const response = GetResultResponseSchema.safeParse({ result });
+
+    if (!response.success) {
+      res.status(400).json({ message: VALIDATION_ERROR.invalidInput, errors: response.error.flatten().fieldErrors });
+      return;
+    }
+
+    res.status(200).json(response.data);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to get result' });
