@@ -161,7 +161,13 @@ export const generateEvaluation = async (contents: InterviewContent[]): Promise<
       ],
     };
 
-    const scoreResponse = await xAIRequest(scoreConfig);
+    let scoreResponse: XAIResponse;
+    try {
+      scoreResponse = await xAIRequest(scoreConfig);
+    } catch (error) {
+      console.log('❌프롬프트 Score 평가 생성 실패', error);
+      throw new Error(`프롬프트 Score 평가 생성 실패: ${error instanceof Error ? error.message : String(error)}`);
+    }
 
     // 각 질문에 대한 피드백
     const contentFeedbackConfig: XAIRequestConfig = {
@@ -170,14 +176,20 @@ export const generateEvaluation = async (contents: InterviewContent[]): Promise<
         ...messages,
         {
           role: 'system',
-          content: `각 면접 질문에 대해 간단한 피드백을 제공하세요. 한국어로 1-2문장으로 작성하고, JSON 배열로 반환: { "feedback": [{ "question": string, "feedback": string, "score": number (1-100) }] }.
+          content: `각 면접 질문에 대해 간단한 피드백을 제공하세요. 한국어로 1-2문장으로 작성하고, JSON 배열로 반환: { "feedback": [{ "question": string, "feedback": string }] }.
           응답은 정확하고 자연스러운 한국어로 작성하세요.
         `,
         },
       ],
     };
 
-    const contentFeedbackResponse = await xAIRequest(contentFeedbackConfig);
+    let contentFeedbackResponse: XAIResponse;
+    try {
+      contentFeedbackResponse = await xAIRequest(contentFeedbackConfig);
+    } catch (error) {
+      console.log('❌프롬프트 ContentFeedback 평가 생성 실패', error);
+      throw new Error(`프롬프트 ContentFeedback 평가 생성 실패: ${error instanceof Error ? error.message : String(error)}`);
+    }
 
     // 전체 피드백
     const feedbackConfig: XAIRequestConfig = {
@@ -191,17 +203,39 @@ export const generateEvaluation = async (contents: InterviewContent[]): Promise<
       ],
     };
 
-    const feedbackResponse = await xAIRequest(feedbackConfig);
+    let feedbackResponse: XAIResponse;
+    try {
+      feedbackResponse = await xAIRequest(feedbackConfig);
+    } catch (error) {
+      console.log('❌프롬프트 Feedback 평가 생성 실패', error);
+      throw new Error(`프롬프트 Feedback 평가 생성 실패: ${error instanceof Error ? error.message : String(error)}`);
+    }
 
-    const scoresResult = ScoreResultSchema.safeParse(JSON.parse(
+    let scoresResult: z.SafeParseReturnType<any, z.infer<typeof ScoreResultSchema>>;
+    let contentFeedbackResult: z.SafeParseReturnType<any, z.infer<typeof ContentFeedbackResultSchema>>;
+    let feedbackResult: z.SafeParseReturnType<any, z.infer<typeof FeedbackResultSchema>>;
+
+    const scoreParsedResponse = JSON.parse(
       scoreResponse.choices[0]?.message?.content?.replace(/```json\n|\n```/g, '') || '{}'
-    ));
-    const contentFeedbackResult = ContentFeedbackResultSchema.safeParse(JSON.parse(
-      contentFeedbackResponse.choices[0]?.message?.content?.replace(/```json\n|\n```/g, '') || '{}'
-    ));
-    const feedbackResult = FeedbackResultSchema.safeParse(
-      feedbackResponse.choices[0]?.message?.content
     );
+    console.log('🅾️scoreParsedResponse', scoreParsedResponse);
+
+    const contentFeedbackParsedResponse = JSON.parse(
+      contentFeedbackResponse.choices[0]?.message?.content?.replace(/```json\n|\n```/g, '') || '{}'
+    );
+    console.log('🅾️contentFeedbackParsedResponse', contentFeedbackParsedResponse);
+
+    const feedbackParsedResponse = feedbackResponse.choices[0]?.message?.content;
+    console.log('🅾️feedbackParsedResponse', feedbackParsedResponse);
+
+    try {
+      scoresResult = ScoreResultSchema.safeParse(scoreParsedResponse);
+      contentFeedbackResult = ContentFeedbackResultSchema.safeParse(contentFeedbackParsedResponse);
+      feedbackResult = FeedbackResultSchema.safeParse(feedbackParsedResponse);
+    } catch (error) {
+      console.log('❌결과 SafeParse 실패, error', error);
+      throw new Error(`결과 SafeParse 실패: ${error instanceof Error ? error.message : String(error)}`);
+    }
 
     if (!scoresResult.success || !contentFeedbackResult.success || !feedbackResult.success) {
       return {
@@ -219,7 +253,7 @@ export const generateEvaluation = async (contents: InterviewContent[]): Promise<
       feedback: feedbackResult.data,
     };
   } catch (error) {
-    console.log('error', error);
+    console.log('prompt error', error instanceof Error ? error.message : String(error));
 
     return {
       success: false,
