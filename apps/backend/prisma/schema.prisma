@@ -45,10 +45,10 @@ model Interview {
   user          User                  @relation("UserInterviews", fields: [userId], references: [id])
   interviewerId Int
   interviewer   Interviewer           @relation("InterviewerInterviews", fields: [interviewerId], references: [id])
-  review        Review?               @relation("InterviewReview")
+  result        Result?               @relation("InterviewResult")
 }
 
- enum SpeakerRole {
+enum SpeakerRole {
   user
   interviewer
 }
@@ -63,7 +63,7 @@ model InterviewContent {
   interview     Interview             @relation("InterviewContents", fields: [interviewId], references: [id])
 }
 
-model Review {
+model Result {
   id                  Int                   @id @default(autoincrement())
   scores              Json      // 예: [{ "standard": "Technical", "score": 18, "summary": "좋음" }]
   contentFeedback     Json      // 각 문항에 대한 피드백
@@ -71,5 +71,5 @@ model Review {
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
   interviewId         Int                   @unique
-  interview           Interview             @relation("InterviewReview", fields: [interviewId], references: [id])
+  interview           Interview             @relation("InterviewResult", fields: [interviewId], references: [id])
 }

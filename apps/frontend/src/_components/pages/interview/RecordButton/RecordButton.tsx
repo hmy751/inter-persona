@@ -260,7 +260,7 @@ export default function RecordButton() {
       return;
     }
 
-    mutate();
+    mutate(Number(interviewId));
   };
 
   if (interviewStatusLoading) {

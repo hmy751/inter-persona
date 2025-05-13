@@ -5,21 +5,37 @@ import styles from './ButtonGroupSection.module.css';
 import { useRouter, useParams } from 'next/navigation';
 import { useGetResult } from '@/_data/result';
 import { useCreateInterview } from '@/_data/interview';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface ButtonGroupSectionProps {}
 
 export default function ButtonGroupSection({}: ButtonGroupSectionProps): React.ReactElement {
   const router = useRouter();
-  const { data } = useGetResult();
-
-  const { mutate, isPending } = useCreateInterview(data?.userId!, data?.interviewerId!);
+  const resultId = useParams().resultId;
+  const queryClient = useQueryClient();
+  const { data, isLoading, error } = useGetResult(Number(resultId));
+  const { mutate, isPending } = useCreateInterview(
+    data?.userId ?? 0,
+    data?.interviewerId ?? 0,
+    data?.interview?.category ?? ''
+  );
 
   const handleClickRetryInterview = async () => {
+    if (error || isLoading) {
+      return;
+    }
+
     mutate();
+
+    queryClient.invalidateQueries({ queryKey: ['result'] });
+    queryClient.invalidateQueries({ queryKey: ['interview'] });
   };
 
   const handleClickSelectInterviewer = () => {
     router.push('/interviewer');
+
+    queryClient.invalidateQueries({ queryKey: ['result'] });
+    queryClient.invalidateQueries({ queryKey: ['interview'] });
   };
 
   return (

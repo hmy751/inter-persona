@@ -1,10 +1,22 @@
 import { z } from 'zod';
 import { InterviewContentSchema } from '@repo/schema/interview';
 import config from '@/config';
-
 const GROK_API_KEY = config.grok.apiKey;
+import { INTERVIEW_CHAT_LIMIT } from '@/libs/constant';
+import { ResultScoresSchema, ResultContentsFeedbackSchema, ResultFeedbackSchema } from '@repo/schema/result';
+
 
 type InterviewContent = z.infer<typeof InterviewContentSchema>;
+
+const ScoreResultSchema = z.object({
+  scores: ResultScoresSchema,
+});
+
+const ContentFeedbackResultSchema = z.object({
+  feedback: ResultContentsFeedbackSchema,
+});
+
+const FeedbackResultSchema = ResultFeedbackSchema;
 
 export type Interviewer = {
   persona: {
@@ -119,4 +131,135 @@ export const askQuestion = async (
   };
   const response = await xAIRequest(config);
   return response.choices[0]?.message?.content || '질문 생성 실패';
+}
+
+export const generateEvaluation = async (contents: InterviewContent[]): Promise<{
+  success: boolean;
+  scores: Array<{ standard: string; score: number; summary: string }>;
+  contentFeedback: Array<{ question: string; feedback: string }>;
+  feedback: string;
+}> => {
+  const messages = getAiMessageFormat(contents).slice(0, INTERVIEW_CHAT_LIMIT);
+
+  try {
+    const scoreConfig: XAIRequestConfig = {
+      model: 'grok-beta',
+      messages: [
+        ...messages,
+        {
+          role: 'system',
+          content: `면접을 다음 기준으로 평가하세요:
+          1. 기술적 전문성
+          2. 문제 해결 능력
+          3. 의사소통
+          4. 적응력
+          5. 팀워크
+          JSON 형식으로 반환: { "scores": [{ "standard": string, "score": number (1-100), "summary": string }] }.
+          응답은 정확하고 자연스러운 한국어로 작성하세요.
+        `,
+        },
+      ],
+    };
+
+    let scoreResponse: XAIResponse;
+    try {
+      scoreResponse = await xAIRequest(scoreConfig);
+    } catch (error) {
+      console.log('❌프롬프트 Score 평가 생성 실패', error);
+      throw new Error(`프롬프트 Score 평가 생성 실패: ${error instanceof Error ? error.message : String(error)}`);
+    }
+
+    // 각 질문에 대한 피드백
+    const contentFeedbackConfig: XAIRequestConfig = {
+      model: 'grok-beta',
+      messages: [
+        ...messages,
+        {
+          role: 'system',
+          content: `각 면접 질문에 대해 간단한 피드백을 제공하세요. 한국어로 1-2문장으로 작성하고, JSON 배열로 반환: { "feedback": [{ "question": string, "feedback": string }] }.
+          응답은 정확하고 자연스러운 한국어로 작성하세요.
+        `,
+        },
+      ],
+    };
+
+    let contentFeedbackResponse: XAIResponse;
+    try {
+      contentFeedbackResponse = await xAIRequest(contentFeedbackConfig);
+    } catch (error) {
+      console.log('❌프롬프트 ContentFeedback 평가 생성 실패', error);
+      throw new Error(`프롬프트 ContentFeedback 평가 생성 실패: ${error instanceof Error ? error.message : String(error)}`);
+    }
+
+    // 전체 피드백
+    const feedbackConfig: XAIRequestConfig = {
+      model: 'grok-beta',
+      messages: [
+        ...messages,
+        {
+          role: 'system',
+          content: '면접 성과를 요약하는 피드백을 한국어로 3문장 이상 작성하세요. 응답은 정확하고 자연스러운 한국어로 작성하세요.',
+        },
+      ],
+    };
+
+    let feedbackResponse: XAIResponse;
+    try {
+      feedbackResponse = await xAIRequest(feedbackConfig);
+    } catch (error) {
+      console.log('❌프롬프트 Feedback 평가 생성 실패', error);
+      throw new Error(`프롬프트 Feedback 평가 생성 실패: ${error instanceof Error ? error.message : String(error)}`);
+    }
+
+    let scoresResult: z.SafeParseReturnType<any, z.infer<typeof ScoreResultSchema>>;
+    let contentFeedbackResult: z.SafeParseReturnType<any, z.infer<typeof ContentFeedbackResultSchema>>;
+    let feedbackResult: z.SafeParseReturnType<any, z.infer<typeof FeedbackResultSchema>>;
+
+    const scoreParsedResponse = JSON.parse(
+      scoreResponse.choices[0]?.message?.content?.replace(/```json\n|\n```/g, '') || '{}'
+    );
+    console.log('🅾️scoreParsedResponse', scoreParsedResponse);
+
+    const contentFeedbackParsedResponse = JSON.parse(
+      contentFeedbackResponse.choices[0]?.message?.content?.replace(/```json\n|\n```/g, '') || '{}'
+    );
+    console.log('🅾️contentFeedbackParsedResponse', contentFeedbackParsedResponse);
+
+    const feedbackParsedResponse = feedbackResponse.choices[0]?.message?.content;
+    console.log('🅾️feedbackParsedResponse', feedbackParsedResponse);
+
+    try {
+      scoresResult = ScoreResultSchema.safeParse(scoreParsedResponse);
+      contentFeedbackResult = ContentFeedbackResultSchema.safeParse(contentFeedbackParsedResponse);
+      feedbackResult = FeedbackResultSchema.safeParse(feedbackParsedResponse);
+    } catch (error) {
+      console.log('❌결과 SafeParse 실패, error', error);
+      throw new Error(`결과 SafeParse 실패: ${error instanceof Error ? error.message : String(error)}`);
+    }
+
+    if (!scoresResult.success || !contentFeedbackResult.success || !feedbackResult.success) {
+      return {
+        success: false,
+        scores: [],
+        contentFeedback: [],
+        feedback: '',
+      };
+    }
+
+    return {
+      success: true,
+      scores: scoresResult.data.scores,
+      contentFeedback: contentFeedbackResult.data.feedback,
+      feedback: feedbackResult.data,
+    };
+  } catch (error) {
+    console.log('prompt error', error instanceof Error ? error.message : String(error));
+
+    return {
+      success: false,
+      scores: [],
+      contentFeedback: [],
+      feedback: '',
+    };
+  }
 }

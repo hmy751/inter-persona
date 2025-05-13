@@ -9,34 +9,27 @@ import {
 import { useRouter, useParams } from 'next/navigation';
 import useToastStore from '@repo/store/useToastStore';
 import { APIError } from '@/_apis/fetcher';
-import { delay } from '@/_libs/utils';
 
 export const useCreateResult = () => {
   const router = useRouter();
-  const interviewId = useParams().interviewId;
   const addToast = useToastStore(state => state.addToast);
 
   return useMutation({
-    mutationFn: async () => {
-      await delay(500);
-
+    mutationFn: async (interviewId: number) => {
       return await fetchCreateResult({
-        interviewId: Number(interviewId),
+        interviewId,
       });
     },
     onSuccess: data => {
-      if (!data?.id) {
-        addToast({
-          title: '인터뷰 결과 생성 실패',
-          description: '인터뷰 결과 생성에 실패했습니다. 다시 시도해주세요.',
-        });
-        return;
-      }
-
       router.push(`/result/${data.id}`);
     },
     onError: error => {
       if (error instanceof APIError) {
+        if (error.status === 409) {
+          router.push(`/result/${(error.data as { id: number }).id}`);
+          return;
+        }
+
         addToast({
           title: '인터뷰 결과 생성 실패',
           description: error.message,
@@ -52,12 +45,10 @@ export const useCreateResult = () => {
   });
 };
 
-export const useGetResult = () => {
-  const resultId = useParams().resultId;
-
+export const useGetResult = (resultId: number) => {
   return useQuery({
     queryKey: ['result', resultId],
-    queryFn: () => fetchGetResult({ resultId: Number(resultId) }),
+    queryFn: () => fetchGetResult({ id: resultId }),
   });
 };
 

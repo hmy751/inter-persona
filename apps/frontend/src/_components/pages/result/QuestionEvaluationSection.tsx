@@ -1,17 +1,19 @@
 import Text from '@repo/ui/Text';
 import styles from './QuestionEvaluationSection.module.css';
-import { useGetResultQuestionEvaluation } from '@/_data/result';
+import { useGetResult } from '@/_data/result';
+import { useParams } from 'next/navigation';
 
 interface QuestionEvaluationSectionProps {}
 
 export default function QuestionEvaluationSection({}: QuestionEvaluationSectionProps): React.ReactElement {
-  const { data, isLoading, error } = useGetResultQuestionEvaluation();
+  const resultId = useParams().resultId;
+  const { data, isLoading, error } = useGetResult(Number(resultId));
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
-  if (!data || error) {
+  if (error) {
     return <div>no data</div>;
   }
 
@@ -20,17 +22,14 @@ export default function QuestionEvaluationSection({}: QuestionEvaluationSectionP
       <Text as="h3" size="md">
         Question Evaluation
       </Text>
-      {data?.questionEvaluation.map(({ title, score, content }, index) => (
-        <div className={styles.question}>
+      {data?.contentFeedback.map(({ question, feedback }, index) => (
+        <div className={styles.question} key={question}>
           <div className={styles.questionHeader}>
             <Text size="sm" weight="bold">
-              {index + 1}. {title}
-            </Text>
-            <Text size="sm" className={styles.questionScore}>
-              {score}%
+              {index + 1}. {question}
             </Text>
           </div>
-          <Text size="sm">{content}</Text>
+          <Text size="sm">{feedback}</Text>
         </div>
       ))}
     </div>
