@@ -34,6 +34,7 @@ export const RESULT_ROUTE = {
   error: {
     notFoundInterview: '해당 인터뷰를 찾을 수 없습니다.',
     failedToCreateResult: '결과 생성에 실패했습니다.',
+    notFoundResult: '해당 결과를 찾을 수 없습니다.',
   },
   message: {
     alreadyExists: '이미 인터뷰 결과가 존재합니다.',

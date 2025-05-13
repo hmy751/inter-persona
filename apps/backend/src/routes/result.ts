@@ -67,4 +67,24 @@ router.post('/', authenticate, async (req: Request, res: Response, next: NextFun
   }
 });
 
+router.get('/:id', authenticate, async (req: Request, res: Response, next: NextFunction) => {
+  const { id: resultId } = req.params;
+
+  try {
+    const result = await prisma.result.findUnique({
+      where: { id: Number(resultId) },
+    });
+
+    if (!result) {
+      res.status(404).json({ message: RESULT_ROUTE.error.notFoundResult });
+      return;
+    }
+
+    res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to get result' });
+  }
+});
+
 export default router;
