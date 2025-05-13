@@ -15,9 +15,15 @@ type CreateResultBody = z.infer<typeof CreateResultRequestSchema>;
 type CreateResultResponse = z.infer<typeof CreateResultResponseSchema>;
 
 export const fetchCreateResult = async ({ interviewId }: CreateResultBody) => {
-  return fetcher.post<CreateResultResponse>('result', {
-    interviewId,
-  });
+  return fetcher.post<CreateResultResponse>(
+    'result',
+    {
+      interviewId,
+    },
+    {
+      timeout: 20000,
+    }
+  );
 };
 
 /**
