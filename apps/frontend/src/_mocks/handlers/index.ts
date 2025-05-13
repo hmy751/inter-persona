@@ -1,8 +1,8 @@
-import { RequestHandler } from 'msw';
-import interviewHandler from './interview';
-import userHandler from './user';
-import interviewerHandler from './interviewer';
-import resultHandler from './result';
-const handlers: RequestHandler[] = [...interviewHandler, ...userHandler, ...interviewerHandler, ...resultHandler];
+import { userHandlers } from './user';
+import { interviewerHandlers } from './interviewer';
+import { interviewHandlers } from './interview';
+import { resultHandlers } from './result';
+
+const handlers = [...userHandlers, ...interviewerHandlers, ...interviewHandlers, ...resultHandlers];
 
 export default handlers;
