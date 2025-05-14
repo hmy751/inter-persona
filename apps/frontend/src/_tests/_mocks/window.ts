@@ -27,7 +27,7 @@ const mockCreateAnalyser = jest.fn().mockImplementation(() => mockAnalyserNode);
 const mockSource = { connect: jest.fn() };
 const mockCreateMediaStreamSource = jest.fn().mockImplementation(() => mockSource);
 
-function MockAudioContextConstructor(this: any) {
+function MockAudioContextConstructor(this: { createAnalyser: jest.Mock; createMediaStreamSource: jest.Mock }) {
   this.createAnalyser = mockCreateAnalyser;
   this.createMediaStreamSource = mockCreateMediaStreamSource;
 }

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useCreateInterview } from '@/_data/interview';
 import useConfirmDialogStore from '@repo/store/useConfirmDialogStore';
 import { useGetUser } from '@/_data/user';
+
 interface StartInterviewButtonProps {
   id: number;
   category: string;
@@ -19,6 +20,7 @@ export default function StartInterviewButton({
   const userId = user?.id;
   const setConfirm = useConfirmDialogStore(state => state.setConfirm);
 
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const { mutate, isPending } = useCreateInterview(userId!, interviewerId, category);
 
   const handleClick = async () => {

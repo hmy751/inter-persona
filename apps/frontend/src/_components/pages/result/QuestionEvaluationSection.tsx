@@ -3,9 +3,7 @@ import styles from './QuestionEvaluationSection.module.css';
 import { useGetResult } from '@/_data/result';
 import { useParams } from 'next/navigation';
 
-interface QuestionEvaluationSectionProps {}
-
-export default function QuestionEvaluationSection({}: QuestionEvaluationSectionProps): React.ReactElement {
+export default function QuestionEvaluationSection(): React.ReactElement {
   const resultId = useParams().resultId;
   const { data, isLoading, error } = useGetResult(Number(resultId));
 

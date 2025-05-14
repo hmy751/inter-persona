@@ -10,7 +10,7 @@ const mockRecorderStop = jest.fn().mockResolvedValue({
   blob: new Blob(['mock audio data'], { type: 'audio/wav' }),
 });
 
-function RecorderMockConstructor(this: any, audioContext: AudioContext) {
+function RecorderMockConstructor(this: { init: jest.Mock; start: jest.Mock; stop: jest.Mock }) {
   this.init = mockRecorderInit;
   this.start = mockRecorderStart;
   this.stop = mockRecorderStop;

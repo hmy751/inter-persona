@@ -7,7 +7,7 @@ import { useGetUser } from '@/_data/user';
 
 interface HeaderUserInfoProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-export default function HeaderUserInfo({}: HeaderUserInfoProps): React.ReactElement | null {
+export default function HeaderUserInfo({ ...restProps }: HeaderUserInfoProps): React.ReactElement | null {
   const { data: user } = useGetUser();
 
   if (!user) {
@@ -15,7 +15,7 @@ export default function HeaderUserInfo({}: HeaderUserInfoProps): React.ReactElem
   }
 
   return (
-    <div className={styles.userInfo}>
+    <div className={styles.userInfo} {...restProps}>
       <Avatar size="sm" src={user?.profileImageUrl} />
       <Text maxWidth="70px" align="right" truncate className={styles.text}>
         {user?.name}

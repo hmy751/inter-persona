@@ -1,5 +1,4 @@
 import fetcher from './fetcher';
-import { Interviewer, User } from './model';
 import { z } from 'zod';
 import {
   InterviewRequestSchema,
