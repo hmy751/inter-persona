@@ -2,7 +2,7 @@ export const baseURL = process.env.NEXT_PUBLIC_API_HOST;
 interface FetcherConfig {
   baseURL?: string;
   headers?: HeadersInit;
-  timeout?: number;
+  timeout: number;
 }
 
 interface RequestConfig extends Omit<RequestInit, 'headers'> {
@@ -60,7 +60,7 @@ const handleError = (error: unknown) => {
 const createHttpClient = (defaultConfig: FetcherConfig) => {
   const request = async <T>(url: string, options: RequestConfig = {}, isFormData = false): Promise<T> => {
     try {
-      const controller = createAbortController(options.timeout || defaultConfig.timeout!);
+      const controller = createAbortController(options.timeout || defaultConfig.timeout);
       const fullURL = `${defaultConfig.baseURL}/${url}`;
 
       const finalOptions: RequestConfig = {

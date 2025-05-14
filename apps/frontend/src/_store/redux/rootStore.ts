@@ -6,17 +6,16 @@ import { rootSaga } from './rootSaga';
 const sagaMiddleware = createSagaMiddleware();
 
 export const makeStore = (preloadedState = {}) => {
+  const ignoredRules = {
+    ignoredActions: ['SEND_RECORD', 'chat/startChat', 'chat/triggerContent'],
+    ignoredActionPaths: ['payload.formData'],
+    ignoredPaths: ['chat.contents.*.timeStamp'],
+  };
+
   const store = configureStore({
     middleware: getDefaultMiddleware =>
       getDefaultMiddleware({
-        serializableCheck:
-          process.env.NODE_ENV === 'test'
-            ? false
-            : {
-                ignoredActions: ['SEND_RECORD', 'chat/startChat', 'chat/triggerContent'],
-                ignoredActionPaths: ['payload.formData'],
-                ignoredPaths: ['chat.contents.*.timeStamp'],
-              },
+        serializableCheck: process.env.NODE_ENV === 'test' ? false : ignoredRules,
       }).concat(sagaMiddleware),
     reducer: {
       chat: chatReducer,

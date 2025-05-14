@@ -1,4 +1,4 @@
-import { call, put, select } from 'redux-saga/effects';
+import { call, put, select, CallEffect, PutEffect, SelectEffect } from 'redux-saga/effects';
 import {
   REQUEST_ANSWER,
   triggerContent,
@@ -7,7 +7,7 @@ import {
   resetTrySpeechCount,
   increaseTrySpeechCount,
 } from '../slice';
-import { delay } from '../../../utils';
+import { delay } from '@/_libs/utils';
 import { RootState } from '@/_store/redux/rootStore';
 import { fetchSpeechToText, SpeechToTextData } from '@/_apis/interview';
 import { ChatContentSpeakerType } from '@/_store/redux/type';
@@ -27,18 +27,20 @@ interface SendRecordAction {
   };
 }
 
-export function* speechToTextSaga(action: SendRecordAction): Generator<any, void, any> {
+export function* speechToTextSaga(
+  action: SendRecordAction
+): Generator<CallEffect | PutEffect | SelectEffect, void, unknown> {
   try {
     yield call(delay, 200);
 
     yield put(triggerContent({ speaker: ChatContentSpeakerType.user }));
     yield call(delay, 500);
 
-    const data: SpeechToTextData = yield call(fetchSpeechToText, {
+    const data = (yield call(fetchSpeechToText, {
       formData: action.payload.formData,
-    });
-    const interviewId: number = yield select(selectInterviewId);
-    const trySpeechCount: number = yield select(selectTrySpeechCount);
+    })) as SpeechToTextData;
+    const interviewId = (yield select(selectInterviewId)) as number;
+    const trySpeechCount = (yield select(selectTrySpeechCount)) as number;
 
     if (data?.text) {
       yield put(updateContent({ content: data.text }));

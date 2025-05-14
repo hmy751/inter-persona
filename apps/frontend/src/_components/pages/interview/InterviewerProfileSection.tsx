@@ -6,9 +6,7 @@ import Text from '@repo/ui/Text';
 import { useParams } from 'next/navigation';
 import { useGetInterviewInterviewer } from '@/_data/interview';
 
-interface InterviewerProfileSectionProps {}
-
-export default function InterviewerProfileSection({}: InterviewerProfileSectionProps) {
+export default function InterviewerProfileSection() {
   const { interviewId } = useParams();
 
   const { data, isLoading, isError } = useGetInterviewInterviewer(Number(interviewId));

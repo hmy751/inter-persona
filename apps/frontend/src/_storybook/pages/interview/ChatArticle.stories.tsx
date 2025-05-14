@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import ChatArticle from '@/_components/pages/interview/ChatArticle';
 import { ChatContentSpeakerType, ChatContentStatusType } from '@/_store/redux/type';
 
@@ -25,7 +25,6 @@ const meta = {
 } satisfies Meta<typeof ChatArticle>;
 
 export default meta;
-type Story = StoryObj<typeof meta>;
 
 const mockInterviewerChatContent = {
   status: ChatContentStatusType.success,
@@ -116,7 +115,7 @@ const mockUserChatContentWithInterviewerError = {
 
 export const UserChatWithInterviewerError = {
   decorators: [
-    (Story: any) => (
+    (Story: React.ComponentType) => (
       <div style={{ height: '200px' }}>
         <Story />
       </div>

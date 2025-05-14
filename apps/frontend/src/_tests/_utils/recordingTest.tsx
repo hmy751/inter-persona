@@ -50,7 +50,9 @@ export const createTestSetup = () => {
     }
 
     jest.useFakeTimers();
-    if (config.frameCallback) config.frameCallback(0);
+    if (config.frameCallback) {
+      config.frameCallback(0);
+    }
 
     return recordButton;
   };
@@ -58,7 +60,9 @@ export const createTestSetup = () => {
   const advanceFramesAndTime = (frames: number, timePerFrame: number) => {
     for (let i = 0; i < frames; i++) {
       jest.advanceTimersByTime(timePerFrame);
-      if (config.frameCallback) config.frameCallback(performance.now());
+      if (config.frameCallback) {
+        config.frameCallback(performance.now());
+      }
     }
   };
 

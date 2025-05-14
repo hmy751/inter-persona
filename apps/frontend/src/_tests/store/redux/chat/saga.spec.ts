@@ -18,7 +18,6 @@ import {
   REQUEST_ANSWER,
   errorContent,
   updateContent,
-  CANCEL_CURRENT_REQUEST_ANSWER,
   RETRY_ANSWER,
   resetTrySpeechCount,
   resetContentStatus,
@@ -35,12 +34,12 @@ describe('사용자 답변 녹음, 비동기 통신 에러 처리 테스트', ()
     const setAddToastSpy = jest.spyOn(useToastStore.getState(), 'addToast');
 
     server.use(
-      http.post('/api/interview', async ({ request }) => {
+      http.post('/api/interview', async () => {
         return Response.json({ text: '' });
       })
     );
 
-    const dispatched: any[] = [];
+    const dispatched: unknown[] = [];
     const action = {
       type: SEND_RECORD,
       payload: {
@@ -71,12 +70,12 @@ describe('사용자 답변 녹음, 비동기 통신 에러 처리 테스트', ()
     let attemptCount = 3;
 
     server.use(
-      http.post('/api/interview', async ({ request }) => {
+      http.post('/api/interview', async () => {
         return Response.json({ text: '' });
       })
     );
 
-    const dispatched: any[] = [];
+    const dispatched: unknown[] = [];
     const action = {
       type: SEND_RECORD,
       payload: {
@@ -120,12 +119,12 @@ describe('사용자 답변 녹음, 비동기 통신 에러 처리 테스트', ()
 describe('AI 응답 비동기 통신 에러 처리 테스트', () => {
   it('에러가 발생하면, 현재 진행중인 메시지를 삭제하고 이전 메시지의 에러상태를 업데이트 한다.', async () => {
     server.use(
-      http.post(`${baseURL}/interview/1/contents/answer`, async ({ request }) => {
+      http.post(`${baseURL}/interview/1/contents/answer`, async () => {
         return Response.json({ content: null });
       })
     );
 
-    const dispatched: any[] = [];
+    const dispatched: unknown[] = [];
     const action = {
       type: REQUEST_ANSWER,
       payload: {
@@ -152,12 +151,12 @@ describe('AI 응답 비동기 통신 에러 처리 테스트', () => {
 
   it('다시 시도하기 요청이 오면, 이전 사용자 답변 메시지를 이용하여 다시 요청한다.', async () => {
     server.use(
-      http.post(`${baseURL}/interview/1/contents/answer`, async ({ request }) => {
+      http.post(`${baseURL}/interview/1/contents/answer`, async () => {
         return Response.json({ content: null });
       })
     );
 
-    const dispatched: any[] = [];
+    const dispatched: unknown[] = [];
     const action = {
       type: REQUEST_ANSWER,
       payload: {
@@ -184,7 +183,7 @@ describe('AI 응답 비동기 통신 에러 처리 테스트', () => {
     expect(dispatched).toEqual(prevErrorDispatched);
 
     server.use(
-      http.post(`${baseURL}/interview/1/contents/answer`, async ({ request }) => {
+      http.post(`${baseURL}/interview/1/contents/answer`, async () => {
         return Response.json({ content: 'response success' });
       })
     );
@@ -216,12 +215,12 @@ describe('AI 응답 비동기 통신 에러 처리 테스트', () => {
 
   it('취소하기 요청이 오면, 이전 메시지의 상태를 초기화 한다.', async () => {
     server.use(
-      http.post(`${baseURL}/interview/1/contents/answer`, async ({ request }) => {
+      http.post(`${baseURL}/interview/1/contents/answer`, async () => {
         return Response.json({ content: null });
       })
     );
 
-    const dispatched: any[] = [];
+    const dispatched: unknown[] = [];
 
     const action = {
       type: REQUEST_ANSWER,

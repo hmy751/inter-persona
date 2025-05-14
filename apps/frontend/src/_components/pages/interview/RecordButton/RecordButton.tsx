@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import Button from '@repo/ui/Button';
 import { detectSilence } from './utils';
 import Image from 'next/image';
@@ -62,19 +62,24 @@ export default function RecordButton() {
 
       try {
         stream = await mediaDevices.getUserMedia({ audio: true });
-      } catch (error: any) {
-        switch (error.name) {
-          case 'NotAllowedError':
-            throw createRecordError(RecordErrorType.PERMISSION_DENIED, error);
-          case 'NotFoundError':
-            throw createRecordError(RecordErrorType.DEVICE_NOT_FOUND, error);
-          case 'NotReadableError':
-          case 'TrackStartError':
-            throw createRecordError(RecordErrorType.DEVICE_NOT_READABLE, error);
-          case 'OverconstrainedError':
-            throw createRecordError(RecordErrorType.DEVICE_NOT_FOUND, error);
-          default:
-            throw createRecordError(RecordErrorType.UNKNOWN_ERROR, error);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          switch (error.name) {
+            case 'NotAllowedError':
+              throw createRecordError(RecordErrorType.PERMISSION_DENIED, error);
+            case 'NotFoundError':
+              throw createRecordError(RecordErrorType.DEVICE_NOT_FOUND, error);
+            case 'NotReadableError':
+              throw createRecordError(RecordErrorType.DEVICE_NOT_READABLE, error);
+            case 'TrackStartError':
+              throw createRecordError(RecordErrorType.DEVICE_NOT_READABLE, error);
+            case 'OverconstrainedError':
+              throw createRecordError(RecordErrorType.DEVICE_NOT_FOUND, error);
+            default:
+              throw createRecordError(RecordErrorType.UNKNOWN_ERROR, error);
+          }
+        } else {
+          throw createRecordError(RecordErrorType.UNKNOWN_ERROR, new Error(String(error)));
         }
       }
 
@@ -83,8 +88,12 @@ export default function RecordButton() {
 
       try {
         audioContext = new window.AudioContext();
-      } catch (error: any) {
-        throw createRecordError(RecordErrorType.CONTEXT_NOT_ALLOWED, error);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          throw createRecordError(RecordErrorType.CONTEXT_NOT_ALLOWED, error);
+        } else {
+          throw createRecordError(RecordErrorType.CONTEXT_NOT_ALLOWED, new Error(String(error)));
+        }
       }
 
       const analyserNode = audioContext.createAnalyser();
@@ -97,8 +106,12 @@ export default function RecordButton() {
       try {
         source = audioContext.createMediaStreamSource(stream);
         source.connect(analyserNode);
-      } catch (error: any) {
-        throw createRecordError(RecordErrorType.DEVICE_NOT_READABLE, error);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          throw createRecordError(RecordErrorType.DEVICE_NOT_READABLE, error);
+        } else {
+          throw createRecordError(RecordErrorType.DEVICE_NOT_READABLE, new Error(String(error)));
+        }
       }
 
       // 4. recorder 초기화
@@ -108,16 +121,24 @@ export default function RecordButton() {
       // 5. recorder 초기화
       try {
         await recorderRef.current.init(stream);
-      } catch (error: any) {
-        throw createRecordError(RecordErrorType.DEVICE_NOT_READABLE, error);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          throw createRecordError(RecordErrorType.DEVICE_NOT_READABLE, error);
+        } else {
+          throw createRecordError(RecordErrorType.DEVICE_NOT_READABLE, new Error(String(error)));
+        }
       }
 
       // 6. 녹음 시작
       try {
         await recorderRef.current.start();
         setRecordingStatus(RecordingStatusType.recording);
-      } catch (error: any) {
-        throw createRecordError(RecordErrorType.UNKNOWN_ERROR, error);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          throw createRecordError(RecordErrorType.UNKNOWN_ERROR, error);
+        } else {
+          throw createRecordError(RecordErrorType.UNKNOWN_ERROR, new Error(String(error)));
+        }
       }
 
       cleanupRef.current = detectSilence(analyserNode, dataArray, setRecordingStatus);
@@ -135,7 +156,7 @@ export default function RecordButton() {
     }
   };
 
-  const finishRecord = async () => {
+  const finishRecord = useCallback(async () => {
     try {
       if (recorderRef.current === null) {
         throw createRecordError(RecordErrorType.UNKNOWN_ERROR);
@@ -180,7 +201,7 @@ export default function RecordButton() {
         duration: 3000,
       });
     }
-  };
+  }, [addToast, dispatch]);
 
   useEffect(() => {
     if (recordingStatus === RecordingStatusType.finished) {
@@ -212,7 +233,7 @@ export default function RecordButton() {
         finishRecord();
       }
     })();
-  }, [recordingStatus]);
+  }, [recordingStatus, isDisabledRecord, finishRecord]);
 
   useEffect(() => {
     (function checkAvailableRecordingIdle() {
@@ -250,7 +271,7 @@ export default function RecordButton() {
     };
   }, [isDisabledRecord, recordingStatus]);
 
-  const handleClickResultButton = async () => {
+  const handleClickResultButton = useCallback(async () => {
     if (!isCompletedInterview) {
       addToast({
         title: '인터뷰 아직 완료되지 않았습니다.',
@@ -261,7 +282,7 @@ export default function RecordButton() {
     }
 
     mutate(Number(interviewId));
-  };
+  }, [addToast, isCompletedInterview, interviewId, mutate]);
 
   if (interviewStatusLoading) {
     return <div>Loading...</div>;

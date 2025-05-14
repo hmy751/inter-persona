@@ -9,8 +9,12 @@ const meta = {
     nextjs: {
       appDirectory: true,
       navigation: {
-        back: () => console.log('Back button clicked'),
-        push: () => console.log('Router push called'),
+        back: () => {
+          // console.log('Back button clicked');
+        },
+        push: () => {
+          // console.log('Router push called');
+        },
       },
     },
   },
