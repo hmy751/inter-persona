@@ -9,5 +9,4 @@ export default defineConfig({
   clean: true,
   splitting: false,
   dts: true,
-  onSuccess: 'NODE_ENV=development node dist/app.js',
 });
