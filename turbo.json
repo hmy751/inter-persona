@@ -1,6 +1,7 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
+  "globalEnv": ["NODE_ENV"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
@@ -48,6 +49,9 @@
       "dependsOn": ["@repo/testing-config#build", "^build"],
       "cache": false,
       "persistent": true
+    },
+    "clean": {
+      "cache": false
     }
   },
   "remoteCache": {

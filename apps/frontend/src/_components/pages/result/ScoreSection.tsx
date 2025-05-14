@@ -4,9 +4,7 @@ import ProgressBar from './ProgressBar';
 import { useGetResult } from '@/_data/result';
 import { useParams } from 'next/navigation';
 
-interface ScoreSectionProps {}
-
-export default function ScoreSection({}: ScoreSectionProps): React.ReactElement {
+export default function ScoreSection(): React.ReactElement {
   const resultId = useParams().resultId;
   const { data, isLoading, error } = useGetResult(Number(resultId));
 

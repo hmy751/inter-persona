@@ -6,12 +6,13 @@ import {
 } from '@/_components/pages/interview/RecordButton/constants';
 import { screen, waitFor, cleanup } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { SEND_RECORD } from '@/_store/redux/features/chat/slice';
+import { SEND_RECORD, ChatState } from '@/_store/redux/features/chat/slice';
 import { ChatContentSpeakerType, ChatContentStatusType } from '@/_store/redux/type';
 import Recorder from 'recorder-js';
 import { mockStream, mockFormData } from '@/_tests/_mocks/window';
 import { renderWithProviders } from '@/_tests/_mocks/providers';
 import { createSuccessRecordingSetup, createTestSetup } from '@/_tests/_utils/recordingTest';
+
 afterEach(() => {
   jest.clearAllMocks();
   cleanup();
@@ -48,7 +49,8 @@ describe('녹음 버튼 UI 상태 테스트', () => {
           },
         ],
         trySpeechCount: 0,
-      },
+        interviewStatus: 'ongoing',
+      } as ChatState,
     };
 
     renderWithProviders(<RecordButton />, { preloadedState });
@@ -203,7 +205,7 @@ describe('녹음 프로세스 테스트', () => {
 
       await waitFor(async () => {
         expect(recorderInstance.stop).toHaveBeenCalled();
-        const { blob } = await recorderInstance.stop.mock.results[0]?.value;
+        const { blob } = (await recorderInstance.stop.mock.results[0]?.value) as { blob: Blob };
         expect(blob.type).toBe('audio/wav');
       });
     });
@@ -211,7 +213,11 @@ describe('녹음 프로세스 테스트', () => {
     it('완성된 FormData를 Redux action을 통해 서버 전송을 요청한다', async () => {
       await testSetup.setupSuccessRecordingEnvironment();
 
-      const mockDispatch = jest.spyOn(testSetup.config.store!, 'dispatch');
+      if (!testSetup.config.store) {
+        throw new Error('testSetup.config.store is not defined');
+      }
+
+      const mockDispatch = jest.spyOn(testSetup.config.store, 'dispatch');
 
       await waitFor(() => {
         expect(mockDispatch).toHaveBeenCalledWith({
@@ -229,7 +235,7 @@ jest.mock('@repo/store/useAlertDialogStore', () => {
   const store = jest.fn(() => ({
     setAlert: setAlertMock,
   }));
-  (store as any).getState = jest.fn(() => ({
+  (store as unknown as { getState: () => { setAlert: typeof setAlertMock } }).getState = jest.fn(() => ({
     setAlert: setAlertMock,
   }));
   return store;
@@ -246,7 +252,7 @@ jest.mock('@repo/store/useConfirmDialogStore', () => {
   const store = jest.fn(() => ({
     setConfirm: setConfirmMock,
   }));
-  (store as any).getState = jest.fn(() => ({
+  (store as unknown as { getState: () => { setConfirm: typeof setConfirmMock } }).getState = jest.fn(() => ({
     setConfirm: setConfirmMock,
   }));
   return store;
@@ -258,7 +264,7 @@ jest.mock('@repo/store/useToastStore', () => {
   const store = jest.fn(() => ({
     addToast: addToastMock,
   }));
-  (store as any).getState = jest.fn(() => ({
+  (store as unknown as { getState: () => { addToast: typeof addToastMock } }).getState = jest.fn(() => ({
     addToast: addToastMock,
   }));
   return store;

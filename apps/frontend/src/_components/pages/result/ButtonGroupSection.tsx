@@ -7,9 +7,7 @@ import { useGetResult } from '@/_data/result';
 import { useCreateInterview } from '@/_data/interview';
 import { useQueryClient } from '@tanstack/react-query';
 
-interface ButtonGroupSectionProps {}
-
-export default function ButtonGroupSection({}: ButtonGroupSectionProps): React.ReactElement {
+export default function ButtonGroupSection(): React.ReactElement {
   const router = useRouter();
   const resultId = useParams().resultId;
   const queryClient = useQueryClient();

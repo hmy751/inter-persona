@@ -12,7 +12,8 @@
     "apps-storybook": "storybook dev -p 6006",
     "build:apps-storybook": "storybook build",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "clean": "rm -rf .next .turbo"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",

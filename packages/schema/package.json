@@ -9,24 +9,24 @@
   },
   "exports": {
     "./user": {
+      "types": "./dist/user.d.ts",
       "import": "./dist/user.js",
-      "require": "./dist/user.cjs",
-      "types": "./dist/user.d.ts"
+      "require": "./dist/user.cjs"
     },
     "./interviewer": {
+      "types": "./dist/interviewer.d.ts",
       "import": "./dist/interviewer.js",
-      "require": "./dist/interviewer.cjs",
-      "types": "./dist/interviewer.d.ts"
+      "require": "./dist/interviewer.cjs"
     },
     "./interview": {
+      "types": "./dist/interview.d.ts",
       "import": "./dist/interview.js",
-      "require": "./dist/interview.cjs",
-      "types": "./dist/interview.d.ts"
+      "require": "./dist/interview.cjs"
     },
     "./result": {
+      "types": "./dist/result.d.ts",
       "import": "./dist/result.js",
-      "require": "./dist/result.cjs",
-      "types": "./dist/result.d.ts"
+      "require": "./dist/result.cjs"
     }
   },
   "dependencies": {

@@ -2,9 +2,8 @@ import styles from './TotalEvaluationSection.module.css';
 import Text from '@repo/ui/Text';
 import { useGetResult } from '@/_data/result';
 import { useParams } from 'next/navigation';
-interface TotalEvaluationSectionProps {}
 
-export default function TotalEvaluationSection({}: TotalEvaluationSectionProps): React.ReactElement {
+export default function TotalEvaluationSection(): React.ReactElement {
   const resultId = useParams().resultId;
   const { data, isLoading, error } = useGetResult(Number(resultId));
 

@@ -1,4 +1,4 @@
-import { call, put, select } from 'redux-saga/effects';
+import { call, put, select, CallEffect, PutEffect, SelectEffect } from 'redux-saga/effects';
 import {
   START_CHAT,
   triggerContent,
@@ -6,17 +6,16 @@ import {
   removeContent,
   startChat,
   resetTrySpeechCount,
-  CANCEL_CURRENT_REQUEST_ANSWER,
   resetContentStatus,
   setInterviewStatus,
   errorContent,
 } from '../slice';
-import { delay } from '../../../utils';
+import { delay } from '@/_libs/utils';
 import { RootState } from '@/_store/redux/rootStore';
 import { fetchAnswer, AnswerData, fetchStartInterview, fetchGetInterviewStatus } from '@/_apis/interview';
 import { ChatContentSpeakerType } from '@/_store/redux/type';
 import { useToastStore } from '@repo/store/useToastStore';
-import { AI_ERROR_TOAST, AI_NETWORK_ERROR_TOAST } from '../constants';
+import { AI_NETWORK_ERROR_TOAST } from '../constants';
 interface RequestAnswerAction {
   type: string;
   payload: {
@@ -26,17 +25,20 @@ interface RequestAnswerAction {
 }
 const selectInterviewId = (state: RootState) => state.chat.interviewId;
 
-export function* retryAnswerSaga(action: RequestAnswerAction): Generator<any, void, any> {
+export function* retryAnswerSaga(action: RequestAnswerAction): Generator<unknown, void, unknown> {
   yield put(resetContentStatus());
   yield* requestAnswerSaga(action);
 }
 
-export function* requestAnswerSaga(action: RequestAnswerAction): Generator<any, void, any> {
+export function* requestAnswerSaga(
+  action: RequestAnswerAction
+): Generator<CallEffect | PutEffect | SelectEffect, void, unknown> {
   try {
     if (action.type === START_CHAT) {
       yield put(startChat({ interviewId: action.payload.interviewId }));
     }
-    const interviewId: number = yield select(selectInterviewId);
+
+    const interviewId = (yield select(selectInterviewId)) as number;
 
     yield call(delay, 200);
 
@@ -46,14 +48,14 @@ export function* requestAnswerSaga(action: RequestAnswerAction): Generator<any, 
     let data: AnswerData;
 
     if (action.type === START_CHAT) {
-      data = yield call(fetchStartInterview, {
+      data = (yield call(fetchStartInterview, {
         interviewId,
-      });
+      })) as AnswerData;
     } else {
-      data = yield call(fetchAnswer, {
+      data = (yield call(fetchAnswer, {
         interviewId,
         content: action.payload.content,
-      });
+      })) as AnswerData;
     }
 
     if (data.content) {
@@ -63,9 +65,9 @@ export function* requestAnswerSaga(action: RequestAnswerAction): Generator<any, 
       yield put(errorContent());
     }
 
-    const statusData = yield call(fetchGetInterviewStatus, {
+    const statusData = (yield call(fetchGetInterviewStatus, {
       interviewId,
-    });
+    })) as { status: string };
 
     if (statusData.status === 'completed') {
       yield put(setInterviewStatus('completed'));
@@ -76,7 +78,7 @@ export function* requestAnswerSaga(action: RequestAnswerAction): Generator<any, 
   }
 }
 
-export function* cancelCurrentRequestAnswerSaga(): Generator<any, void, any> {
+export function* cancelCurrentRequestAnswerSaga(): Generator<unknown, void, unknown> {
   yield put(removeContent());
   yield put(resetTrySpeechCount());
 }
