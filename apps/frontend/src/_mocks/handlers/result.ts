@@ -66,7 +66,12 @@ export const resultHandlers = [
 
     if (results.some(r => r.interviewId === interviewId)) {
       const existingResult = results.find(r => r.interviewId === interviewId);
-      return HttpResponse.json(CreateResultResponseSchema.parse({ id: existingResult!.id }), { status: 200 });
+
+      if (!existingResult) {
+        return HttpResponse.json({ message: '결과를 찾을 수 없습니다.' }, { status: 404 });
+      }
+
+      return HttpResponse.json(CreateResultResponseSchema.parse({ id: existingResult.id }), { status: 200 });
     }
 
     const interview = tempMockInterviewsForResults[interviewId];

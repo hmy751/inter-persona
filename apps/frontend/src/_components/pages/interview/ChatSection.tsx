@@ -63,6 +63,7 @@ export default function ChatSection() {
     return () => {
       dispatch(initializeChatState(null));
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [interviewId, interviewLoading]);
 
   if (interviewLoading) {

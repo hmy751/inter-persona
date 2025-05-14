@@ -11,7 +11,9 @@ export const handleRecordError = (error: RecordError) => {
       break;
     case 'confirmDialog':
       useConfirmDialogStore.getState().setConfirm(title, message, () => {
-        if (callback) callback();
+        if (callback) {
+          callback();
+        }
       });
       break;
     case 'toast':

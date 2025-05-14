@@ -4,7 +4,9 @@ export const checkFileWave = (audioFile: File) => {
   const reader = new FileReader();
 
   reader.onloadend = (event: ProgressEvent<FileReader>) => {
-    if (!event.target) return;
+    if (!event.target) {
+      return;
+    }
     const arrayBuffer = event.target.result;
     const uint8Array = new Uint8Array(arrayBuffer as ArrayBufferLike);
 
@@ -13,9 +15,9 @@ export const checkFileWave = (audioFile: File) => {
     const waveFormat = String.fromCharCode(...uint8Array.slice(8, 12)); // "WAVE" 확인
 
     if (header === 'RIFF' && waveFormat === 'WAVE') {
-      console.log('This is a valid WAV file.');
+      // console.log('This is a valid WAV file.');
     } else {
-      console.log('This is not a WAV file.');
+      // console.log('This is not a WAV file.');
     }
   };
 

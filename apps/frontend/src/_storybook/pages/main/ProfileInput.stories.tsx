@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import ProfileInput from '@/_components/pages/main/ProfileInput';
 
 const meta: Meta<typeof ProfileInput> = {
@@ -11,7 +11,6 @@ const meta: Meta<typeof ProfileInput> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof ProfileInput>;
 
 export const Primary = {
   render() {

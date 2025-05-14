@@ -49,7 +49,7 @@ const ProfileInput = forwardRef<HTMLInputElement, ProfileInputProps>(
     const [previewUrl, setPreviewUrl] = useState<string | null>(defaultImageUrl || null);
     const [isDragging, setIsDragging] = useState(false);
     const internalRef = useRef<HTMLInputElement>(null);
-    const [internalError, setInternalError] = useState<string | undefined>(error);
+    const [_, setInternalError] = useState<string | undefined>(error);
 
     const assignRef = useCallback(
       (element: HTMLInputElement) => {
@@ -83,7 +83,7 @@ const ProfileInput = forwardRef<HTMLInputElement, ProfileInputProps>(
           URL.revokeObjectURL(previewUrl);
         }
       };
-    }, [defaultImageUrl]);
+    }, [defaultImageUrl, previewUrl, setImage]);
 
     const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0] || null;
@@ -152,8 +152,10 @@ const ProfileInput = forwardRef<HTMLInputElement, ProfileInputProps>(
         setIsDragging(false);
 
         if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-          const file = e.dataTransfer.files[0]!;
-          handleFile(file);
+          const file = e.dataTransfer.files[0];
+          if (file) {
+            handleFile(file);
+          }
         }
       },
       [handleFile, setIsDragging]
