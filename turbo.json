@@ -48,6 +48,9 @@
       "dependsOn": ["@repo/testing-config#build", "^build"],
       "cache": false,
       "persistent": true
+    },
+    "clean": {
+      "cache": false
     }
   },
   "remoteCache": {
