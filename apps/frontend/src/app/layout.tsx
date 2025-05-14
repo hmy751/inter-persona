@@ -16,6 +16,7 @@ export default function RootLayout({
 }>) {
   const isUseMsw = process.env.NEXT_PUBLIC_USE_MSW;
 
+  //
   return (
     <html lang="en">
       <body className={noto_sans_kr.className}>
