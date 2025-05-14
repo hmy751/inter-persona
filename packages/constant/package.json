@@ -5,14 +5,14 @@
   "license": "MIT",
   "exports": {
     "./message": {
+      "types": "./dist/message.d.ts",
       "import": "./dist/message.js",
-      "require": "./dist/message.cjs",
-      "types": "./dist/message.d.ts"
+      "require": "./dist/message.cjs"
     },
     "./name": {
+      "types": "./dist/name.d.ts",
       "import": "./dist/name.js",
-      "require": "./dist/name.cjs",
-      "types": "./dist/name.d.ts"
+      "require": "./dist/name.cjs"
     }
   },
   "scripts": {
