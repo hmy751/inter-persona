@@ -34,6 +34,17 @@ phases:
       - docker push $BACKEND_REPO:cache
       - echo "Writing image definitions file..."
       - printf '[{"name":"frontend-container","imageUri":"%s"},{"name":"backend-container","imageUri":"%s"}]' $FRONTEND_REPO:$IMAGE_TAG $BACKEND_REPO:$IMAGE_TAG > imagedefinitions.json
+      - echo "Updating frontend task definition..."
+      - FRONTEND_IMAGE_URI=$(jq -r '.[0].imageUri' imagedefinitions.json)
+      - sed -i "s|\"image\": \"<placeholder>\"|\"image\": \"$FRONTEND_IMAGE_URI\"|" task-definition.json
+      - aws ecs register-task-definition --cli-input-json file://task-definition.json --region ap-northeast-2
+      - echo "Updating backend task definition..."
+      - BACKEND_IMAGE_URI=$(jq -r '.[1].imageUri' imagedefinitions.json)
+      - sed -i "s|\"image\": \"<placeholder>\"|\"image\": \"$BACKEND_IMAGE_URI\"|" task-definition-backend.json
+      - aws ecs register-task-definition --cli-input-json file://task-definition-backend.json --region ap-northeast-2
+      - echo "Updating ECS services..."
+      - aws ecs update-service --cluster inter-persona-cluster --service inter-persona-frontend-service --task-definition inter-persona-new --force-new-deployment --region ap-northeast-2
+      - aws ecs update-service --cluster inter-persona-cluster --service inter-persona-backend-service --task-definition inter-persona-backend --force-new-deployment --region ap-northeast-2
 artifacts:
   files:
     - imagedefinitions.json
@@ -42,3 +53,4 @@ cache:
     - node_modules/**/*
     - .turbo/**/*
     - /root/.cache/docker/**/*
+    
