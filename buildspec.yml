@@ -32,11 +32,14 @@ phases:
       - docker tag $BACKEND_REPO:$IMAGE_TAG $BACKEND_REPO:cache
       - docker push $BACKEND_REPO:$IMAGE_TAG
       - docker push $BACKEND_REPO:cache
-      - echo "Writing image definitions file..."
-      - printf '[{"name":"frontend-container","imageUri":"%s"},{"name":"backend-container","imageUri":"%s"}]' $FRONTEND_REPO:$IMAGE_TAG $BACKEND_REPO:$IMAGE_TAG > imagedefinitions.json
+      - echo "Writing frontend image definitions file..."
+      - printf '[{"name":"frontend-container","imageUri":"%s"}]' $FRONTEND_REPO:$IMAGE_TAG > imagedefinitions-frontend.json
+      - echo "Writing backend image definitions file..."
+      - printf '[{"name":"backend-container","imageUri":"%s"}]' $BACKEND_REPO:$IMAGE_TAG > imagedefinitions-backend.json
 artifacts:
   files:
-    - imagedefinitions.json
+    - imagedefinitions-frontend.json
+    - imagedefinitions-backend.json
 cache:
   paths:
     - node_modules/**/*
