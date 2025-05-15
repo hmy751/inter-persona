@@ -17,6 +17,7 @@ export default function RootLayout({
 }>) {
   const isUseMsw = process.env.NEXT_PUBLIC_USE_MSW;
   const clarityId = process.env.NEXT_PUBLIC_CLARITY;
+  const gtmId = process.env.NEXT_PUBLIC_GTM;
 
   return (
     <html lang="en">
@@ -32,6 +33,15 @@ export default function RootLayout({
             `}
           </Script>
         )}
+        {gtmId && (
+          <Script id="gtm-script" strategy="afterInteractive">
+            {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+              new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+              j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+              'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','${gtmId}');`}
+          </Script>
+        )}
       </head>
       <body className={noto_sans_kr.className}>
         {!isUseMsw ? (
@@ -44,6 +54,18 @@ export default function RootLayout({
               <LayoutUI>{children}</LayoutUI>
             </RootProviders>
           </MSWProvider>
+        )}
+        {gtmId && (
+          <>
+            <noscript>
+              <iframe
+                src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
+                height="0"
+                width="0"
+                style={{ display: 'none', visibility: 'hidden' }}
+              ></iframe>
+            </noscript>
+          </>
         )}
       </body>
     </html>
