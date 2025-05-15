@@ -3,6 +3,9 @@
   "ui": "tui",
   "globalEnv": ["NODE_ENV"],
   "tasks": {
+    "prisma:generate": {
+      "outputs": ["node_modules/.prisma/client/**"]
+    },
     "build": {
       "dependsOn": ["^build"],
       "inputs": [
