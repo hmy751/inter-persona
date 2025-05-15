@@ -13,6 +13,7 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
+    "postinstall": "pnpm run prisma:generate",
     "clean": "rm -rf dist .turbo"
   },
   "dependencies": {
