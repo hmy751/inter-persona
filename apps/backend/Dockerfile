@@ -28,11 +28,23 @@ ENV NODE_ENV=production
 
 COPY --from=builder /deploy .
 
-RUN echo "--- Runner: Deployed files structure ---" && ls -R && echo "--- End of structure ---"
-RUN echo "--- Runner: Checking for dotenv in deployed node_modules ---" && \
-    (find ./node_modules -name dotenv -type d -print -exec ls -ld {} \; || echo "dotenv not found in deployed node_modules") && \
-    echo "--- Runner: dotenv check end ---"
-# --- 디버깅 라인 끝 ---
+RUN echo "--- Runner: Verifying file structure ---" && \
+    echo "Current directory: $(pwd)" && \
+    echo "Listing /app root (ls -Al /app):" && \
+    ls -Al /app && \
+    echo "Recursive listing of /app (ls -R /app) - first few levels:" && \
+    ls -R /app | head -n 50 && \
+    echo "Checking existence of /app/dist/app.js:" && \
+    (test -f /app/dist/app.js && echo "/app/dist/app.js EXISTS" || echo "/app/dist/app.js NOT FOUND") && \
+    echo "Checking existence of /app/apps/backend/dist/app.js (should NOT exist):" && \
+    (test -f /app/apps/backend/dist/app.js && echo "/app/apps/backend/dist/app.js EXISTS (UNEXPECTED)" || echo "/app/apps/backend/dist/app.js NOT FOUND (EXPECTED)") && \
+    echo "Checking /app/node_modules/dotenv symlink:" && \
+    (ls -l /app/node_modules/dotenv || echo "/app/node_modules/dotenv symlink NOT FOUND") && \
+    echo "Checking actual dotenv in .pnpm:" && \
+    (find /app/node_modules/.pnpm -name dotenv -type d -path '*/node_modules/dotenv' -print -exec ls -ld {} \; || echo "dotenv not found in .pnpm structure") && \
+    echo "Checking package.json in /app:" && \
+    (ls -l /app/package.json && echo "Content of /app/package.json:" && cat /app/package.json || echo "/app/package.json NOT FOUND") && \
+    echo "--- Runner: File structure verification end ---"
 
 EXPOSE 8000
 
