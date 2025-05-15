@@ -18,11 +18,12 @@ export default function RootLayout({
   const isUseMsw = process.env.NEXT_PUBLIC_USE_MSW;
   const clarityId = process.env.NEXT_PUBLIC_CLARITY;
   const gtmId = process.env.NEXT_PUBLIC_GTM;
+  const isProduction = process.env.NODE_ENV === 'production';
 
   return (
     <html lang="en">
       <head>
-        {clarityId && (
+        {isProduction && clarityId && (
           <Script id="clarity-script" strategy="afterInteractive">
             {`
               (function(c,l,a,r,i,t,y){
@@ -33,7 +34,7 @@ export default function RootLayout({
             `}
           </Script>
         )}
-        {gtmId && (
+        {isProduction && gtmId && (
           <Script id="gtm-script" strategy="afterInteractive">
             {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
               new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -55,7 +56,7 @@ export default function RootLayout({
             </RootProviders>
           </MSWProvider>
         )}
-        {gtmId && (
+        {isProduction && gtmId && (
           <>
             <noscript>
               <iframe
