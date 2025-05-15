@@ -41,4 +41,4 @@ COPY --from=builder /app/packages ./packages
 
 EXPOSE 8000
 
-CMD ["pnpm", "--filter", "@apps/backend", "run", "start:backend"]
+CMD ["sh", "-c", "echo '--- Checking /app/node_modules/.prisma/client ---' && ls -lA /app/node_modules/.prisma/client && echo '--- Checking /app/node_modules/@prisma/client/generated ---' && ls -lA /app/node_modules/@prisma/client/generated && echo '--- Checking pnpm store link for @prisma/client if possible (difficult to do simply here) ---' && echo '--- Attempting to run app ---' && pnpm --filter @apps/backend run start:backend"]
