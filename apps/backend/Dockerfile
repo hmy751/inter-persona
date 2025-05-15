@@ -48,4 +48,31 @@ RUN echo "--- Runner: Verifying file structure ---" && \
 
 EXPOSE 8000
 
-CMD ["node", "dist/app.js"]
+CMD ["node", "-e", "\
+console.log('--- Node.js Internal State and dotenv Import Test ---'); \
+console.log('Timestamp:', new Date().toISOString()); \
+console.log('process.env.NODE_ENV:', process.env.NODE_ENV); \
+console.log('Current working directory (process.cwd()):', process.cwd()); \
+console.log('Attempting to import dotenv/config dynamically:'); \
+import('dotenv/config') \
+  .then(() => { \
+    console.log('SUCCESS: dotenv/config imported dynamically.'); \
+    console.log('process.env.DATABASE_URL (after import - should be from ECS secrets):', process.env.DATABASE_URL ? 'Exists' : 'NOT FOUND'); \
+  }) \
+  .catch(err => { \
+    console.error('ERROR: Failed to import dotenv/config dynamically:', err); \
+    console.error('Error stack:', err.stack); \
+  }); \
+console.log('Attempting to import dotenv package itself:'); \
+import('dotenv') \
+  .then(dotenvPackage => { \
+    console.log('SUCCESS: dotenv package imported dynamically.', typeof dotenvPackage.config); \
+  }) \
+  .catch(err => { \
+    console.error('ERROR: Failed to import dotenv package dynamically:', err); \
+    console.error('Error stack:', err.stack); \
+  }); \
+console.log('Listing /app/node_modules/.pnpm/dotenv@16.5.0/node_modules/dotenv:'); \
+try { const fs = require('fs'); console.log(fs.readdirSync('/app/node_modules/.pnpm/dotenv@16.5.0/node_modules/dotenv')); } catch(e) {console.error('Failed to list dotenv dir with require(fs)', e.message)} \
+console.log('--- Test End ---'); \
+"]
