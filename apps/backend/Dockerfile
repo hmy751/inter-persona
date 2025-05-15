@@ -28,23 +28,15 @@ ENV NODE_ENV=production
 
 COPY --from=builder /deploy .
 
-RUN echo "--- Runner: Verifying File Structure & Built Code ---" && \
-    echo "Current directory: $(pwd)" && \
-    echo "Listing /app root (ls -Al /app):" && \
-    ls -Al /app && \
-    echo "Checking existence of /app/dist/app.js:" && \
-    (test -f /app/dist/app.js && echo "/app/dist/app.js EXISTS" || echo "/app/dist/app.js NOT FOUND") && \
-    echo "Checking /app/node_modules/dotenv symlink:" && \
-    (ls -l /app/node_modules/dotenv || echo "/app/node_modules/dotenv symlink NOT FOUND") && \
-    echo "Checking actual dotenv in .pnpm:" && \
-    (find /app/node_modules/.pnpm -name dotenv -type d -path '*/node_modules/dotenv' -print -exec ls -ld {} \; || echo "dotenv not found in .pnpm structure") && \
-    echo "Content of /app/package.json:" && \
-    (cat /app/package.json || echo "/app/package.json NOT FOUND") && \
-    echo "--- First 30 lines of /app/dist/app.js (to check dotenv import) ---" && \
-    (cat /app/dist/app.js | head -n 30 || echo "/app/dist/app.js not found or cat failed") && \
-    echo "--- Grepping for 'dotenv' in /app/dist/app.js ---" && \
-    (grep 'dotenv' /app/dist/app.js || echo "'dotenv' string not found in /app/dist/app.js") && \
-    echo "--- Runner: File structure verification and code check end ---"
+
+
+RUN echo "--- Runner (Debian): Verifying File Structure & Built Code ---" && \
+  echo "Current directory: $(pwd)" && \
+  ls -Al /app && \
+  (test -f /app/dist/app.js && echo "/app/dist/app.js EXISTS") || echo "/app/dist/app.js NOT FOUND" && \
+  (ls -l /app/node_modules/@prisma/client && echo "@prisma/client symlink details displayed") || echo "@prisma/client symlink NOT FOUND or ls -l failed" && \
+  echo "--- Runner (Debian): File structure verification and code check end ---"
+
 
 EXPOSE 8000
 
