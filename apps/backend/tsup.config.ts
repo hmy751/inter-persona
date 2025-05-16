@@ -8,5 +8,5 @@ export default defineConfig({
   clean: true,
   splitting: false,
   dts: true,
-  external: ['dotenv'],
+  external: ['dotenv', '@prisma/client'],
 });
