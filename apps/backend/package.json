@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "tsup",
-    "start:backend": "NODE_ENV=production node dist/app.js",
+    "start:backend": "NODE_ENV=production node dist/app.js --hostname 0.0.0.0 --port 8000",
     "dev:backend": "pnpm run dev:build:watch & pnpm run dev:start",
     "dev:build:watch": "NODE_ENV=development tsup --watch",
     "dev:start": "NODE_ENV=development nodemon --watch dist/app.js",

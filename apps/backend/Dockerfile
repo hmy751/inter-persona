@@ -42,4 +42,4 @@ RUN echo "--- Runner (Debian, as root): Verifying File Structure & Built Code --
 
 EXPOSE 8000
 
-CMD ["node", "dist/app.js"]
+CMD ["pnpm", "--filter", "@apps/backend", "start:backend"]
