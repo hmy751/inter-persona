@@ -29,7 +29,6 @@ ENV NODE_ENV=production
 COPY --from=builder /deploy .
 
 
-
 RUN echo "--- Runner (Debian): Verifying File Structure & Built Code ---" && \
   echo "Current directory: $(pwd)" && \
   ls -Al /app && \
@@ -39,7 +38,6 @@ RUN echo "--- Runner (Debian): Verifying File Structure & Built Code ---" && \
 
 
 EXPOSE 8000
-
 
 CMD ["node", "--enable-source-maps", "-e", "\
 console.log('--- MINIMAL PRISMA CLIENT INSTANTIATION TEST ---'); \
