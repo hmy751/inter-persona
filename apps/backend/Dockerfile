@@ -30,7 +30,7 @@ WORKDIR /app
 
 RUN pnpm turbo run build --filter=@apps/backend
 
-RUN pnpm --filter @apps/backend deploy --prod /app/deploy/apps/backend
+RUN pnpm --filter @apps/backend deploy /app/deploy/apps/backend
 
 FROM base AS runner
 
