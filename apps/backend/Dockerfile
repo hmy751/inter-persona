@@ -1,47 +1,52 @@
-FROM node:20 AS builder
+FROM node:20.18.1 AS base
 
-RUN apt-get update && apt-get install -y openssl libssl3 && rm -rf /var/lib/apt/lists/*
 RUN npm install -g pnpm
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
-COPY apps/ ./apps/
-COPY packages/ ./packages/
-
-RUN pnpm install --frozen-lockfile
+FROM base AS builder
 
 ARG TURBO_TOKEN
 ARG TURBO_TEAM
-ENV TURBO_TOKEN=$TURBO_TOKEN
-ENV TURBO_TEAM=$TURBO_TEAM
+ENV TURBO_TOKEN=${TURBO_TOKEN}
+ENV TURBO_TEAM=${TURBO_TEAM}
+
+COPY --chown=node:node package.json pnpm-lock.yaml turbo.json pnpm-workspace.yaml ./
+
+COPY --chown=node:node apps/backend/package.json ./apps/backend/
+COPY --chown=node:node apps/backend/prisma/schema.prisma ./apps/backend/prisma/schema.prisma 
+
+COPY --chown=node:node packages/ ./packages/
+
+RUN pnpm install --frozen-lockfile
+
+COPY --chown=node:node . .
+
+WORKDIR /app/apps/backend
+
+RUN pnpm run prisma:generate 
+
+WORKDIR /app
 
 RUN pnpm turbo run build --filter=@apps/backend
 
-RUN pnpm turbo run prisma:generate --filter=@apps/backend
+RUN pnpm --filter @apps/backend deploy --prod /app/deploy/apps/backend
 
-RUN mkdir /deploy_target_root
-RUN pnpm --filter=@apps/backend deploy /deploy_target_root --prod
+FROM base AS runner
 
+WORKDIR /home/node/app
 
-FROM node:20 AS runner
+ENV NODE_ENV production
 
-RUN apt-get update && apt-get install -y libssl3 ca-certificates && rm -rf /var/lib/apt/lists/* 
+COPY --from=builder --chown=node:node /app/deploy/apps/backend/ ./
+COPY --from=builder --chown=node:node /app/apps/backend/prisma ./prisma
 
-RUN npm install -g pnpm
+RUN apt-get update && \
+    apt-get install -y curl && \
+    rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
-ENV NODE_ENV=production
-
-COPY --from=builder /deploy_target_root . 
-
-RUN echo "--- Runner (Debian, as root): Verifying File Structure & Built Code ---" && \
-  echo "Current directory: $(pwd)" && \
-  ls -Al /app && \
-  (test -f /app/dist/app.js && echo "/app/dist/app.js EXISTS") || echo "/app/dist/app.js NOT FOUND" && \
-  (ls -l /app/node_modules/@prisma/client && echo "@prisma/client symlink details displayed") || echo "@prisma/client symlink NOT FOUND or ls -l failed" && \
-  echo "--- Runner (Debian, as root): File structure verification and code check end ---"
+USER node
 
 EXPOSE 8000
 
-CMD ["pnpm", "--filter", "@apps/backend", "start:backend"]
+CMD ["node", "dist/app.js", "--hostname", "0.0.0.0", "--port", "8000"]
