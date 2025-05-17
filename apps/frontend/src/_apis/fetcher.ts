@@ -62,6 +62,7 @@ const createHttpClient = (defaultConfig: FetcherConfig) => {
     try {
       const controller = createAbortController(options.timeout || defaultConfig.timeout);
       const fullURL = `${defaultConfig.baseURL}${url}`;
+      console.log(defaultConfig, defaultConfig?.baseURL, url, fullURL);
 
       const finalOptions: RequestConfig = {
         ...options,
