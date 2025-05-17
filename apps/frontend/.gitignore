@@ -37,5 +37,6 @@ pnpm-debug.log*
 next-env.d.ts
 
 .env
+.env.production
 .env.development
 *storybook.log
