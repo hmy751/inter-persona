@@ -16,12 +16,12 @@ phases:
       - FRONTEND_REPO=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_FRONTEND_REPOSITORY_NAME
       - BACKEND_REPO=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_BACKEND_REPOSITORY_NAME
       - IMAGE_TAG=${CODEBUILD_RESOLVED_SOURCE_VERSION:-latest}
-  build:
-    commands:
-      - echo "Building the frontend Docker image..."
-      - docker build --build-arg TURBO_TOKEN=${TURBO_TOKEN} --build-arg TURBO_TEAM=${TURBO_TEAM} --cache-from $FRONTEND_REPO:cache -t $FRONTEND_REPO:$IMAGE_TAG -f apps/frontend/Dockerfile .
-      - echo "Building the backend Docker image..."
-      - docker build --build-arg TURBO_TOKEN=${TURBO_TOKEN} --build-arg TURBO_TEAM=${TURBO_TEAM} --cache-from $BACKEND_REPO:cache -t $BACKEND_REPO:$IMAGE_TAG -f apps/backend/Dockerfile .
+build:
+  commands:
+    - echo "Building the frontend Docker image..."
+    - docker build --build-arg TURBO_TOKEN=${TURBO_TOKEN} --build-arg TURBO_TEAM=${TURBO_TEAM} -t $FRONTEND_REPO:$IMAGE_TAG -f apps/frontend/Dockerfile .
+    - echo "Building the backend Docker image..."
+    - docker build --build-arg TURBO_TOKEN=${TURBO_TOKEN} --build-arg TURBO_TEAM=${TURBO_TEAM} -t $BACKEND_REPO:$IMAGE_TAG -f apps/backend/Dockerfile .
   post_build:
     commands:
       - echo "Pushing the frontend Docker image to ECR..."
