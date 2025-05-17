@@ -1,4 +1,4 @@
-FROM node:20-slim AS builder
+FROM node:20 AS builder
 
 RUN apt-get update && apt-get install -y openssl libssl3 && rm -rf /var/lib/apt/lists/*
 RUN npm install -g pnpm
@@ -24,7 +24,7 @@ RUN mkdir /deploy_target_root
 RUN pnpm --filter=@apps/backend deploy /deploy_target_root --prod
 
 
-FROM node:20-slim AS runner
+FROM node:20 AS runner
 
 RUN apt-get update && apt-get install -y libssl3 ca-certificates && rm -rf /var/lib/apt/lists/* 
 
