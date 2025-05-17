@@ -5,5 +5,5 @@ import { InterviewerListResponseSchema } from '@repo/schema/interviewer';
 type InterviewerListResponse = z.infer<typeof InterviewerListResponseSchema>;
 
 export const fetchInterviewerList = async () => {
-  return fetcher.get<InterviewerListResponse>('interviewer');
+  return fetcher.get<InterviewerListResponse>('/api/interviewer');
 };

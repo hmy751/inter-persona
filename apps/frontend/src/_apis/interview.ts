@@ -27,7 +27,7 @@ export type GetInterviewBody = z.infer<typeof InterviewRequestSchema>;
 export type GetInterviewResponse = z.infer<typeof InterviewResponseSchema>;
 
 export const fetchGetInterview = async ({ interviewId }: GetInterviewBody) => {
-  return fetcher.get<GetInterviewResponse>(`interview/${interviewId}`);
+  return fetcher.get<GetInterviewResponse>(`/api/interview/${interviewId}`);
 };
 
 /**
@@ -38,7 +38,7 @@ export type GetInterviewInterviewerBody = z.infer<typeof InterviewInterviewerReq
 export type GetInterviewInterviewerResponse = z.infer<typeof InterviewInterviewerResponseSchema>;
 
 export const fetchGetInterviewInterviewer = async ({ interviewId }: GetInterviewInterviewerBody) => {
-  return fetcher.get<GetInterviewInterviewerResponse>(`interview/${interviewId}/interviewer`);
+  return fetcher.get<GetInterviewInterviewerResponse>(`/api/interview/${interviewId}/interviewer`);
 };
 
 /**
@@ -49,7 +49,7 @@ export type GetInterviewUserBody = z.infer<typeof InterviewUserRequestSchema>;
 export type GetInterviewUserResponse = z.infer<typeof InterviewUserResponseSchema>;
 
 export const fetchGetInterviewUser = async ({ interviewId }: GetInterviewUserBody) => {
-  return fetcher.get<GetInterviewUserResponse>(`interview/${interviewId}/user`);
+  return fetcher.get<GetInterviewUserResponse>(`/api/interview/${interviewId}/user`);
 };
 
 /**
@@ -60,7 +60,7 @@ export type CreateInterviewBody = z.infer<typeof InterviewCreateRequestSchema>;
 export type CreateInterviewResponse = z.infer<typeof InterviewCreateResponseSchema>;
 
 export const fetchCreateInterview = async ({ interviewerId, userId, category }: CreateInterviewBody) => {
-  return fetcher.post<CreateInterviewResponse>('interview', {
+  return fetcher.post<CreateInterviewResponse>('/api/interview', {
     interviewerId,
     userId,
     category,
@@ -75,7 +75,7 @@ export type GetInterviewContentsBody = z.infer<typeof InterviewContentsRequestSc
 export type GetInterviewContentsResponse = z.infer<typeof InterviewContentsResponseSchema>;
 
 export const fetchGetInterviewContents = async ({ interviewId }: GetInterviewContentsBody) => {
-  return fetcher.get<GetInterviewContentsResponse>(`interview/${interviewId}/contents`);
+  return fetcher.get<GetInterviewContentsResponse>(`/api/interview/${interviewId}/contents`);
 };
 
 /**
@@ -86,7 +86,7 @@ export type StartInterviewBody = z.infer<typeof InterviewStartRequestSchema>;
 export type StartInterviewResponse = z.infer<typeof InterviewStartResponseSchema>;
 
 export const fetchStartInterview = async ({ interviewId }: StartInterviewBody) => {
-  return fetcher.post<StartInterviewResponse>(`interview/${interviewId}/start`);
+  return fetcher.post<StartInterviewResponse>(`/api/interview/${interviewId}/start`);
 };
 
 /**
@@ -125,7 +125,7 @@ export type AnswerBody = z.infer<typeof InterviewAnswerRequestSchema>;
 export type AnswerData = z.infer<typeof InterviewAnswerResponseSchema>;
 
 export const fetchAnswer = async ({ interviewId, content }: AnswerBody) => {
-  return fetcher.post<AnswerData>(`interview/${interviewId}/contents/answer`, {
+  return fetcher.post<AnswerData>(`/api/interview/${interviewId}/contents/answer`, {
     content,
   });
 };
@@ -138,5 +138,5 @@ export type GetInterviewStatusBody = z.infer<typeof InterviewStatusRequestSchema
 export type GetInterviewStatusResponse = z.infer<typeof InterviewStatusResponseSchema>;
 
 export const fetchGetInterviewStatus = async ({ interviewId }: GetInterviewStatusBody) => {
-  return fetcher.get<GetInterviewStatusResponse>(`interview/${interviewId}/status`);
+  return fetcher.get<GetInterviewStatusResponse>(`/api/interview/${interviewId}/status`);
 };
