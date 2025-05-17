@@ -16,7 +16,7 @@ type CreateResultResponse = z.infer<typeof CreateResultResponseSchema>;
 
 export const fetchCreateResult = async ({ interviewId }: CreateResultBody) => {
   return fetcher.post<CreateResultResponse>(
-    'result',
+    '/api/result',
     {
       interviewId,
     },
@@ -34,7 +34,7 @@ type GetResultBody = z.infer<typeof GetResultRequestSchema>;
 type GetResultResponse = z.infer<typeof GetResultResponseSchema>;
 
 export const fetchGetResult = async ({ id }: GetResultBody) => {
-  return fetcher.get<GetResultResponse>(`result/${id}`);
+  return fetcher.get<GetResultResponse>(`/api/result/${id}`);
 };
 
 /**
@@ -49,7 +49,7 @@ export interface GetResultScoreResponse {
 }
 
 export const fetchGetResultScore = async ({ resultId }: GetResultScoreBody) => {
-  return fetcher.get<GetResultScoreResponse>(`result/${resultId}/score`);
+  return fetcher.get<GetResultScoreResponse>(`/api/result/${resultId}/score`);
 };
 
 /**
@@ -69,7 +69,7 @@ export interface GetResultTotalEvaluationResponse {
 }
 
 export const fetchGetResultTotalEvaluation = async ({ resultId }: GetResultTotalEvaluationBody) => {
-  return fetcher.get<GetResultTotalEvaluationResponse>(`result/${resultId}/total`);
+  return fetcher.get<GetResultTotalEvaluationResponse>(`/api/result/${resultId}/total`);
 };
 
 /**
@@ -89,5 +89,5 @@ export interface GetResultQuestionEvaluationResponse {
 }
 
 export const fetchGetResultQuestionEvaluation = async ({ resultId }: GetResultQuestionEvaluationBody) => {
-  return fetcher.get<GetResultQuestionEvaluationResponse>(`result/${resultId}/question`);
+  return fetcher.get<GetResultQuestionEvaluationResponse>(`/api/result/${resultId}/question`);
 };
