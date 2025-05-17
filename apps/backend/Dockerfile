@@ -12,10 +12,8 @@ ENV TURBO_TOKEN=${TURBO_TOKEN}
 ENV TURBO_TEAM=${TURBO_TEAM}
 
 COPY --chown=node:node package.json pnpm-lock.yaml turbo.json pnpm-workspace.yaml ./
-
 COPY --chown=node:node apps/backend/package.json ./apps/backend/
-COPY --chown=node:node apps/backend/prisma/schema.prisma ./apps/backend/prisma/schema.prisma 
-
+COPY --chown=node:node apps/backend/prisma ./apps/backend/prisma/ 
 COPY --chown=node:node packages/ ./packages/
 
 RUN pnpm install --frozen-lockfile
@@ -24,22 +22,23 @@ COPY --chown=node:node . .
 
 WORKDIR /app/apps/backend
 
-RUN pnpm run prisma:generate 
+RUN pnpm run prisma:generate
 
 WORKDIR /app
 
 RUN pnpm turbo run build --filter=@apps/backend
-
-RUN pnpm --filter @apps/backend deploy /app/deploy/apps/backend
+RUN pnpm --filter @apps/backend deploy --prod /app/deploy/apps/backend
 
 FROM base AS runner
 
-WORKDIR /home/node/app
+WORKDIR /home/node/app # 애플리케이션 실행 기준 디렉토리
 
 ENV NODE_ENV production
 
 COPY --from=builder --chown=node:node /app/deploy/apps/backend/ ./
 COPY --from=builder --chown=node:node /app/apps/backend/prisma ./prisma
+
+RUN pnpm exec prisma generate --schema=./prisma/schema.prisma
 
 RUN apt-get update && \
     apt-get install -y curl && \
