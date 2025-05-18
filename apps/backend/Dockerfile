@@ -31,7 +31,7 @@ RUN pnpm --filter @apps/backend deploy --prod /app/deploy/apps/backend
 
 FROM base AS runner
 
-WORKDIR /home/node/app # 애플리케이션 실행 기준 디렉토리
+WORKDIR /home/node/app
 
 ENV NODE_ENV production
 
