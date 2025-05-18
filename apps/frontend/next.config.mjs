@@ -22,6 +22,8 @@ const nextConfig = {
         hostname: 'inter-persona.s3.ap-northeast-2.amazonaws.com',
       },
     ],
+    loader: 'custom',
+    loaderFile: './src/_libs/utils/imageLoader.ts',
   },
   async redirects() {
     return [
