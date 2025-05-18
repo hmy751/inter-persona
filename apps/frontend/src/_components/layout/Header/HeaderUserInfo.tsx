@@ -4,6 +4,7 @@ import Avatar from '@repo/ui/Avatar';
 import Text from '@repo/ui/Text';
 import styles from './HeaderUserInfo.module.css';
 import { useGetUser } from '@/_data/user';
+import clsx from 'clsx';
 
 interface HeaderUserInfoProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -15,7 +16,7 @@ export default function HeaderUserInfo({ ...restProps }: HeaderUserInfoProps): R
   }
 
   return (
-    <div className={styles.userInfo} {...restProps}>
+    <div className={clsx(styles.userInfo)} {...restProps}>
       <Avatar size="sm" src={user?.profileImageUrl} />
       <Text maxWidth="70px" align="right" truncate className={styles.text}>
         {user?.name}

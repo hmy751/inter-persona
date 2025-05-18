@@ -6,7 +6,7 @@ import HeaderTitle from './HeaderTitle';
 export default function Header(): React.ReactElement {
   return (
     <header className={styles.header}>
-      <BackButton className={styles.first} />
+      <BackButton />
       <HeaderTitle className={styles.second} />
       <HeaderUserInfo className={styles.third} />
     </header>

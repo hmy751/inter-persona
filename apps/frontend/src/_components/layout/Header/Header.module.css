@@ -21,10 +21,6 @@
   }
 }
 
-.first {
-  flex: 1;
-}
-
 .second {
   position: absolute;
   left: 50%;
