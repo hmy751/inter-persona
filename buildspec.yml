@@ -19,9 +19,24 @@ phases:
   build:
     commands:
       - echo "Building the frontend Docker image..."
-      - docker build --build-arg TURBO_TOKEN=${TURBO_TOKEN} --build-arg TURBO_TEAM=${TURBO_TEAM} --cache-from $FRONTEND_REPO:cache -t $FRONTEND_REPO:$IMAGE_TAG -f apps/frontend/Dockerfile .
+      - >
+        docker build
+        --build-arg TURBO_TOKEN=${TURBO_TOKEN}
+        --build-arg TURBO_TEAM=${TURBO_TEAM}
+        --build-arg NEXT_PUBLIC_CLIENT_SECRET=${NEXT_PUBLIC_CLIENT_SECRET}
+        --build-arg NEXT_PUBLIC_INVOKE_URL=${NEXT_PUBLIC_INVOKE_URL}
+        --build-arg NEXT_PUBLIC_API_HOST=${NEXT_PUBLIC_API_HOST}
+        --cache-from $FRONTEND_REPO:cache
+        -t $FRONTEND_REPO:$IMAGE_TAG
+        -f apps/frontend/Dockerfile .
       - echo "Building the backend Docker image..."
-      - docker build --build-arg TURBO_TOKEN=${TURBO_TOKEN} --build-arg TURBO_TEAM=${TURBO_TEAM} --cache-from $BACKEND_REPO:cache -t $BACKEND_REPO:$IMAGE_TAG -f apps/backend/Dockerfile .
+      - >
+        docker build
+        --build-arg TURBO_TOKEN=${TURBO_TOKEN}
+        --build-arg TURBO_TEAM=${TURBO_TEAM}
+        --cache-from $BACKEND_REPO:cache
+        -t $BACKEND_REPO:$IMAGE_TAG
+        -f apps/backend/Dockerfile .
   post_build:
     commands:
       - echo "Pushing the frontend Docker image to ECR..."

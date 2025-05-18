@@ -7,8 +7,8 @@ WORKDIR /app
 FROM base AS builder
 
 ARG TURBO_TOKEN
-ARG TURBO_TEAM
 ENV TURBO_TOKEN=${TURBO_TOKEN}
+ARG TURBO_TEAM
 ENV TURBO_TEAM=${TURBO_TEAM}
 
 COPY --chown=node:node package.json pnpm-lock.yaml turbo.json pnpm-workspace.yaml ./
