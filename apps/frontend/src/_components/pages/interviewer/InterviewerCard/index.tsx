@@ -22,7 +22,7 @@ export default function InterviewerCard({
   mbti,
   description,
 }: InterviewerCardProps): React.ReactElement {
-  const [category, setCategory] = useState<string>('frontend');
+  const [category, setCategory] = useState<string>('Frontend');
 
   return (
     <div className={styles.wrapper}>
@@ -48,9 +48,9 @@ export default function InterviewerCard({
           {mbti}
         </Text>
         <div className={styles.buttonWrapper}>
-          <SelectRoot value={category} onValueChange={setCategory} size="sm">
-            <SelectOption value="frontend">frontend</SelectOption>
-            <SelectOption value="backend">backend</SelectOption>
+          <SelectRoot value={category} onValueChange={setCategory}>
+            <SelectOption value="frontend">Frontend</SelectOption>
+            <SelectOption value="backend">Backend</SelectOption>
           </SelectRoot>
           <StartInterviewButton id={id} category={category} />
         </div>
