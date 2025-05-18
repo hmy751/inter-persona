@@ -49,4 +49,4 @@ export const VALIDATION_ERROR = {
   invalidInput: '입력값이 올바르지 않습니다.',
 };
 
-export const INTERVIEW_CHAT_LIMIT = 2;
+export const INTERVIEW_CHAT_LIMIT = 20;

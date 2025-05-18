@@ -1,12 +1,13 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Text from '@repo/ui/Text';
 import { useMediaQuery } from '@/_hooks/useMediaQuery';
 
 interface HeaderTitleProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export default function HeaderTitle({ className }: HeaderTitleProps): React.ReactElement {
+  const router = useRouter();
   const pathname = usePathname();
   const isMobile = useMediaQuery('(max-width: 767px)');
 
@@ -22,7 +23,7 @@ export default function HeaderTitle({ className }: HeaderTitleProps): React.Reac
     : 'Inter Persona';
 
   return (
-    <Text as="h1" className={className}>
+    <Text as="h1" className={className} onClick={() => router.push('/main')}>
       {title || 'Inter Persona'}
     </Text>
   );

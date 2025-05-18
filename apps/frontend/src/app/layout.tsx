@@ -20,10 +20,10 @@ export default function RootLayout({
   const gtmId = process.env.NEXT_PUBLIC_GTM;
   const isProduction = process.env.NODE_ENV === 'production';
 
-  //
   return (
-    <html lang="en">
+    <html lang="ko">
       <head>
+        <link rel="icon" type="image/png" href="/favicon.png" />
         {isProduction && clarityId && (
           <Script id="clarity-script" strategy="afterInteractive">
             {`
