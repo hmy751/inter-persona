@@ -35,8 +35,8 @@ export default function StartInterviewButton({
   };
 
   return (
-    <Button variant="outline" size="md" onClick={handleClick} disabled={isPending} isLoading={isPending}>
-      Start interview
+    <Button size="md" onClick={handleClick} disabled={isPending} isLoading={isPending}>
+      Start Interview
     </Button>
   );
 }
