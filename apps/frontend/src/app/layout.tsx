@@ -20,6 +20,7 @@ export default function RootLayout({
   const gtmId = process.env.NEXT_PUBLIC_GTM;
   const isProduction = process.env.NODE_ENV === 'production';
 
+  //
   return (
     <html lang="en">
       <head>

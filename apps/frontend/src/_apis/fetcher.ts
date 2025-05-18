@@ -61,7 +61,7 @@ const createHttpClient = (defaultConfig: FetcherConfig) => {
   const request = async <T>(url: string, options: RequestConfig = {}, isFormData = false): Promise<T> => {
     try {
       const controller = createAbortController(options.timeout || defaultConfig.timeout);
-      const fullURL = `${defaultConfig.baseURL}/${url}`;
+      const fullURL = `${defaultConfig.baseURL}${url}`;
 
       const finalOptions: RequestConfig = {
         ...options,

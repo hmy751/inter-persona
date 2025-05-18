@@ -1,0 +1,91 @@
+{
+  "family": "backend",
+  "executionRoleArn": "arn:aws:iam::580910323870:role/ecsTaskExecutionRole",
+  "networkMode": "awsvpc",
+  "containerDefinitions": [
+    {
+      "name": "backend-container",
+      "image": "placeholder-image",
+      "cpu": 0,
+      "portMappings": [
+        {
+          "name": "backend-container",
+          "containerPort": 8000,
+          "hostPort": 8000,
+          "protocol": "tcp",
+          "appProtocol": "http"
+        }
+      ],
+      "essential": true,
+      "secrets": [
+        {
+          "name": "NODE_ENV",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:580910323870:secret:inter-persona-backend-YnhSAt:NODE_ENV::"
+        },
+        {
+          "name": "PORT",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:580910323870:secret:inter-persona-backend-YnhSAt:PORT::"
+        },
+        {
+          "name": "HOST",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:580910323870:secret:inter-persona-backend-YnhSAt:HOST::"
+        },
+        {
+          "name": "CORS_ORIGIN",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:580910323870:secret:inter-persona-backend-YnhSAt:CORS_ORIGIN::"
+        },
+        {
+          "name": "DATABASE_URL",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:580910323870:secret:inter-persona-backend-YnhSAt:DATABASE_URL::"
+        },
+        {
+          "name": "JWT_SECRET",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:580910323870:secret:inter-persona-backend-YnhSAt:JWT_SECRET::"
+        },
+        {
+          "name": "JWT_ISSUER",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:580910323870:secret:inter-persona-backend-YnhSAt:JWT_ISSUER::"
+        },
+        {
+          "name": "JWT_EXPIRES_IN",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:580910323870:secret:inter-persona-backend-YnhSAt:JWT_EXPIRES_IN::"
+        },
+        {
+          "name": "S3_BUCKET_NAME",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:580910323870:secret:inter-persona-backend-YnhSAt:S3_BUCKET_NAME::"
+        },
+        {
+          "name": "AWS_REGION",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:580910323870:secret:inter-persona-backend-YnhSAt:AWS_REGION::"
+        },
+        {
+          "name": "AWS_ACCESS_KEY_ID",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:580910323870:secret:inter-persona-backend-YnhSAt:AWS_ACCESS_KEY_ID::"
+        },
+        {
+          "name": "AWS_SECRET_ACCESS_KEY",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:580910323870:secret:inter-persona-backend-YnhSAt:AWS_SECRET_ACCESS_KEY::"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/inter-persona-backend",
+          "mode": "non-blocking",
+          "awslogs-create-group": "true",
+          "max-buffer-size": "25m",
+          "awslogs-region": "ap-northeast-2",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ],
+  "volumes": [],
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "1024",
+  "memory": "3072",
+  "runtimePlatform": {
+    "cpuArchitecture": "X86_64",
+    "operatingSystemFamily": "LINUX"
+  }
+}

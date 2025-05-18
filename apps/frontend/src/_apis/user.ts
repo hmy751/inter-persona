@@ -13,7 +13,7 @@ type LoginBody = z.infer<typeof LoginRequestSchema>;
 type LoginResponse = z.infer<typeof LoginResponseSchema>;
 
 export const fetchLogin = async ({ email, password }: LoginBody) => {
-  return fetcher.post<LoginResponse>('user/login', {
+  return fetcher.post<LoginResponse>('/api/user/login', {
     email,
     password,
   });
@@ -23,12 +23,12 @@ export const fetchLogin = async ({ email, password }: LoginBody) => {
 type RegisterResponse = z.infer<typeof RegisterResponseSchema>;
 
 export const fetchRegister = async (formData: FormData) => {
-  return fetcher.post<RegisterResponse>('user/register', formData);
+  return fetcher.post<RegisterResponse>('/api/user/register', formData);
 };
 
 // 회원 정보 조회
 type UserInfoResponse = z.infer<typeof UserInfoResponseSchema>;
 
 export const fetchUserInfo = async () => {
-  return fetcher.get<UserInfoResponse>('user/info');
+  return fetcher.get<UserInfoResponse>('/api/user/info');
 };
