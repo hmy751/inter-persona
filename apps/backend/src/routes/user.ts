@@ -116,6 +116,7 @@ router.post('/register', uploadFile.single('profileImage'), async (req: Request,
     const responseData = RegisterResponseSchema.safeParse({
       success: true,
       message: USER_ROUTE.registerSuccess,
+      id: newUser.id,
     });
 
     res.status(201).json(responseData.data);
