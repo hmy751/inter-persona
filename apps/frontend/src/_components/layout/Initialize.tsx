@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { useFunnelIdStore } from '@/_store/zustand/useFunnelId';
+import { useFunnelIdStore } from '@/_store/zustand/useFunnelIdStore';
 
 export default function Initialize() {
   const { setFunnelId, clearFunnelId } = useFunnelIdStore();
