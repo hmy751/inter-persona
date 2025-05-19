@@ -26,7 +26,7 @@ export default function StartInterviewButton({
   const handleClick = async () => {
     if (!userId) {
       setConfirm('유저 정보 필요', '인터뷰를 시작하려면 로그인해주세요.', () => {
-        router.push('/main');
+        router.push('/user');
       });
       return;
     }
