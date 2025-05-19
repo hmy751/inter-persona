@@ -13,3 +13,7 @@ export enum Status {
   success = 'success',
   failed = 'failed',
 }
+
+export enum InterviewerEvent {
+  interviewer_selected = 'interviewer_selected',
+}
