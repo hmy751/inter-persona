@@ -45,6 +45,7 @@ export const LoginRequestSchema = z.object({
 export const LoginResponseSchema = z.object({
   success: z.boolean(),
   message: z.string(),
+  id: z.number(),
 });
 
 export const RegisterRequestSchema = z

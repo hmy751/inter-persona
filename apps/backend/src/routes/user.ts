@@ -61,6 +61,7 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
     const responseData = LoginResponseSchema.safeParse({
       success: true,
       message: USER_ROUTE.loginSuccess,
+      id: foundUser.id,
     });
 
     res.status(201).json(responseData.data);
