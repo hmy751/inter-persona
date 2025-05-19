@@ -4,7 +4,7 @@ import '@repo/ui/styles/globals.css';
 import MSWProvider from '@/_components/layout/providers/MSWProvider';
 import RootProviders from '@/_components/layout/providers/RootProviders';
 import LayoutUI from '@/_components/layout/LayoutUI';
-import GtmInitialize from '@/_components/layout/GtmInitialize';
+import Initialize from '@/_components/layout/Initialize';
 
 const noto_sans_kr = Noto_Sans_KR({
   subsets: ['latin'],
@@ -49,7 +49,7 @@ export default function RootLayout({
         {!isUseMsw ? (
           <RootProviders>
             <LayoutUI>{children}</LayoutUI>
-            <GtmInitialize />
+            <Initialize />
           </RootProviders>
         ) : (
           <MSWProvider>
