@@ -13,12 +13,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { VALIDATION } from '@repo/constant/message';
 import { useToastStore } from '@repo/store/useToastStore';
+import { getSessionId } from '@/_libs/utils/session';
+import { GtmLoginAttemptFailed, GtmLoginAttemptSuccess } from '@/_libs/utils/analysis/user';
+import { useFunnelIdStore } from '@/_store/zustand/useFunnelIdStore';
 
 export default function LoginForm() {
   const router = useRouter();
   const { addToast } = useToastStore();
   const queryClient = useQueryClient();
-
+  const { funnelId } = useFunnelIdStore();
   const {
     control,
     handleSubmit,
@@ -43,6 +46,12 @@ export default function LoginForm() {
       const validationResult = LoginResponseSchema.safeParse(responseData);
 
       if (!validationResult.success) {
+        GtmLoginAttemptFailed({
+          message: '응답 성공, 스키마 검증 실패',
+          session_id: getSessionId(),
+          funnel_id: funnelId || '',
+        });
+
         addToast({
           title: '로그인 실패',
           description: '서버 응답 처리 중 문제가 발생했습니다. 다시 시도해주세요.',
@@ -50,6 +59,12 @@ export default function LoginForm() {
         });
         return;
       }
+
+      GtmLoginAttemptSuccess({
+        user_id: validationResult.data.id.toString(),
+        session_id: getSessionId(),
+        funnel_id: funnelId || '',
+      });
 
       addToast({
         title: '로그인 성공',
@@ -62,6 +77,13 @@ export default function LoginForm() {
       router.push('/interviewer');
     } catch (error) {
       const description = error instanceof Error ? error.message : '서버에 문제가 발생했습니다. 다시 시도해주세요.';
+
+      GtmLoginAttemptFailed({
+        message: description,
+        session_id: getSessionId(),
+        funnel_id: funnelId || '',
+      });
+
       addToast({
         title: '로그인 실패',
         description,
