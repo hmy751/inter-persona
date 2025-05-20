@@ -20,12 +20,12 @@ export function middleware(request: NextRequest) {
   }
 
   if (token) {
-    if (path === '/main') {
+    if (path === '/user') {
       return NextResponse.redirect(new URL('/interviewer', origin));
     }
   } else {
-    if (path !== '/main') {
-      return NextResponse.redirect(new URL('/main', origin));
+    if (path !== '/user') {
+      return NextResponse.redirect(new URL('/user', origin));
     }
   }
 

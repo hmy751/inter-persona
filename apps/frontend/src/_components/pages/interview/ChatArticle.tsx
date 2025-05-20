@@ -4,8 +4,12 @@ import Avatar from '@repo/ui/Avatar';
 import clsx from 'clsx';
 import Button from '@repo/ui/Button';
 import { ChatContentStatusType } from '@/_store/redux/type';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RETRY_ANSWER, CANCEL_CURRENT_REQUEST_ANSWER } from '@/_store/redux/features/chat/slice';
+import { GTMAnswerCancel, GTMAnswerRetry } from '@/_libs/utils/analysis/interview';
+import { getSessionId } from '@/_libs/utils/session';
+import { selectInterviewId, selectChatContents } from '@/_store/redux/features/chat/selector';
+import { useFunnelIdStore } from '@/_store/zustand/useFunnelIdStore';
 
 export type ChatType = 'user' | 'interviewer' | '';
 
@@ -25,6 +29,9 @@ const ChatArticleContext = createContext<{
 function ChatRetryCancelSelector() {
   const { status, content } = useContext(ChatArticleContext);
   const dispatch = useDispatch();
+  const interviewId = useSelector(selectInterviewId);
+  const contentsLength = useSelector(selectChatContents);
+  const funnelId = useFunnelIdStore(state => state.funnelId);
 
   if (status !== ChatContentStatusType.fail) {
     return null;
@@ -37,11 +44,27 @@ function ChatRetryCancelSelector() {
         content: content as unknown as string,
       },
     });
+
+    GTMAnswerRetry({
+      interview_id: interviewId?.toString() || '',
+      question_id: (contentsLength || 0 + 1).toString() || '',
+      retry_count: 1,
+      session_id: getSessionId() || '',
+      funnel_id: funnelId || '',
+    });
   };
 
   const handleCancel = () => {
     dispatch({
       type: CANCEL_CURRENT_REQUEST_ANSWER,
+    });
+
+    GTMAnswerCancel({
+      interview_id: interviewId?.toString() || '',
+      last_question_id: (contentsLength || 0 + 1).toString() || '',
+      reason: 'user_cancel',
+      session_id: getSessionId() || '',
+      funnel_id: funnelId || '',
     });
   };
 

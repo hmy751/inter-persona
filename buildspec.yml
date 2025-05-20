@@ -26,6 +26,8 @@ phases:
         --build-arg NEXT_PUBLIC_CLIENT_SECRET=${NEXT_PUBLIC_CLIENT_SECRET}
         --build-arg NEXT_PUBLIC_INVOKE_URL=${NEXT_PUBLIC_INVOKE_URL}
         --build-arg NEXT_PUBLIC_API_HOST=${NEXT_PUBLIC_API_HOST}
+        --build-arg NEXT_PUBLIC_CLARITY=${NEXT_PUBLIC_CLARITY}
+        --build-arg NEXT_PUBLIC_GTM=${NEXT_PUBLIC_GTM}
         --cache-from $FRONTEND_REPO:cache
         -t $FRONTEND_REPO:$IMAGE_TAG
         -f apps/frontend/Dockerfile .
