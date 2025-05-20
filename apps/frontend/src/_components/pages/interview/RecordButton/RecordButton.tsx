@@ -17,7 +17,14 @@ import useToastStore from '@repo/store/useToastStore';
 import { useCreateResult } from '@/_data/result';
 import { useParams } from 'next/navigation';
 import { useGetInterview } from '@/_data/interview';
-
+import {
+  GTMRecordingStarted,
+  GTMAnswerSubmittedFailed,
+  GTMAnswerSubmittedSuccess,
+  GTMRecordingCompleted,
+} from '@/_libs/utils/analysis/interview';
+import { getSessionId } from '@/_libs/utils/session';
+import { useFunnelIdStore } from '@/_store/zustand/useFunnelIdStore';
 export enum RecordingStatusType {
   idle = 'idle',
   recording = 'recording',
@@ -30,6 +37,8 @@ export default function RecordButton() {
   const [recordingStatus, setRecordingStatus] = useState<RecordingStatusType>(RecordingStatusType.idle);
   const [buttonIconSrc, setButtonIconSrc] = useState<string>('/assets/images/record-button.svg');
   const interviewStatus = useSelector(selectInterviewStatus);
+  const funnelId = useFunnelIdStore(state => state.funnelId);
+  const recordingStartTime = useRef<string | null>(null);
 
   const dispatch = useDispatch();
   const currentRecordingAnswer = useSelector(selectCurrentRecordingAnswer);
@@ -40,8 +49,10 @@ export default function RecordButton() {
   const { data, isLoading: interviewStatusLoading } = useGetInterview(Number(interviewId));
 
   const isCompletedInterview = data?.interview.status === 'completed' || interviewStatus === 'completed';
+  const contentsLength = data?.interview.contents?.length;
+  const recordingStartTimeDate = new Date(recordingStartTime.current as string);
 
-  const handleRecord = async () => {
+  const handleRecord = useCallback(async () => {
     try {
       cleanupRef.current?.();
 
@@ -133,6 +144,16 @@ export default function RecordButton() {
       try {
         await recorderRef.current.start();
         setRecordingStatus(RecordingStatusType.recording);
+
+        recordingStartTime.current = new Date().toISOString();
+
+        GTMRecordingStarted({
+          interview_id: interviewId as string,
+          question_id: (contentsLength || 0 + 1).toString() || '',
+          start_time: new Date().toISOString(),
+          session_id: getSessionId() || '',
+          funnel_id: funnelId || '',
+        });
       } catch (error: unknown) {
         if (error instanceof Error) {
           throw createRecordError(RecordErrorType.UNKNOWN_ERROR, error);
@@ -153,8 +174,17 @@ export default function RecordButton() {
         description: '알 수 없는 오류가 발생했습니다. 다시 시도해주세요.',
         duration: 3000,
       });
+
+      GTMAnswerSubmittedFailed({
+        interview_id: interviewId as string,
+        question_id: (contentsLength || 0 + 1).toString() || '',
+        duration: (new Date().getTime() - recordingStartTimeDate.getTime()) / 1000,
+        session_id: getSessionId() || '',
+        funnel_id: funnelId || '',
+        message: '알 수 없는 오류가 발생했습니다. 다시 시도해주세요.',
+      });
     }
-  };
+  }, [addToast, funnelId, interviewId, contentsLength, recordingStartTimeDate, isDisabledRecord, recordingStatus]);
 
   const finishRecord = useCallback(async () => {
     try {
@@ -163,6 +193,15 @@ export default function RecordButton() {
       }
 
       const { blob } = await recorderRef.current.stop();
+
+      GTMRecordingCompleted({
+        interview_id: interviewId as string,
+        question_id: (contentsLength || 0 + 1).toString() || '',
+        duration: (new Date().getTime() - recordingStartTimeDate.getTime()) / 1000,
+        file_size: blob.size,
+        session_id: getSessionId() || '',
+        funnel_id: funnelId || '',
+      });
 
       // 파일 크기 체크 (예: 50MB 제한)
       if (blob.size > 50 * 1024 * 1024) {
@@ -189,9 +228,26 @@ export default function RecordButton() {
       formData.append('params', JSON.stringify(params));
 
       dispatch({ type: SEND_RECORD, payload: { formData } });
+
+      GTMAnswerSubmittedSuccess({
+        interview_id: interviewId as string,
+        question_id: (contentsLength || 0 + 1).toString() || '',
+        duration: (new Date().getTime() - recordingStartTimeDate.getTime()) / 1000,
+        session_id: getSessionId() || '',
+        funnel_id: funnelId || '',
+      });
     } catch (error) {
       if (error instanceof RecordError) {
         handleRecordError(error);
+
+        GTMAnswerSubmittedFailed({
+          interview_id: interviewId as string,
+          question_id: (contentsLength || 0 + 1).toString() || '',
+          duration: (new Date().getTime() - recordingStartTimeDate.getTime()) / 1000,
+          session_id: getSessionId() || '',
+          funnel_id: funnelId || '',
+          message: error.message,
+        });
         return;
       }
 
@@ -200,8 +256,17 @@ export default function RecordButton() {
         description: '알 수 없는 오류가 발생했습니다. 다시 시도해주세요.',
         duration: 3000,
       });
+
+      GTMAnswerSubmittedFailed({
+        interview_id: interviewId as string,
+        question_id: (contentsLength || 0 + 1).toString() || '',
+        duration: (new Date().getTime() - recordingStartTimeDate.getTime()) / 1000,
+        session_id: getSessionId() || '',
+        funnel_id: funnelId || '',
+        message: '알 수 없는 오류가 발생했습니다. 다시 시도해주세요.',
+      });
     }
-  }, [addToast, dispatch]);
+  }, [addToast, dispatch, funnelId, interviewId, contentsLength, recordingStartTimeDate]);
 
   useEffect(() => {
     if (recordingStatus === RecordingStatusType.finished) {
