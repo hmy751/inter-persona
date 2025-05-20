@@ -35,3 +35,8 @@ export enum ResultEvent {
   retry_interview = 'retry_interview',
   select_new_interviewer = 'select_new_interviewer',
 }
+
+export enum PageEvent {
+  page_view = 'page_view',
+  page_exit = 'page_exit',
+}
