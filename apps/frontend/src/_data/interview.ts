@@ -16,6 +16,9 @@ import {
 import { APIError } from '@/_apis/fetcher';
 import useToastStore from '@repo/store/useToastStore';
 import { useRouter } from 'next/navigation';
+import { useFunnelIdStore } from '@/_store/zustand/useFunnelIdStore';
+import { GTMInterviewerSelectedSuccess, GTMInterviewerSelectedFailed } from '@/_libs/utils/analysis/interviewer';
+import { getSessionId } from '@/_libs/utils/session';
 
 export const useGetInterview = (interviewId: number) => {
   return useQuery<GetInterviewResponse, APIError>({
@@ -38,6 +41,7 @@ export const useGetInterviewContents = (interviewId: number) => {
 export const useCreateInterview = (userId: number, interviewerId: number, category: string) => {
   const router = useRouter();
   const addToast = useToastStore(state => state.addToast);
+  const { funnelId } = useFunnelIdStore();
 
   const { mutate, isPending } = useMutation({
     mutationFn: async () => {
@@ -51,6 +55,15 @@ export const useCreateInterview = (userId: number, interviewerId: number, catego
     },
     onSuccess: data => {
       if (!data?.interviewId) {
+        GTMInterviewerSelectedFailed({
+          user_id: userId.toString(),
+          interviewer_id: interviewerId.toString(),
+          session_id: getSessionId(),
+          funnel_id: funnelId || '',
+          category,
+          message: '요청 성공, 응답 데이터 검증 실패',
+        });
+
         addToast({
           title: '인터뷰 생성 실패',
           description: '인터뷰 생성에 실패했습니다. 다시 시도해주세요.',
@@ -58,16 +71,42 @@ export const useCreateInterview = (userId: number, interviewerId: number, catego
         return;
       }
 
+      GTMInterviewerSelectedSuccess({
+        user_id: userId.toString(),
+        interviewer_id: interviewerId.toString(),
+        session_id: getSessionId(),
+        funnel_id: funnelId || '',
+        category,
+      });
+
       router.push(`/interview/${data.interviewId}`);
     },
     onError: error => {
       if (error instanceof APIError) {
+        GTMInterviewerSelectedFailed({
+          user_id: userId.toString(),
+          interviewer_id: interviewerId.toString(),
+          session_id: getSessionId(),
+          funnel_id: funnelId || '',
+          category,
+          message: error.message,
+        });
+
         addToast({
           title: '인터뷰 생성 실패',
           description: error.message,
         });
         return;
       }
+
+      GTMInterviewerSelectedFailed({
+        user_id: userId.toString(),
+        interviewer_id: interviewerId.toString(),
+        session_id: getSessionId(),
+        funnel_id: funnelId || '',
+        category,
+        message: error.message,
+      });
 
       addToast({
         title: '인터뷰 생성 실패',

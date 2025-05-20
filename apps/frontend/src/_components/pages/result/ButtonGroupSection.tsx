@@ -6,6 +6,9 @@ import { useRouter, useParams } from 'next/navigation';
 import { useGetResult } from '@/_data/result';
 import { useCreateInterview } from '@/_data/interview';
 import { useQueryClient } from '@tanstack/react-query';
+import { GTMRetryInterview, GTMSelectNewInterviewer } from '@/_libs/utils/analysis/result';
+import { getSessionId } from '@/_libs/utils/session';
+import { useFunnelIdStore } from '@/_store/zustand/useFunnelIdStore';
 
 export default function ButtonGroupSection(): React.ReactElement {
   const router = useRouter();
@@ -27,6 +30,14 @@ export default function ButtonGroupSection(): React.ReactElement {
 
     queryClient.invalidateQueries({ queryKey: ['result'] });
     queryClient.invalidateQueries({ queryKey: ['interview'] });
+
+    GTMRetryInterview({
+      result_id: resultId as string,
+      interview_id: data?.interview.id.toString() || '',
+      user_id: data?.user.id.toString() || '',
+      session_id: getSessionId() || '',
+      funnel_id: useFunnelIdStore.getState().funnelId || '',
+    });
   };
 
   const handleClickSelectInterviewer = () => {
@@ -34,6 +45,13 @@ export default function ButtonGroupSection(): React.ReactElement {
 
     queryClient.invalidateQueries({ queryKey: ['result'] });
     queryClient.invalidateQueries({ queryKey: ['interview'] });
+
+    GTMSelectNewInterviewer({
+      result_id: resultId as string,
+      user_id: data?.user.id.toString() || '',
+      session_id: getSessionId() || '',
+      funnel_id: useFunnelIdStore.getState().funnelId || '',
+    });
   };
 
   return (

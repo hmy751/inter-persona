@@ -13,10 +13,14 @@ import { RegisterRequestSchema, RegisterResponseSchema } from '@repo/schema/user
 import { fetchRegister } from '@/_apis/user';
 import { useToastStore } from '@repo/store/useToastStore';
 import { useConfirmDialogStore } from '@repo/store/useConfirmDialogStore';
+import { useFunnelIdStore } from '@/_store/zustand/useFunnelIdStore';
+import { GtmSignupAttemptFailed, GtmSignupAttemptSuccess } from '@/_libs/utils/analysis/user';
+import { getSessionId } from '@/_libs/utils/session';
 
 export default function SignupForm({ onSuccess }: { onSuccess: () => void }) {
   const { addToast } = useToastStore();
   const { setConfirm } = useConfirmDialogStore();
+  const { funnelId } = useFunnelIdStore();
 
   const {
     control,
@@ -55,6 +59,12 @@ export default function SignupForm({ onSuccess }: { onSuccess: () => void }) {
       const validationResult = RegisterResponseSchema.safeParse(data);
 
       if (!validationResult.success) {
+        GtmSignupAttemptFailed({
+          message: '응답 성공, 스키마 검증 실패',
+          session_id: getSessionId(),
+          funnel_id: funnelId || '',
+        });
+
         addToast({
           title: '회원가입 실패',
           description: '서버에 문제가 발생했습니다. 다시 시도해주세요.',
@@ -63,11 +73,25 @@ export default function SignupForm({ onSuccess }: { onSuccess: () => void }) {
         return;
       }
 
+      GtmSignupAttemptSuccess({
+        user_id: validationResult.data.id.toString(),
+        session_id: getSessionId(),
+        funnel_id: funnelId || '',
+      });
+
       setConfirm('회원가입 성공', '회원가입이 완료되었습니다.', onSuccess);
     } catch (error) {
+      const description = error instanceof Error ? error.message : '서버에 문제가 발생했습니다. 다시 시도해주세요.';
+
+      GtmSignupAttemptFailed({
+        message: description,
+        session_id: getSessionId(),
+        funnel_id: funnelId || '',
+      });
+
       addToast({
         title: '회원가입 실패',
-        description: '서버에 문제가 발생했습니다. 다시 시도해주세요.',
+        description,
         duration: 3000,
       });
     }

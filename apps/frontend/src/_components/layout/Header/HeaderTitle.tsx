@@ -12,7 +12,7 @@ export default function HeaderTitle({ className }: HeaderTitleProps): React.Reac
   const isMobile = useMediaQuery('(max-width: 767px)');
 
   const mapPathnameToTitle = {
-    main: 'Inter Persona',
+    user: 'Inter Persona',
     interviewer: 'Select Interviewer',
     interview: 'Interview',
     result: 'Result',
@@ -23,7 +23,7 @@ export default function HeaderTitle({ className }: HeaderTitleProps): React.Reac
     : 'Inter Persona';
 
   return (
-    <Text as="h1" className={className} onClick={() => router.push('/main')}>
+    <Text as="h1" className={className} onClick={() => router.push('/')}>
       {title || 'Inter Persona'}
     </Text>
   );

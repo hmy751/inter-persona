@@ -1,8 +1,8 @@
 import type { Meta } from '@storybook/react';
-import ProfileInput from '@/_components/pages/main/ProfileInput';
+import ProfileInput from '@/_components/pages/user/ProfileInput';
 
 const meta: Meta<typeof ProfileInput> = {
-  title: 'Pages/Main/ProfileInput',
+  title: 'Pages/User/ProfileInput',
   component: ProfileInput,
   parameters: {
     layout: 'centered',
