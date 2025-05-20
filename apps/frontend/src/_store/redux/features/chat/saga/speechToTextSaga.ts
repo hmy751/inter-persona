@@ -18,6 +18,9 @@ const selectInterviewId = (state: RootState) => state.chat.interviewId;
 const selectTrySpeechCount = (state: RootState) => state.chat.trySpeechCount;
 
 import { requestAnswerSaga } from './requestAnswerSaga';
+import { GTMSTTResultSuccess, GTMSTTResultFailed } from '@/_libs/utils/analysis/interview';
+import { getSessionId } from '@/_libs/utils/session';
+import { useFunnelIdStore } from '@/_store/zustand/useFunnelIdStore';
 
 interface SendRecordAction {
   type: string;
@@ -49,6 +52,13 @@ export function* speechToTextSaga(
         payload: { content: data.text as unknown as string, interviewId },
       });
       yield put(resetTrySpeechCount());
+
+      GTMSTTResultSuccess({
+        interview_id: interviewId.toString(),
+        session_id: getSessionId() || '',
+        funnel_id: useFunnelIdStore.getState().funnelId || '',
+      });
+
       return;
     }
 
@@ -58,6 +68,13 @@ export function* speechToTextSaga(
       yield put(increaseTrySpeechCount());
       return;
     }
+
+    GTMSTTResultFailed({
+      interview_id: interviewId.toString(),
+      session_id: getSessionId() || '',
+      funnel_id: useFunnelIdStore.getState().funnelId || '',
+      error_message: '녹음 변환 에러',
+    });
 
     throw new Error('녹음 변환 에러');
   } catch (err) {

@@ -16,6 +16,9 @@ import { fetchAnswer, AnswerData, fetchStartInterview, fetchGetInterviewStatus }
 import { ChatContentSpeakerType } from '@/_store/redux/type';
 import { useToastStore } from '@repo/store/useToastStore';
 import { AI_NETWORK_ERROR_TOAST } from '../constants';
+import { GTMInterviewCompleted } from '@/_libs/utils/analysis/interview';
+import { getSessionId } from '@/_libs/utils/session';
+import { useFunnelIdStore } from '@/_store/zustand/useFunnelIdStore';
 interface RequestAnswerAction {
   type: string;
   payload: {
@@ -71,6 +74,12 @@ export function* requestAnswerSaga(
 
     if (statusData.status === 'completed') {
       yield put(setInterviewStatus('completed'));
+
+      GTMInterviewCompleted({
+        interview_id: interviewId.toString(),
+        session_id: getSessionId() || '',
+        funnel_id: useFunnelIdStore.getState().funnelId || '',
+      });
     }
   } catch (err) {
     useToastStore.getState().addToast(AI_NETWORK_ERROR_TOAST);

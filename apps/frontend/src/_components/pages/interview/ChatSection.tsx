@@ -12,12 +12,16 @@ import useToastStore from '@repo/store/useToastStore';
 
 import { useGetInterview } from '@/_data/interview';
 import { ChatContentSpeakerType, ChatContentStatusType } from '@/_store/redux/type';
+import { GTMInterviewStarted } from '@/_libs/utils/analysis/interview';
+import { getSessionId } from '@/_libs/utils/session';
+import { useFunnelIdStore } from '@/_store/zustand/useFunnelIdStore';
 
 export default function ChatSection() {
   const interviewId = useParams().interviewId;
   const dispatch = useDispatch();
   const chatContents = useSelector(selectChatContents);
   const addToast = useToastStore(state => state.addToast);
+  const funnelId = useFunnelIdStore(state => state.funnelId);
 
   const { data, isLoading: interviewLoading } = useGetInterview(Number(interviewId));
 
@@ -48,6 +52,15 @@ export default function ChatSection() {
           return;
         }
 
+        GTMInterviewStarted({
+          interview_id: interviewData?.id.toString() || '',
+          interviewer_id: interviewData?.interviewer?.id.toString() || '',
+          user_id: interviewData?.user?.id.toString() || '',
+          session_id: getSessionId() || '',
+          funnel_id: funnelId || '',
+          category: interviewData?.category || '',
+        });
+
         // 인터뷰가 진행되지 않은 경우
         dispatch({
           type: START_CHAT,
@@ -63,8 +76,7 @@ export default function ChatSection() {
     return () => {
       dispatch(initializeChatState(null));
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [interviewId, interviewLoading]);
+  }, [interviewId, interviewLoading, interviewData, funnelId, dispatch, addToast]);
 
   if (interviewLoading) {
     return <div>Loading...</div>;
