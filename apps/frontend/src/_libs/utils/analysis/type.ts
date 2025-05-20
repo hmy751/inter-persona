@@ -29,3 +29,9 @@ export enum InterviewEvent {
   answer_retry = 'answer_retry',
   answer_cancel = 'answer_cancel',
 }
+
+export enum ResultEvent {
+  view_results = 'view_results',
+  retry_interview = 'retry_interview',
+  select_new_interviewer = 'select_new_interviewer',
+}
