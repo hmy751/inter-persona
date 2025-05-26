@@ -71,7 +71,7 @@
 
 .chatSpeechBot {
   composes: chatSpeech;
-  background-color: var(--color-gray-100);
+  background-color: var(--color-secondary);
   color: var(--color-text-primary);
 
   @media (max-width: 767px) {
@@ -80,21 +80,11 @@
 }
 
 .skeletonGrayBackground {
-  background: linear-gradient(
-    90deg,
-    var(--color-gray-100) 25%,
-    var(--color-gray-50) 50%,
-    var(--color-gray-100) 75%
-  );
+  background: linear-gradient(90deg, var(--color-secondary) 25%, var(--color-gray-50) 50%, var(--color-secondary) 75%);
 }
 
 .skeletonBlueBackground {
-  background: linear-gradient(
-    90deg,
-    var(--color-primary) 25%,
-    var(--color-secondary) 50%,
-    var(--color-primary) 75%
-  );
+  background: linear-gradient(90deg, var(--color-primary) 25%, var(--color-secondary) 50%, var(--color-primary) 75%);
 }
 
 .skeletonLoader {
