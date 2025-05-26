@@ -50,9 +50,10 @@ export default function RecordButton() {
 
   const isCompletedInterview = data?.interview.status === 'completed' || interviewStatus === 'completed';
   const contentsLength = data?.interview.contents?.length;
-  const recordingStartTimeDate = new Date(recordingStartTime.current as string);
 
   const handleRecord = useCallback(async () => {
+    const recordingStartTimeDate = new Date(recordingStartTime.current as string);
+
     try {
       cleanupRef.current?.();
 
@@ -184,9 +185,11 @@ export default function RecordButton() {
         message: '알 수 없는 오류가 발생했습니다. 다시 시도해주세요.',
       });
     }
-  }, [addToast, funnelId, interviewId, contentsLength, recordingStartTimeDate, isDisabledRecord, recordingStatus]);
+  }, [addToast, funnelId, interviewId, contentsLength, isDisabledRecord, recordingStatus]);
 
   const finishRecord = useCallback(async () => {
+    const recordingStartTimeDate = new Date(recordingStartTime.current as string);
+
     try {
       if (recorderRef.current === null) {
         throw createRecordError(RecordErrorType.UNKNOWN_ERROR);
@@ -266,7 +269,7 @@ export default function RecordButton() {
         message: '알 수 없는 오류가 발생했습니다. 다시 시도해주세요.',
       });
     }
-  }, [addToast, dispatch, funnelId, interviewId, contentsLength, recordingStartTimeDate]);
+  }, [addToast, dispatch, funnelId, interviewId, contentsLength]);
 
   useEffect(() => {
     if (recordingStatus === RecordingStatusType.finished) {
