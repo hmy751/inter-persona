@@ -7,8 +7,8 @@
   --color-base-black: #000000;
 
   /* Brand Colors */
-  --color-primary: #4a90e2;
-  --color-secondary: #5c6bc0;
+  --color-primary: #228b22;
+  --color-secondary: #f5f5dc;
   --color-neutral: #34495e;
   --color-muted: #94a3b8;
   --color-overlay: rgba(0, 0, 0, 0.5);
@@ -75,7 +75,7 @@
      4. Effects & Interactions
      ================================= */
   /* Gradients */
-  --gradient-primary: linear-gradient(135deg, var(--color-secondary), var(--color-info));
+  --gradient-primary: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
 
   /* Shadows */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
