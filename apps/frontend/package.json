@@ -6,7 +6,7 @@
     "dev:frontend:msw": "NEXT_PUBLIC_USE_MSW=true next dev",
     "dev:frontend": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start:frontend": "next start",
     "start:prod": "next start --hostname 0.0.0.0 --port 3000",
     "lint": "next lint",
     "apps-storybook": "storybook dev -p 6006",

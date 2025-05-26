@@ -35,11 +35,19 @@
       "cache": false,
       "persistent": true
     },
+    "start:backend": {
+      "cache": false,
+      "persistent": true
+    },
     "dev:frontend": {
       "cache": false,
       "persistent": true
     },
     "dev:frontend:msw": {
+      "cache": false,
+      "persistent": true
+    },
+    "start:frontend": {
       "cache": false,
       "persistent": true
     },
