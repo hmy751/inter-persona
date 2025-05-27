@@ -19,7 +19,7 @@ export default function GlobalError({ reset }: { error: Error & { digest?: strin
           <Text as="h1" size="xl">
             서비스에 문제가 발생했습니다.
           </Text>
-          <Button variant="outline" size="lg" color="secondary" onClick={() => reset()}>
+          <Button variant="outline" size="lg" color="primary" onClick={() => reset()}>
             다시 시도해주세요.
           </Button>
         </div>

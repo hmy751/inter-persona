@@ -70,10 +70,10 @@ function ChatRetryCancelSelector() {
 
   return (
     <div className={styles.retryCancelSelector}>
-      <Button size="sm" variant="secondary" onClick={handleRetry}>
+      <Button size="sm" variant="primary" onClick={handleRetry}>
         다시 시도하기
       </Button>
-      <Button size="sm" variant="outline" onClick={handleCancel}>
+      <Button size="sm" variant="secondary" onClick={handleCancel}>
         취소하기
       </Button>
     </div>
