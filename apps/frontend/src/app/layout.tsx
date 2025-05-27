@@ -56,11 +56,13 @@ export default function RootLayout({
   const isUseMsw = process.env.NEXT_PUBLIC_USE_MSW;
   const clarityId = process.env.NEXT_PUBLIC_CLARITY;
   const gtmId = process.env.NEXT_PUBLIC_GTM;
+  const gtmIdInternal = process.env.NEXT_PUBLIC_GTM_INTERNAL;
+  const isInternal = process.env.NEXT_PUBLIC_IS_INTERNAL;
 
   return (
     <html lang="ko">
       <head>
-        {clarityId && (
+        {!isInternal && clarityId && (
           <Script id="clarity-script" strategy="afterInteractive">
             {`
               (function(c,l,a,r,i,t,y){
@@ -71,13 +73,22 @@ export default function RootLayout({
             `}
           </Script>
         )}
-        {gtmId && (
+        {!isInternal && gtmId && (
           <Script id="gtm-script" strategy="afterInteractive">
             {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
               new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
               j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
               'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
             })(window,document,'script','dataLayer','${gtmId}');`}
+          </Script>
+        )}
+        {isInternal && (
+          <Script id="gtm-script" strategy="afterInteractive">
+            {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+              new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+              j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+              'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','${gtmIdInternal}');`}
           </Script>
         )}
       </head>
@@ -94,7 +105,7 @@ export default function RootLayout({
             </RootProviders>
           </MSWProvider>
         )}
-        {gtmId && (
+        {!isInternal && gtmId && (
           <>
             <noscript>
               <iframe
