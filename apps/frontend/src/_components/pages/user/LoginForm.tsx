@@ -106,6 +106,7 @@ export default function LoginForm() {
               onChange={onChange}
               onBlur={onBlur}
               value={value}
+              autoComplete="login-email"
             />
           )}
         />
@@ -123,6 +124,7 @@ export default function LoginForm() {
               onChange={onChange}
               onBlur={onBlur}
               value={value}
+              autoComplete="login-password"
             />
           )}
         />
