@@ -127,6 +127,7 @@ export default function SignupForm({ onSuccess }: { onSuccess: () => void }) {
               onChange={onChange}
               onBlur={onBlur}
               value={value}
+              autoComplete="signup-email"
             />
           )}
         />
@@ -144,6 +145,7 @@ export default function SignupForm({ onSuccess }: { onSuccess: () => void }) {
               onChange={onChange}
               onBlur={onBlur}
               value={value}
+              autoComplete="signup-name"
             />
           )}
         />
@@ -161,6 +163,7 @@ export default function SignupForm({ onSuccess }: { onSuccess: () => void }) {
               onChange={onChange}
               onBlur={onBlur}
               value={value}
+              autoComplete="signup-password"
             />
           )}
         />
@@ -178,6 +181,7 @@ export default function SignupForm({ onSuccess }: { onSuccess: () => void }) {
               onChange={onChange}
               onBlur={onBlur}
               value={value}
+              autoComplete="signup-password-confirm"
             />
           )}
         />
