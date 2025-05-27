@@ -159,7 +159,7 @@ export default function SignupForm({ onSuccess }: { onSuccess: () => void }) {
             <Input
               type="password"
               isTouched={isTouched}
-              placeholder={VALIDATION.password.required}
+              placeholder={'비밀번호를 숫자와 혼합해서 입력해주세요.'}
               onChange={onChange}
               onBlur={onBlur}
               value={value}
@@ -177,7 +177,7 @@ export default function SignupForm({ onSuccess }: { onSuccess: () => void }) {
             <Input
               type="password"
               isTouched={isTouched}
-              placeholder={VALIDATION.password.required}
+              placeholder="비밀번호를 다시 입력해주세요."
               onChange={onChange}
               onBlur={onBlur}
               value={value}
@@ -187,7 +187,7 @@ export default function SignupForm({ onSuccess }: { onSuccess: () => void }) {
         />
       </Field>
 
-      <Button variant="primary" fullWidth type="submit" disabled={isSubmitting} isLoading={isSubmitting}>
+      <Button variant="primary" fullWidth type="submit" disabled={isSubmitting || !isValid} isLoading={isSubmitting}>
         회원가입
       </Button>
     </form>

@@ -31,14 +31,8 @@ export const LoginRequestSchema = z.object({
     .regex(/[a-z]/, {
       message: VALIDATION.password.lowercase,
     })
-    .regex(/[A-Z]/, {
-      message: VALIDATION.password.uppercase,
-    })
     .regex(/\d/, {
       message: VALIDATION.password.number,
-    })
-    .regex(/[!@#$%^&*]/, {
-      message: VALIDATION.password.special,
     }),
 });
 
@@ -66,14 +60,8 @@ export const RegisterRequestSchema = z
       .regex(/[a-z]/, {
         message: VALIDATION.password.lowercase,
       })
-      .regex(/[A-Z]/, {
-        message: VALIDATION.password.uppercase,
-      })
       .regex(/\d/, {
         message: VALIDATION.password.number,
-      })
-      .regex(/[!@#$%^&*]/, {
-        message: VALIDATION.password.special,
       }),
     passwordConfirm: z
       .string()
@@ -83,14 +71,8 @@ export const RegisterRequestSchema = z
       .regex(/[a-z]/, {
         message: VALIDATION.password.lowercase,
       })
-      .regex(/[A-Z]/, {
-        message: VALIDATION.password.uppercase,
-      })
       .regex(/\d/, {
         message: VALIDATION.password.number,
-      })
-      .regex(/[!@#$%^&*]/, {
-        message: VALIDATION.password.special,
       }),
     name: z
       .string()
