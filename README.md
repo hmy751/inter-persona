@@ -176,11 +176,31 @@ Inter Persona의 사용 흐름은 간단합니다.
 
 사용자 정보 입력: 앱 실행 후, 이메일과 아이디를 입력하여 로그인합니다.
 
+<img src="./apps/frontend/public/assets/gif/login.gif" width="600px" alt="로그인">
+
 인터뷰어 조회: 다양한 성향의 가상 면접관 리스트를 확인하고, 마음에 드는 면접관을 선택합니다.
+
+<img src="./apps/frontend/public/assets/gif/interviewer.gif" width="600px" alt="인터뷰어조회">
 
 인터뷰 진행: 선택한 면접관의 인사말로 인터뷰가 시작됩니다. 사용자는 음성으로 답변하고, AI 면접관의 후속 질문에 응답하며 대화를 이어갑니다.
 
+<img src="./apps/frontend/public/assets/gif/interview.gif" width="600px" alt="인터뷰진행">
+
 결과 확인: 약 20회의 대화가 오가면 인터뷰가 마무리되고, 결과 페이지에서 종합 점수와 세부 평가를 확인할 수 있습니다.
+
+<div style="display: flex; justify-content: flex-start; align-items: flex-start;">
+  <img src="./apps/frontend/public/assets/gif/result1.gif" width="300px" alt="결과확인1" style="margin-right: 10px;">
+  <img src="./apps/frontend/public/assets/gif/result2.gif" width="300px" alt="결과확인2">
+</div>
+
+추가로 모바일에서도 볼 수 있도록 반응형 UI로 구현했습니다.
+
+<div style="display: flex; justify-content: flex-start; align-items: flex-start; flex-wrap: wrap;">
+  <img src="./apps/frontend/public/assets/gif/mobile_login.gif" width="150px" alt="모바일로그인" style="margin-right: 10px;">
+  <img src="./apps/frontend/public/assets/gif/mobile_interviewer.gif" width="150px" alt="모바일인터뷰어" style="margin-right: 10px;">
+  <img src="./apps/frontend/public/assets/gif/mobile_interview.gif" width="150px" alt="모바일인터뷰" style="margin-right: 10px;">
+  <img src="./apps/frontend/public/assets/gif/mobile_result.gif" width="150px" alt="모바일결과확인">
+</div>
 
 이 모든 과정은 실제 면접 경험을 최대한 살릴 수 있도록 설계되었습니다.
 
