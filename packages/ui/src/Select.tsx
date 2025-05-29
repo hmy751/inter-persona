@@ -28,7 +28,7 @@ interface SelectRootProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 
   placeholder?: string;
 }
 
-export const SelectRoot = forwardRef<HTMLSelectElement, SelectRootProps>(
+const Root = forwardRef<HTMLSelectElement, SelectRootProps>(
   (
     {
       children,
@@ -89,11 +89,11 @@ export const SelectRoot = forwardRef<HTMLSelectElement, SelectRootProps>(
   }
 );
 
-SelectRoot.displayName = 'Select.Root';
+Root.displayName = 'Select.Root';
 
 interface SelectOptionProps extends OptionHTMLAttributes<HTMLOptionElement> {}
 
-export const SelectOption = forwardRef<HTMLOptionElement, SelectOptionProps>(
+const Option = forwardRef<HTMLOptionElement, SelectOptionProps>(
   ({ children, ...restProps }: SelectOptionProps, ref) => {
     return (
       <option ref={ref} {...restProps}>
@@ -103,10 +103,12 @@ export const SelectOption = forwardRef<HTMLOptionElement, SelectOptionProps>(
   }
 );
 
-SelectOption.displayName = 'Select.Option';
+Option.displayName = 'Select.Option';
 
-export const Select = Object.assign(SelectRoot, {
-  Option: SelectOption,
+const Select = Object.assign(Root, {
+  Option,
 });
 
 Select.displayName = 'Select';
+
+export default Select;

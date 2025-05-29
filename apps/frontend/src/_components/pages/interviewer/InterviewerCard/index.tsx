@@ -5,7 +5,7 @@ import Image from 'next/image';
 import styles from './InterviewerCard.module.css';
 import Text from '@repo/ui/Text';
 import StartInterviewButton from './StartInterviewButton';
-import { SelectRoot, SelectOption } from '@repo/ui/Select';
+import Select from '@repo/ui/Select';
 
 interface InterviewerCardProps {
   id: number;
@@ -48,10 +48,10 @@ export default function InterviewerCard({
           {mbti}
         </Text>
         <div className={styles.buttonWrapper}>
-          <SelectRoot value={category} onValueChange={setCategory}>
-            <SelectOption value="frontend">Frontend</SelectOption>
-            <SelectOption value="backend">Backend</SelectOption>
-          </SelectRoot>
+          <Select value={category} onValueChange={setCategory}>
+            <Select.Option value="frontend">Frontend</Select.Option>
+            <Select.Option value="backend">Backend</Select.Option>
+          </Select>
           <StartInterviewButton id={id} category={category} />
         </div>
       </div>

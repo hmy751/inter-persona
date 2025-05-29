@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { SelectRoot, SelectOption } from './Select';
+import Select from './Select';
 import type { ComponentProps } from 'react';
 
-type SelectRootProps = ComponentProps<typeof SelectRoot>;
+type SelectRootProps = ComponentProps<typeof Select>;
 
 const meta = {
   title: 'Common/Select',
-  component: SelectRoot,
+  component: Select,
   parameters: {
     layout: 'centered',
   },
@@ -28,11 +28,11 @@ export const Primary: Story = {
     const [value, setValue] = useState('');
 
     return (
-      <SelectRoot {...args} value={value} onValueChange={setValue}>
-        <SelectOption value="option1">Option 1</SelectOption>
-        <SelectOption value="option2">Option 2</SelectOption>
-        <SelectOption value="option3">Option 3</SelectOption>
-      </SelectRoot>
+      <Select {...args} value={value} onValueChange={setValue}>
+        <Select.Option value="option1">Option 1</Select.Option>
+        <Select.Option value="option2">Option 2</Select.Option>
+        <Select.Option value="option3">Option 3</Select.Option>
+      </Select>
     );
   },
   args: {
@@ -45,11 +45,11 @@ export const InitialValue: Story = {
     const [value, setValue] = useState('option2');
 
     return (
-      <SelectRoot {...args} value={value} onValueChange={setValue}>
-        <SelectOption value="option1">Option 1</SelectOption>
-        <SelectOption value="option2">Option 2 (Initial)</SelectOption>
-        <SelectOption value="option3">Option 3</SelectOption>
-      </SelectRoot>
+      <Select {...args} value={value} onValueChange={setValue}>
+        <Select.Option value="option1">Option 1</Select.Option>
+        <Select.Option value="option2">Option 2 (Initial)</Select.Option>
+        <Select.Option value="option3">Option 3</Select.Option>
+      </Select>
     );
   },
   args: {
@@ -62,10 +62,10 @@ export const Error: Story = {
     const [value, setValue] = useState('');
 
     return (
-      <SelectRoot {...args} value={value} onValueChange={setValue}>
-        <SelectOption value="option1">Option 1</SelectOption>
-        <SelectOption value="option2">Option 2</SelectOption>
-      </SelectRoot>
+      <Select {...args} value={value} onValueChange={setValue}>
+        <Select.Option value="option1">Option 1</Select.Option>
+        <Select.Option value="option2">Option 2</Select.Option>
+      </Select>
     );
   },
   args: {
@@ -79,10 +79,10 @@ export const Disabled: Story = {
     const [value, setValue] = useState('option1');
 
     return (
-      <SelectRoot {...args} value={value} onValueChange={setValue}>
-        <SelectOption value="option1">Option 1 (Disabled Select)</SelectOption>
-        <SelectOption value="option2">Option 2</SelectOption>
-      </SelectRoot>
+      <Select {...args} value={value} onValueChange={setValue}>
+        <Select.Option value="option1">Option 1 (Disabled Select)</Select.Option>
+        <Select.Option value="option2">Option 2</Select.Option>
+      </Select>
     );
   },
   args: {
@@ -96,13 +96,13 @@ export const WithDisabledOption: Story = {
     const [value, setValue] = useState('');
 
     return (
-      <SelectRoot {...args} value={value} onValueChange={setValue}>
-        <SelectOption value="option1">Option 1</SelectOption>
-        <SelectOption value="option2" disabled>
+      <Select {...args} value={value} onValueChange={setValue}>
+        <Select.Option value="option1">Option 1</Select.Option>
+        <Select.Option value="option2" disabled>
           Option 2 (Disabled)
-        </SelectOption>
-        <SelectOption value="option3">Option 3</SelectOption>
-      </SelectRoot>
+        </Select.Option>
+        <Select.Option value="option3">Option 3</Select.Option>
+      </Select>
     );
   },
   args: {
