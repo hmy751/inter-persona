@@ -8,7 +8,7 @@ import Input from '@repo/ui/Input';
 import Button from '@repo/ui/Button';
 import { VALIDATION } from '@repo/constant/message';
 import styles from './FormSection.module.css';
-import ProfileInput from './ProfileInput';
+import ProfileInput, { validationProfile } from './ProfileInput';
 import { RegisterRequestSchema, RegisterResponseSchema } from '@repo/schema/user';
 import { fetchRegister } from '@/_apis/user';
 import { useToastStore } from '@repo/store/useToastStore';
@@ -103,14 +103,26 @@ export default function SignupForm({ onSuccess }: { onSuccess: () => void }) {
         <Controller
           name="profileImage"
           control={control}
+          rules={{
+            validate: file => {
+              if (!file) {
+                return '파일이 존재하지 않습니다.';
+              }
+
+              const { isValid, message } = validationProfile(file);
+
+              if (isValid) {
+                return true;
+              }
+
+              return message;
+            },
+          }}
           render={({ field: { onChange, ref } }) => (
-            <ProfileInput
-              ref={ref}
-              size="xl"
-              setImage={file => {
-                onChange(file);
-              }}
-            />
+            <ProfileInput size="xl" onChangeFile={file => onChange(file)}>
+              <ProfileInput.Input ref={ref} />
+              <ProfileInput.Preview size="xl" />
+            </ProfileInput>
           )}
         />
       </Field>
@@ -127,6 +139,7 @@ export default function SignupForm({ onSuccess }: { onSuccess: () => void }) {
               onChange={onChange}
               onBlur={onBlur}
               value={value}
+              autoComplete="signup-email"
             />
           )}
         />
@@ -144,6 +157,7 @@ export default function SignupForm({ onSuccess }: { onSuccess: () => void }) {
               onChange={onChange}
               onBlur={onBlur}
               value={value}
+              autoComplete="signup-name"
             />
           )}
         />
@@ -157,10 +171,11 @@ export default function SignupForm({ onSuccess }: { onSuccess: () => void }) {
             <Input
               type="password"
               isTouched={isTouched}
-              placeholder={VALIDATION.password.required}
+              placeholder={'비밀번호를 숫자와 혼합해서 입력해주세요.'}
               onChange={onChange}
               onBlur={onBlur}
               value={value}
+              autoComplete="signup-password"
             />
           )}
         />
@@ -174,16 +189,17 @@ export default function SignupForm({ onSuccess }: { onSuccess: () => void }) {
             <Input
               type="password"
               isTouched={isTouched}
-              placeholder={VALIDATION.password.required}
+              placeholder="비밀번호를 다시 입력해주세요."
               onChange={onChange}
               onBlur={onBlur}
               value={value}
+              autoComplete="signup-password-confirm"
             />
           )}
         />
       </Field>
 
-      <Button variant="primary" fullWidth type="submit" disabled={isSubmitting} isLoading={isSubmitting}>
+      <Button variant="primary" fullWidth type="submit" disabled={isSubmitting || !isValid} isLoading={isSubmitting}>
         회원가입
       </Button>
     </form>

@@ -1,6 +1,19 @@
 'use client';
 
-import { useState, useRef, ChangeEvent, DragEvent, useEffect, forwardRef, useCallback, MutableRefObject } from 'react';
+import {
+  useState,
+  useRef,
+  ChangeEvent,
+  DragEvent,
+  useEffect,
+  forwardRef,
+  useCallback,
+  MutableRefObject,
+  InputHTMLAttributes,
+  createContext,
+  useMemo,
+  useContext,
+} from 'react';
 import Avatar from '@repo/ui/Avatar';
 import styles from './ProfileInput.module.css';
 import Text from '@repo/ui/Text';
@@ -21,40 +34,122 @@ export const UploadIcon = () => (
   </svg>
 );
 
-interface ProfileInputProps {
-  setImage: React.Dispatch<React.SetStateAction<File | null>>;
-  defaultImageUrl?: string;
-  size?: 'lg' | 'xl';
-  maxSizeInMB?: number;
-  acceptedFormats?: string;
-  className?: string;
-  onValidate?: (file: File | null) => string | undefined;
-  error?: string;
+export const validationProfile = (file: File) => {
+  if (!file) {
+    return { isValid: false, message: '파일이 존재하지 않습니다.' };
+  }
+
+  if (!file.type.startsWith('image/')) {
+    return { isValid: false, message: '이미지 형식이 아닙니다.' };
+  }
+
+  const fileSizeInMB = file.size / (1024 * 1024);
+
+  const MAX_SIZE_IN_MB = 5;
+
+  if (fileSizeInMB > MAX_SIZE_IN_MB) {
+    return { isValid: false, message: '파일 용량이 너무 큽니다. 5mb이하로 변경해주세요.' };
+  }
+
+  return { isValid: true };
+};
+
+interface ProfileInputContextValue {
+  isDragging: boolean;
+  setIsDragging: React.Dispatch<React.SetStateAction<boolean>>;
+  previewUrl: string;
+  rootInputRef: MutableRefObject<HTMLInputElement | null>;
+  handlePreviewUrl: (arg: File) => void;
+  onChangeFile: (arg: File) => void;
 }
 
-const ProfileInput = forwardRef<HTMLInputElement, ProfileInputProps>(
-  (
-    {
-      setImage,
-      error,
-      defaultImageUrl = DEFAULT_PROFILE_IMAGE_URL,
-      size = 'xl',
-      maxSizeInMB = 5,
-      acceptedFormats = 'image/jpeg, image/png, image/jpg',
-      className,
-      onValidate,
+const ProfileInputContext = createContext<ProfileInputContextValue>({} as ProfileInputContextValue);
+
+interface RootProps extends React.PropsWithChildren {
+  defaultImageUrl?: string;
+  onChangeFile: (arg: File) => void;
+  size: 'lg' | 'xl';
+}
+
+const Root = ({ defaultImageUrl = DEFAULT_PROFILE_IMAGE_URL, children, size, onChangeFile }: RootProps) => {
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [previewUrl, setPreviewUrl] = useState<string>(defaultImageUrl);
+  const rootInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handlePreviewUrl = useCallback(
+    (file: File) => {
+      if (!file) {
+        return;
+      }
+
+      if (previewUrl && previewUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(previewUrl);
+      }
+
+      const newPreviewUrl = URL.createObjectURL(file);
+
+      setPreviewUrl(newPreviewUrl);
     },
-    ref
-  ) => {
-    const [previewUrl, setPreviewUrl] = useState<string | null>(defaultImageUrl || null);
-    const [isDragging, setIsDragging] = useState(false);
+    [previewUrl]
+  );
+
+  const contextValue = useMemo(
+    () => ({
+      isDragging,
+      setIsDragging,
+      previewUrl,
+      rootInputRef,
+      handlePreviewUrl,
+      onChangeFile,
+    }),
+    [isDragging, setIsDragging, previewUrl, rootInputRef, handlePreviewUrl, onChangeFile]
+  );
+
+  useEffect(() => {
+    if (defaultImageUrl) {
+      urlToFile(defaultImageUrl, DEFAULT_PROFILE_IMAGE_NAME, 'image/png').then(file => {
+        onChangeFile(file);
+      });
+    }
+
+    return () => {};
+  }, [defaultImageUrl]);
+
+  return (
+    <ProfileInputContext.Provider value={contextValue}>
+      <div
+        className={`
+        ${styles.imageInputContainer} 
+        ${styles[`size-${size}`]} 
+        ${isDragging ? styles.dragging : ''}
+      `}
+        tabIndex={0}
+      >
+        {children}
+        <Text size="sm" color="secondary">
+          {isDragging ? '이미지를 놓아주세요' : '클릭 또는 드래그하여 이미지를 업로드 해주세요'}
+        </Text>
+      </div>
+    </ProfileInputContext.Provider>
+  );
+};
+
+Root.displayName = 'ProfileInput.Root';
+
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+  acceptedFormats?: string;
+}
+
+const Input = forwardRef<HTMLInputElement, InputProps>(
+  ({ acceptedFormats = 'image/jpeg, image/png, image/jpg', ...restProps }, ref) => {
     const internalRef = useRef<HTMLInputElement>(null);
-    const [_, setInternalError] = useState<string | undefined>(error);
+    const { rootInputRef, handlePreviewUrl, onChangeFile } = useContext(ProfileInputContext);
 
     const assignRef = useCallback(
       (element: HTMLInputElement) => {
         if (element) {
           (internalRef as MutableRefObject<HTMLInputElement>).current = element;
+          rootInputRef.current = element;
         }
 
         if (typeof ref === 'function') {
@@ -66,151 +161,128 @@ const ProfileInput = forwardRef<HTMLInputElement, ProfileInputProps>(
       [ref, internalRef]
     );
 
-    useEffect(() => {
-      setInternalError(error);
-    }, [error]);
+    const handleChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
+      e.stopPropagation();
 
-    useEffect(() => {
-      if (defaultImageUrl) {
-        setPreviewUrl(defaultImageUrl);
-        urlToFile(defaultImageUrl, DEFAULT_PROFILE_IMAGE_NAME, 'image/png').then(file => {
-          setImage(file);
-        });
-      }
+      if (e.target?.files && e.target.files?.length > 0) {
+        const file = e.target.files[0]!;
 
-      return () => {
-        if (previewUrl && previewUrl.startsWith('blob:')) {
-          URL.revokeObjectURL(previewUrl);
+        const { isValid } = validationProfile(file);
+
+        if (!isValid) {
+          return;
         }
-      };
-    }, [defaultImageUrl, previewUrl, setImage]);
 
-    const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-      const file = event.target.files?.[0] || null;
-      handleFile(file);
+        handlePreviewUrl(file);
+        onChangeFile(file);
+      }
     };
 
-    const handleFile = useCallback(
-      (file: File | null) => {
-        if (file && onValidate) {
-          const validationError = onValidate(file);
-          setInternalError(validationError);
-        }
-
-        if (!file) {
-          setImage(null);
-          setPreviewUrl(defaultImageUrl || null);
-          return;
-        }
-
-        const fileSizeInMB = file.size / (1024 * 1024);
-
-        if (fileSizeInMB > (maxSizeInMB || 5)) {
-          setImage(file);
-          return;
-        }
-
-        if (previewUrl && previewUrl.startsWith('blob:')) {
-          URL.revokeObjectURL(previewUrl);
-        }
-
-        const newPreviewUrl = URL.createObjectURL(file);
-
-        setPreviewUrl(newPreviewUrl);
-        setImage(file);
-      },
-      [onValidate, setInternalError, setImage, setPreviewUrl, defaultImageUrl, maxSizeInMB, previewUrl]
-    );
-
-    const handleDragEnter = useCallback(
-      (e: DragEvent<HTMLDivElement>) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setIsDragging(true);
-      },
-      [setIsDragging]
-    );
-
-    const handleDragLeave = useCallback(
-      (e: DragEvent<HTMLDivElement>) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setIsDragging(false);
-      },
-      [setIsDragging]
-    );
-
-    const handleDragOver = useCallback((e: DragEvent<HTMLDivElement>) => {
-      e.preventDefault();
-      e.stopPropagation();
-    }, []);
-
-    const handleDrop = useCallback(
-      (e: DragEvent<HTMLDivElement>) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setIsDragging(false);
-
-        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-          const file = e.dataTransfer.files[0];
-          if (file) {
-            handleFile(file);
-          }
-        }
-      },
-      [handleFile, setIsDragging]
-    );
-
-    const handleSelectClick = useCallback(() => {
-      internalRef.current?.click();
-    }, [internalRef]);
-
     return (
-      <div
-        className={`
-        ${styles.imageInputContainer} 
-        ${styles[`size-${size}`]} 
-        ${isDragging ? styles.dragging : ''}
-        ${className || ''}
-      `}
-        tabIndex={0}
-      >
-        <input
-          ref={assignRef}
-          type="file"
-          onChange={handleFileChange}
-          accept={acceptedFormats}
-          className={styles.hiddenInput}
-          aria-label="프로필 이미지 선택"
-        />
-        <div
-          className={styles.avatarContainer}
-          onClick={handleSelectClick}
-          onDragEnter={handleDragEnter}
-          onDragLeave={handleDragLeave}
-          onDragOver={handleDragOver}
-          onDrop={handleDrop}
-        >
-          <Avatar
-            src={previewUrl || defaultImageUrl}
-            size={size}
-            alt="프로필 이미지"
-            className={`${styles.avatar} ${isDragging ? styles.draggingAvatar : ''}`}
-          />
-          <div className={styles.uploadOverlay}>
-            <div className={styles.uploadIcon}>
-              <UploadIcon />
-            </div>
-          </div>
-        </div>
-        <Text size="sm" color="secondary">
-          {isDragging ? '이미지를 놓아주세요' : '클릭 또는 드래그하여 이미지를 업로드 해주세요'}
-        </Text>
-      </div>
+      <input
+        ref={assignRef}
+        type="file"
+        onChange={handleChangeInput}
+        accept={acceptedFormats}
+        className={styles.hiddenInput}
+        aria-label="프로필 이미지 선택"
+        {...restProps}
+      />
     );
   }
 );
 
-ProfileInput.displayName = 'ProfileInput';
+Input.displayName = 'ProfileInput.Input';
+
+interface PreviewProps {
+  size: 'lg' | 'xl';
+}
+
+const Preview = ({ size }: PreviewProps) => {
+  const { isDragging, setIsDragging, previewUrl, rootInputRef, onChangeFile, handlePreviewUrl } =
+    useContext(ProfileInputContext);
+
+  const handleDragEnter = useCallback(
+    (e: DragEvent<HTMLDivElement>) => {
+      e.stopPropagation();
+      e.preventDefault();
+
+      setIsDragging(true);
+    },
+    [setIsDragging]
+  );
+
+  const handleDragLeave = useCallback(
+    (e: DragEvent<HTMLDivElement>) => {
+      e.stopPropagation();
+      e.preventDefault();
+
+      setIsDragging(false);
+    },
+    [setIsDragging]
+  );
+
+  const handleDrop = useCallback(
+    (e: DragEvent<HTMLDivElement>) => {
+      e.stopPropagation();
+      e.preventDefault();
+
+      setIsDragging(false);
+
+      if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        const file = e.dataTransfer.files[0] as File;
+
+        const { isValid } = validationProfile(file);
+
+        if (!isValid) {
+          return;
+        }
+
+        handlePreviewUrl(file);
+        onChangeFile(file);
+      }
+    },
+    [handlePreviewUrl, setIsDragging, rootInputRef.current, onChangeFile]
+  );
+
+  const handleSelectClick = useCallback(() => {
+    rootInputRef.current?.click();
+  }, [rootInputRef]);
+
+  const handleDragOver = useCallback((e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }, []);
+
+  return (
+    <div
+      className={styles.avatarContainer}
+      onClick={handleSelectClick}
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+      onDragOver={handleDragOver}
+    >
+      <Avatar
+        src={previewUrl}
+        size={size}
+        alt="프로필 이미지"
+        className={`${styles.avatar} ${isDragging ? styles.draggingAvatar : ''}`}
+      />
+      <div className={styles.uploadOverlay}>
+        <div className={styles.uploadIcon}>
+          <UploadIcon />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+Preview.displayName = 'ProfileInput.Preview';
+
+const ProfileInput = Object.assign(Root, {
+  Input,
+  Preview,
+});
 
 export default ProfileInput;

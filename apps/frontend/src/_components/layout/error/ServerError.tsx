@@ -23,7 +23,7 @@ export default function ServerError({
       </Text>
       <Button
         variant="outline"
-        color="secondary"
+        color="primary"
         size="md"
         onClick={() => {
           if (error instanceof APIError && error.reset) {
