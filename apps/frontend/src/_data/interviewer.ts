@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 import { fetchInterviewerList } from '@/_apis/interviewer';
 import { InterviewerListResponseSchema } from '@repo/schema/interviewer';
-import { APIError } from '@/_apis/fetcher';
+import { APIError } from '@/_libs/error/errors';
 
 type InterviewerListResponse = z.infer<typeof InterviewerListResponseSchema>;
 

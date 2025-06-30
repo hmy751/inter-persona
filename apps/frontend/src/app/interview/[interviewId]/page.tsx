@@ -5,7 +5,7 @@ import styles from './page.module.css';
 import Text from '@repo/ui/Text';
 import ChatSection from '@/_components/pages/interview/ChatSection';
 import { useRouter } from 'next/navigation';
-import { APIError } from '@/_apis/fetcher';
+import { APIError } from '@/_libs/error/errors';
 
 export default function Page({ params }: { params: { interviewId: string } }) {
   const interviewId = Number(params.interviewId);

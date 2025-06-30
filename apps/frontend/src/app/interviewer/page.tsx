@@ -4,7 +4,7 @@ import InterviewerCard from '@/_components/pages/interviewer/InterviewerCard';
 import styles from './page.module.css';
 import Text from '@repo/ui/Text';
 import { useGetInterviewerList } from '@/_data/interviewer';
-import { APIError } from '@/_apis/fetcher';
+import { APIError } from '@/_libs/error/errors';
 
 export default function InterviewerChoicePage() {
   const { data, isLoading, error } = useGetInterviewerList();

@@ -2,7 +2,7 @@
 
 import Text from '@repo/ui/Text';
 import Button from '@repo/ui/Button';
-import { APIError } from '@/_apis/fetcher';
+import { APIError } from '@/_libs/error/errors';
 import styles from './error.module.css';
 import { useEffect } from 'react';
 export default function ServerError({

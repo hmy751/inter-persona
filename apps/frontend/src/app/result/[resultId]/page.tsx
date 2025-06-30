@@ -9,7 +9,7 @@ import QuestionEvaluationSection from '@/_components/pages/result/QuestionEvalua
 import ButtonGroupSection from '@/_components/pages/result/ButtonGroupSection';
 import { useGetResult } from '@/_data/result';
 import { useRouter, useParams } from 'next/navigation';
-import { APIError } from '@/_apis/fetcher';
+import { APIError } from '@/_libs/error/errors';
 import { GTMViewResults } from '@/_libs/utils/analysis/result';
 import { getSessionId } from '@/_libs/utils/session';
 import { useFunnelIdStore } from '@/_store/zustand/useFunnelIdStore';

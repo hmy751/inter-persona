@@ -13,7 +13,7 @@ import {
   fetchGetInterview,
   GetInterviewResponse,
 } from '@/_apis/interview';
-import { APIError } from '@/_apis/fetcher';
+import { APIError } from '@/_libs/error/errors';
 import useToastStore from '@repo/store/useToastStore';
 import { useRouter } from 'next/navigation';
 import { useFunnelIdStore } from '@/_store/zustand/useFunnelIdStore';
