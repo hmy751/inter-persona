@@ -10,6 +10,9 @@ class ErrorService {
     this.registerHandlers();
   }
 
+  // handle자체는 문맥을 고려하여 실행해야함.
+  // auth와 같은 글로벌 요소는 httpClient,
+  // UX처리 문맥이 필요한 경우 컴포넌트 호출지점에서
   public handle(error: unknown, option: ErrorHandlerOption = 'silent'): void {
     // 알 수 없는 오류는 에러 바운더리나 error.tsx로 처리
     if (!(error instanceof APIError)) {
