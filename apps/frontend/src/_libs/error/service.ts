@@ -1,4 +1,4 @@
-import { ErrorHandler, DefaultErrorHandler, ErrorHandlerOption, APIErrorConstructor } from '@/_libs/types/error';
+import { ErrorHandler, DefaultErrorHandler, APIErrorConstructor, HandleErrorOptions } from '@/_libs/types/error';
 import { AuthError, APIError, NetworkError, UnknownError } from './errors';
 import { handleDefaultError, handleAuthError, handleNetworkError, handleUnknownError } from './handlers';
 
@@ -13,10 +13,11 @@ class ErrorService {
   // handle자체는 문맥을 고려하여 실행해야함.
   // auth와 같은 글로벌 요소는 httpClient,
   // UX처리 문맥이 필요한 경우 컴포넌트 호출지점에서
-  public handle(error: unknown, option: ErrorHandlerOption = 'silent'): void {
+  public handle(error: unknown, options: HandleErrorOptions = {}): void {
+    const { type = 'silent' } = options;
     // 알 수 없는 오류는 에러 바운더리나 error.tsx로 처리
     if (!(error instanceof APIError)) {
-      this.defaultHandler(new UnknownError({ data: error }), 'boundary');
+      this.defaultHandler(new UnknownError({ data: error }), { ...options, type: 'boundary' });
       return;
     }
 
@@ -29,7 +30,7 @@ class ErrorService {
     }
 
     // 그 이외는 option에 따라서 에러처리
-    this.defaultHandler(error, option);
+    this.defaultHandler(error, { ...options, type });
   }
 
   private registerHandlers(): void {

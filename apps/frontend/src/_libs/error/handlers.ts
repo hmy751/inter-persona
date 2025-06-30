@@ -1,4 +1,4 @@
-import { ErrorHandlerOption } from '@/_libs/types/error';
+import { HandleErrorOptions } from '@/_libs/types/error';
 import { APIError, AuthError, NetworkError, UnknownError } from './errors';
 import useToastStore from '@repo/store/useToastStore';
 import useAlertDialogStore from '@repo/store/useAlertDialogStore';
@@ -7,17 +7,18 @@ const logError = (error: APIError) => {
   console.error(error?.message);
 };
 
-export const handleDefaultError = (error: APIError, option: ErrorHandlerOption) => {
+export const handleDefaultError = (error: APIError, options: HandleErrorOptions) => {
   logError(error);
+  const { type = 'silent', title = '에러 발생' } = options;
 
-  switch (option) {
+  switch (type) {
     case 'boundary':
       throw error;
     case 'dialog':
-      useAlertDialogStore.getState().setAlert('에러 발생', error.message);
+      useAlertDialogStore.getState().setAlert(title, error.message);
       break;
     case 'toast':
-      useToastStore.getState().addToast({ title: '에러 발생', description: error?.message, duration: 1000 });
+      useToastStore.getState().addToast({ title, description: error?.message, duration: 1000 });
       break;
     case 'silent':
       break;

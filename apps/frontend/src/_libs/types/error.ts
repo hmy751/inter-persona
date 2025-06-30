@@ -2,8 +2,15 @@ import { APIError } from '../error/errors';
 
 export type APIErrorConstructor = new (...args: any[]) => APIError;
 
-export type ErrorHandlerOption = 'silent' | 'dialog' | 'toast' | 'boundary';
+export type ErrorType = 'silent' | 'boundary' | 'dialog' | 'toast';
 
-export type ErrorHandler = (error: APIError) => void;
+export interface HandleErrorOptions {
+  type?: ErrorType;
+  title?: string;
+}
 
-export type DefaultErrorHandler = (error: APIError, option: ErrorHandlerOption) => void;
+export interface ErrorHandler {
+  (error: any): void;
+}
+
+export type DefaultErrorHandler = (error: APIError, options: HandleErrorOptions) => void;
