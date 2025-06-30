@@ -1,6 +1,10 @@
-import { APIError } from '@/_libs/error/errors';
+import { APIError, AuthError, NetworkError, UnknownError } from '@/_libs/error/errors';
+import { errorService } from '@/_libs/error/service';
 
 export const baseURL = process.env.NEXT_PUBLIC_API_HOST;
+
+// eslint-disable-next-line prettier/prettier
+const PENDING_PROMISE = new Promise<never>(() => { });
 
 interface FetcherConfig {
   baseURL?: string;
@@ -23,28 +27,17 @@ const handleResponse = async (response: Response) => {
   const contentType = response.headers.get('content-type');
   const isJSON = contentType?.includes('application/json');
 
-  const data = isJSON ? await response.json() : await response.text();
-
   if (!response.ok) {
-    throw new APIError(data.message || response.statusText, response.status, data.code || 'UNKNOWN_ERROR', data);
+    const errorData = isJSON ? await response.json() : { message: await response.text() };
+    throw new APIError({
+      message: errorData.message || response.statusText,
+      status: response.status,
+      code: errorData.code || 'UNKNOWN_ERROR',
+      data: errorData,
+    });
   }
 
-  return data;
-};
-
-const handleError = (error: unknown) => {
-  if (error instanceof APIError) {
-    throw error;
-  }
-
-  if (error instanceof Error) {
-    if (error.name === 'AbortError') {
-      throw new APIError('요청 시간이 초과되었습니다', 408, 'REQUEST_TIMEOUT');
-    }
-    throw new APIError('네트워크 에러가 발생했습니다', 0, 'NETWORK_ERROR', error);
-  }
-
-  throw new APIError('알 수 없는 에러가 발생했습니다', 0, 'UNKNOWN_ERROR', error);
+  return isJSON ? await response.json() : await response.text();
 };
 
 const createHttpClient = (defaultConfig: FetcherConfig) => {
@@ -71,7 +64,34 @@ const createHttpClient = (defaultConfig: FetcherConfig) => {
 
       return handleResponse(response);
     } catch (error) {
-      throw handleError(error);
+      if (error instanceof APIError) {
+        if (error.status === 401) {
+          const authError = new AuthError({
+            message: '인증에 실패했습니다.',
+            data: error,
+          });
+          errorService.handle(authError);
+
+          return PENDING_PROMISE;
+        }
+
+        throw error;
+      }
+
+      if (error instanceof Error) {
+        if (error.name === 'AbortError') {
+          throw new APIError({
+            message: '요청 시간이 초과되었습니다',
+            status: 408,
+            code: 'REQUEST_TIMEOUT',
+            data: error,
+          });
+        }
+
+        throw new NetworkError({ data: error });
+      }
+
+      throw new UnknownError({ data: error });
     }
   };
 
