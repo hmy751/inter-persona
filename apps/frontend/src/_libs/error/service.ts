@@ -1,6 +1,6 @@
 import { ErrorHandler, DefaultErrorHandler, ErrorHandlerOption, APIErrorConstructor } from '@/_libs/types/error';
-import { AuthError, APIError } from './errors';
-import { handleDefaultError } from './handlers/defaultHandler';
+import { AuthError, APIError, NetworkError, UnknownError } from './errors';
+import { handleDefaultError, handleAuthError, handleNetworkError, handleUnknownError } from './handlers';
 
 class ErrorService {
   private handlerMap = new Map<APIErrorConstructor, ErrorHandler>();
@@ -16,7 +16,7 @@ class ErrorService {
   public handle(error: unknown, option: ErrorHandlerOption = 'silent'): void {
     // 알 수 없는 오류는 에러 바운더리나 error.tsx로 처리
     if (!(error instanceof APIError)) {
-      this.defaultHandler(new APIError('오류가 발생했습니다. 다시 시도해주세요.', 500, 'UNKNOWN_ERROR'), 'boundary');
+      this.defaultHandler(new UnknownError({ data: error }), 'boundary');
       return;
     }
 
@@ -33,7 +33,9 @@ class ErrorService {
   }
 
   private registerHandlers(): void {
-    // this.handlerMap.set(AuthError, handleAuthError);
+    this.handlerMap.set(AuthError, handleAuthError);
+    this.handlerMap.set(NetworkError, handleNetworkError);
+    this.handlerMap.set(UnknownError, handleUnknownError);
     // 새로운 핸들러는 여기에 등록
   }
 }
