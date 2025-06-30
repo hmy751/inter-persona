@@ -1,4 +1,7 @@
+import { APIError } from '@/_libs/error/errors';
+
 export const baseURL = process.env.NEXT_PUBLIC_API_HOST;
+
 interface FetcherConfig {
   baseURL?: string;
   headers?: HeadersInit;
@@ -8,19 +11,6 @@ interface FetcherConfig {
 interface RequestConfig extends Omit<RequestInit, 'headers'> {
   headers?: HeadersInit;
   timeout?: number;
-}
-
-export class APIError extends Error {
-  constructor(
-    message: string,
-    public status: number,
-    public code: string,
-    public data?: unknown,
-    public reset?: () => void
-  ) {
-    super(message);
-    this.name = 'APIError';
-  }
 }
 
 const createAbortController = (timeout: number) => {
