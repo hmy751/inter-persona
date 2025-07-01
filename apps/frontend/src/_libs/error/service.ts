@@ -1,6 +1,12 @@
 import { ErrorHandler, DefaultErrorHandler, APIErrorConstructor, HandleErrorOptions } from '@/_libs/types/error';
-import { AuthError, APIError, NetworkError, UnknownError } from './errors';
-import { handleDefaultError, handleAuthError, handleNetworkError, handleUnknownError } from './handlers';
+import { AuthError, APIError, NetworkError, UnknownError, ClientDataValidationError } from './errors';
+import {
+  handleDefaultError,
+  handleAuthError,
+  handleNetworkError,
+  handleUnknownError,
+  handleClientDataValidationError,
+} from './handlers';
 
 class ErrorService {
   private handlerMap = new Map<APIErrorConstructor, ErrorHandler>();
@@ -37,6 +43,7 @@ class ErrorService {
     this.handlerMap.set(AuthError, handleAuthError);
     this.handlerMap.set(NetworkError, handleNetworkError);
     this.handlerMap.set(UnknownError, handleUnknownError);
+    this.handlerMap.set(ClientDataValidationError, handleClientDataValidationError);
     // 새로운 핸들러는 여기에 등록
   }
 }
