@@ -1,10 +1,6 @@
-import { APIError, AuthError, NetworkError, UnknownError } from '@/_libs/error/errors';
-import { errorService } from '@/_libs/error/service';
+import { APIError, AuthError, NetworkError } from '@/_libs/error/errors';
 
 export const baseURL = process.env.NEXT_PUBLIC_API_HOST;
-
-// eslint-disable-next-line prettier/prettier
-const PENDING_PROMISE = new Promise<never>(() => { });
 
 interface FetcherConfig {
   baseURL?: string;
@@ -24,20 +20,24 @@ const createAbortController = (timeout: number) => {
 };
 
 const handleResponse = async (response: Response) => {
-  const contentType = response.headers.get('content-type');
-  const isJSON = contentType?.includes('application/json');
+  const isJSON = response.headers.get('content-type')?.includes('application/json');
 
   if (!response.ok) {
     const errorData = isJSON ? await response.json() : { message: await response.text() };
+
+    if (response.status === 401) {
+      throw new AuthError({ data: errorData, message: '인증이 필요합니다.' });
+    }
+
     throw new APIError({
-      message: errorData.message || response.statusText,
+      message: errorData.message || 'API 요청에 실패했습니다.',
       status: response.status,
-      code: errorData.code || 'UNKNOWN_ERROR',
+      code: errorData.code,
       data: errorData,
     });
   }
 
-  return isJSON ? await response.json() : await response.text();
+  return isJSON ? await response.json() : response.text();
 };
 
 const createHttpClient = (defaultConfig: FetcherConfig) => {
@@ -61,37 +61,32 @@ const createHttpClient = (defaultConfig: FetcherConfig) => {
       }
 
       const response = await fetch(fullURL, finalOptions);
-
       return handleResponse(response);
     } catch (error) {
+      // APIError, AuthError 등 이미 변환된 에러는 그대로 다시 던짐
       if (error instanceof APIError) {
-        if (error.status === 401) {
-          const authError = new AuthError({
-            message: '인증에 실패했습니다.',
-            data: error,
-          });
-          errorService.handle(authError);
-
-          return PENDING_PROMISE;
-        }
-
         throw error;
       }
 
+      // fetch 자체에서 발생한 네트워크 레벨의 에러
       if (error instanceof Error) {
         if (error.name === 'AbortError') {
           throw new APIError({
-            message: '요청 시간이 초과되었습니다',
+            message: '요청 시간이 초과되었습니다.',
             status: 408,
             code: 'REQUEST_TIMEOUT',
             data: error,
           });
         }
-
-        throw new NetworkError({ data: error });
+        throw new NetworkError({ message: '네트워크 연결을 확인해주세요.', data: error });
       }
 
-      throw new UnknownError({ data: error });
+      // 그 외 알 수 없는 에러
+      throw new APIError({
+        message: '알 수 없는 에러가 발생했습니다.',
+        status: 0,
+        data: error,
+      });
     }
   };
 

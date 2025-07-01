@@ -56,19 +56,6 @@ export class NetworkError extends APIError {
   }
 }
 
-export class UnknownError extends APIError {
-  constructor(params: Partial<APIErrorParams> = {}) {
-    super({
-      status: params.status || 0,
-      data: params.data,
-      ...params,
-      message: params.message || '알 수 없는 오류가 발생했습니다.',
-      code: 'UNKNOWN_ERROR',
-    });
-    this.name = 'UnknownError';
-  }
-}
-
 export class ClientDataValidationError extends APIError {
   constructor({ data, message }: { data: unknown; message?: string }) {
     super({

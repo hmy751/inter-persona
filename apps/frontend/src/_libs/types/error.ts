@@ -7,6 +7,8 @@ export type ErrorType = 'silent' | 'boundary' | 'dialog' | 'toast';
 export interface HandleErrorOptions {
   type?: ErrorType;
   title?: string;
+  description?: string;
+  context?: string;
 }
 
 export interface ErrorHandler {
