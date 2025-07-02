@@ -16,8 +16,8 @@ export const handleNetworkAction = (error: NetworkError): void => {
 
 export const handleResponseSchemaValidationAction = (error: ResponseSchemaValidationError) => {
   console.error('⛔️ Client-Server Contract Violation Mismatched data schema detected.', {
-    validationIssues: error?.validationIssues,
-    receivedData: error?.data,
+    errorDetails: error,
+    receivedData: error?.data.issues,
   });
   useToastStore.getState().addToast({
     title: '일시적인 오류',

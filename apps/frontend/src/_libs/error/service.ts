@@ -1,11 +1,11 @@
-import { HandleErrorOptions } from '@/_libs/types/error';
+import { HandleErrorOptions, AppErrorConstructor } from '@/_libs/types/error';
 import useAlertDialogStore from '@repo/store/useAlertDialogStore';
 import useToastStore from '@repo/store/useToastStore';
 import { AuthError, ResponseSchemaValidationError, NetworkError, AppError } from './errors';
 import { handleAuthAction, handleResponseSchemaValidationAction, handleNetworkAction } from './handlers';
 
 class ErrorService {
-  private registeredHandlers = new Map<typeof AppError, (error: any) => void>();
+  private registeredHandlers = new Map<AppErrorConstructor, (error: any) => void>();
   private logger = new ErrorLogger();
 
   constructor() {
@@ -24,7 +24,7 @@ class ErrorService {
 
     // bypassRegisteredHandlers가 false이고, 에러가 AppError일 때만 전용 핸들러를 확인
     if (!bypassRegisteredHandlers && error instanceof AppError) {
-      const handler = this.registeredHandlers.get(error.constructor as typeof AppError);
+      const handler = this.registeredHandlers.get(error.constructor as AppErrorConstructor);
       if (handler) {
         handler(error);
         return;

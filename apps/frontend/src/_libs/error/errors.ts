@@ -1,18 +1,18 @@
 import type { ZodError } from 'zod';
 
-type AppErrorParams = {
+type AppErrorParams<TData = unknown> = {
   message: string;
   code?: string;
-  data: unknown;
+  data: TData;
   reset?: () => void;
 };
 
-export class AppError extends Error {
+export class AppError<TData = unknown> extends Error {
   public code?: string;
-  public data: unknown;
+  public data: TData;
   public reset?: () => void;
 
-  constructor({ message, code, data, reset }: AppErrorParams) {
+  constructor({ message, code, data, reset }: AppErrorParams<TData>) {
     super(message);
 
     this.name = 'AppError';
@@ -23,12 +23,12 @@ export class AppError extends Error {
   }
 }
 
-type APIErrorParams = AppErrorParams & { status: number };
+type APIErrorParams<TData = unknown> = AppErrorParams<TData> & { status: number };
 
-export class APIError extends AppError {
+export class APIError<TData = unknown> extends AppError<TData> {
   public status: number;
 
-  constructor({ message, status, code, data, reset }: APIErrorParams) {
+  constructor({ message, status, code, data, reset }: APIErrorParams<TData>) {
     super({
       message,
       code,
@@ -42,10 +42,10 @@ export class APIError extends AppError {
   }
 }
 
-type AuthErrorParams = Omit<APIErrorParams, 'status'>;
+type AuthErrorParams<TData = unknown> = Omit<APIErrorParams<TData>, 'status'>;
 
-export class AuthError extends APIError {
-  constructor({ message, code = 'UNAUTHORIZED', data, reset }: AuthErrorParams) {
+export class AuthError<TData = unknown> extends APIError<TData> {
+  constructor({ message, code = 'UNAUTHORIZED', data, reset }: AuthErrorParams<TData>) {
     super({
       message,
       status: 401,
@@ -58,37 +58,34 @@ export class AuthError extends APIError {
   }
 }
 
-type NetworkErrorParams = Omit<APIErrorParams, 'status'>;
+type NetworkErrorParams<TData = unknown> = Omit<APIErrorParams<TData>, 'status'>;
 
-export class NetworkError extends APIError {
-  constructor({ message, code, data }: NetworkErrorParams) {
+export class NetworkError<TData = unknown> extends APIError<TData> {
+  constructor({ message, code, data }: NetworkErrorParams<TData>) {
     super({
       message: message || '네트워크 연결을 확인해주세요.',
       status: 0,
       code: code || 'NETWORK_ERROR',
-      data: data,
+      data,
     });
 
     this.name = 'NetworkError';
   }
 }
 
-type ResponseSchemaValidationErrorParams = Omit<APIErrorParams, 'status'> & {
-  validationIssues: ZodError['issues'];
+type ResponseSchemaValidationErrorParams = {
+  data: ZodError;
+  message?: string;
 };
 
-export class ResponseSchemaValidationError extends AppError {
-  public validationIssues: ZodError['issues'];
-
-  constructor({ data, message, validationIssues }: ResponseSchemaValidationErrorParams) {
+export class ResponseSchemaValidationError extends AppError<ZodError> {
+  constructor({ data, message }: ResponseSchemaValidationErrorParams) {
     super({
-      message: message || '서버 데이터의 형식이 올바르지 않습니다.',
+      message: message || data?.message || '서버 데이터의 형식이 올바르지 않습니다.',
       code: 'RESPONSE_SCHEMA_VALIDATION_ERROR',
       data,
     });
 
     this.name = 'ResponseSchemaValidationError';
-
-    this.validationIssues = validationIssues;
   }
 }

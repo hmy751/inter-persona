@@ -1,6 +1,6 @@
-import { APIError } from '../error/errors';
+import { APIError, AppError } from '../error/errors';
 
-export type APIErrorConstructor = new (...args: any[]) => APIError;
+export type AppErrorConstructor = new (...args: any[]) => AppError<any>;
 
 export type ErrorType = 'silent' | 'boundary' | 'dialog' | 'toast';
 
