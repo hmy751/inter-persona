@@ -3,6 +3,7 @@ import useAlertDialogStore from '@repo/store/useAlertDialogStore';
 import useToastStore from '@repo/store/useToastStore';
 import { AuthError, ClientServerMismatchedError, NetworkError, AppError } from './errors';
 import { handleAuthAction, handleClientServerMismatchedAction, handleNetworkAction } from './handlers';
+import { handleRecordAction, RecordError } from './errors/RecordError';
 
 class ErrorService {
   private registeredHandlers = new Map<AppErrorConstructor, (error: any) => void>();
@@ -41,7 +42,8 @@ class ErrorService {
   }
 
   private displayUI(error: unknown, options: HandleErrorOptions): void {
-    const message = options.description || (error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.');
+    const message =
+      (error instanceof AppError ? error.message : options.description) || '알 수 없는 오류가 발생했습니다.';
     const { type = 'toast', title = '알림' } = options;
 
     console.log(`🎨 Displaying UI (${type})`, { title, message });
@@ -64,6 +66,7 @@ class ErrorService {
     this.registeredHandlers.set(AuthError, handleAuthAction);
     this.registeredHandlers.set(NetworkError, handleNetworkAction);
     this.registeredHandlers.set(ClientServerMismatchedError, handleClientServerMismatchedAction);
+    this.registeredHandlers.set(RecordError, handleRecordAction);
     // 추가할 핸들러는 여기에 등록
   }
 }
