@@ -16,6 +16,8 @@ import { useToastStore } from '@repo/store/useToastStore';
 import { getSessionId } from '@/_libs/utils/session';
 import { GtmLoginAttemptFailed, GtmLoginAttemptSuccess } from '@/_libs/utils/analysis/user';
 import { useFunnelIdStore } from '@/_store/zustand/useFunnelIdStore';
+import { errorService } from '@/_libs/error/service';
+import { ResponseSchemaValidationError } from '@/_libs/error/errors';
 
 export default function LoginForm() {
   const router = useRouter();
@@ -46,18 +48,9 @@ export default function LoginForm() {
       const validationResult = LoginResponseSchema.safeParse(responseData);
 
       if (!validationResult.success) {
-        GtmLoginAttemptFailed({
-          message: '응답 성공, 스키마 검증 실패',
-          session_id: getSessionId(),
-          funnel_id: funnelId || '',
+        throw new ResponseSchemaValidationError({
+          data: validationResult.error,
         });
-
-        addToast({
-          title: '로그인 실패',
-          description: '서버 응답 처리 중 문제가 발생했습니다. 다시 시도해주세요.',
-          duration: 3000,
-        });
-        return;
       }
 
       GtmLoginAttemptSuccess({
@@ -84,10 +77,10 @@ export default function LoginForm() {
         funnel_id: funnelId || '',
       });
 
-      addToast({
+      errorService.handle(error, {
+        type: 'toast',
         title: '로그인 실패',
         description,
-        duration: 3000,
       });
     }
   };

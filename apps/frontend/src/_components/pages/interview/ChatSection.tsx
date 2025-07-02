@@ -7,7 +7,6 @@ import { START_CHAT, initializeChatState } from '@/_store/redux/features/chat/sl
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import styles from './chat.module.css';
-import { AI_NETWORK_ERROR_TOAST } from '@/_store/redux/features/chat/constants';
 import useToastStore from '@repo/store/useToastStore';
 
 import { useGetInterview } from '@/_data/interview';
@@ -15,6 +14,7 @@ import { ChatContentSpeakerType, ChatContentStatusType } from '@/_store/redux/ty
 import { GTMInterviewStarted } from '@/_libs/utils/analysis/interview';
 import { getSessionId } from '@/_libs/utils/session';
 import { useFunnelIdStore } from '@/_store/zustand/useFunnelIdStore';
+import { errorService } from '@/_libs/error/service';
 
 export default function ChatSection() {
   const interviewId = useParams().interviewId;
@@ -69,8 +69,12 @@ export default function ChatSection() {
           },
         });
       })();
-    } catch (err) {
-      addToast(AI_NETWORK_ERROR_TOAST);
+    } catch (error) {
+      errorService.handle(error, {
+        type: 'toast',
+        title: 'AI 응답 에러',
+        description: '요청에 실패했습니다. 새로고침 하여 인터뷰를 다시 시도해주세요!',
+      });
     }
 
     return () => {
