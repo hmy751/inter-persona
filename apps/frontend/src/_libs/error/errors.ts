@@ -73,19 +73,19 @@ export class NetworkError<TData = unknown> extends APIError<TData> {
   }
 }
 
-type ResponseSchemaValidationErrorParams = {
+type ClientServerMismatchedErrorParams = {
   data: ZodError;
   message?: string;
 };
 
-export class ResponseSchemaValidationError extends AppError<ZodError> {
-  constructor({ data, message }: ResponseSchemaValidationErrorParams) {
+export class ClientServerMismatchedError extends AppError<ZodError> {
+  constructor({ data, message }: ClientServerMismatchedErrorParams) {
     super({
       message: message || data?.message || '서버 데이터의 형식이 올바르지 않습니다.',
-      code: 'RESPONSE_SCHEMA_VALIDATION_ERROR',
+      code: 'CLIENT_SERVER_MISMATCHED_ERROR',
       data,
     });
 
-    this.name = 'ResponseSchemaValidationError';
+    this.name = 'ClientServerMismatchedError';
   }
 }

@@ -17,7 +17,7 @@ import { getSessionId } from '@/_libs/utils/session';
 import { GtmLoginAttemptFailed, GtmLoginAttemptSuccess } from '@/_libs/utils/analysis/user';
 import { useFunnelIdStore } from '@/_store/zustand/useFunnelIdStore';
 import { errorService } from '@/_libs/error/service';
-import { ResponseSchemaValidationError } from '@/_libs/error/errors';
+import { ClientServerMismatchedError } from '@/_libs/error/errors';
 
 export default function LoginForm() {
   const router = useRouter();
@@ -48,7 +48,7 @@ export default function LoginForm() {
       const validationResult = LoginResponseSchema.safeParse(responseData);
 
       if (!validationResult.success) {
-        throw new ResponseSchemaValidationError({
+        throw new ClientServerMismatchedError({
           data: validationResult.error,
         });
       }

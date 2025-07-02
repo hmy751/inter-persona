@@ -1,8 +1,8 @@
 import { HandleErrorOptions, AppErrorConstructor } from '@/_libs/types/error';
 import useAlertDialogStore from '@repo/store/useAlertDialogStore';
 import useToastStore from '@repo/store/useToastStore';
-import { AuthError, ResponseSchemaValidationError, NetworkError, AppError } from './errors';
-import { handleAuthAction, handleResponseSchemaValidationAction, handleNetworkAction } from './handlers';
+import { AuthError, ClientServerMismatchedError, NetworkError, AppError } from './errors';
+import { handleAuthAction, handleClientServerMismatchedAction, handleNetworkAction } from './handlers';
 
 class ErrorService {
   private registeredHandlers = new Map<AppErrorConstructor, (error: any) => void>();
@@ -63,7 +63,7 @@ class ErrorService {
   private registerSpecialHandlers(): void {
     this.registeredHandlers.set(AuthError, handleAuthAction);
     this.registeredHandlers.set(NetworkError, handleNetworkAction);
-    this.registeredHandlers.set(ResponseSchemaValidationError, handleResponseSchemaValidationAction);
+    this.registeredHandlers.set(ClientServerMismatchedError, handleClientServerMismatchedAction);
     // 추가할 핸들러는 여기에 등록
   }
 }

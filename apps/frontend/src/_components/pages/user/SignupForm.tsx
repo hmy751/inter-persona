@@ -17,7 +17,7 @@ import { useFunnelIdStore } from '@/_store/zustand/useFunnelIdStore';
 import { GtmSignupAttemptFailed, GtmSignupAttemptSuccess } from '@/_libs/utils/analysis/user';
 import { getSessionId } from '@/_libs/utils/session';
 import { errorService } from '@/_libs/error/service';
-import { ResponseSchemaValidationError } from '@/_libs/error/errors';
+import { ClientServerMismatchedError } from '@/_libs/error/errors';
 
 export default function SignupForm({ onSuccess }: { onSuccess: () => void }) {
   const { addToast } = useToastStore();
@@ -61,7 +61,7 @@ export default function SignupForm({ onSuccess }: { onSuccess: () => void }) {
       const validationResult = RegisterResponseSchema.safeParse(data);
 
       if (!validationResult.success) {
-        throw new ResponseSchemaValidationError({
+        throw new ClientServerMismatchedError({
           data: validationResult.error,
         });
       }
