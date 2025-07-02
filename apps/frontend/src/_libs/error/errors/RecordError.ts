@@ -18,6 +18,8 @@ export enum RecordErrorType {
   CONTEXT_NOT_ALLOWED = 'CONTEXT_NOT_ALLOWED',
   // File - for BlobEvent handling
   FILE_TOO_LARGE = 'FILE_TOO_LARGE',
+  RECORDER_NOT_FOUND = 'RECORDER_NOT_FOUND',
+  FAIL_AUDIO_FILE = 'FAIL_AUDIO_FILE',
 }
 
 const getMicrophonePermissionSetting = async () => {
@@ -105,13 +107,26 @@ const RECORD_ERROR_MAPPINGS: Record<RecordErrorType, RecordErrorDetail> = {
     message: '녹음 파일이 너무 큽니다. 더 짧게 녹음해주세요.',
     manage: 'toast',
   },
+  [RecordErrorType.RECORDER_NOT_FOUND]: {
+    title: 'Recorder Not Found',
+    message: '녹음기를 찾을 수 없습니다. 다시 시도해주세요.',
+    manage: 'toast',
+  },
+  [RecordErrorType.FAIL_AUDIO_FILE]: {
+    title: 'Fail Audio Fail',
+    message: '오디오 파일이 존재하지 않스빈다. 다시 시도해주세요.',
+    manage: 'toast',
+  },
 };
 
 export type RecordErrorDetailData = {
   type: RecordErrorType;
 };
 
-type RecordErrorParams = AppErrorParams & { type: RecordErrorType };
+type RecordErrorParams = Omit<AppErrorParams, 'message' | 'data'> & {
+  type: RecordErrorType;
+  data?: unknown;
+};
 
 export class RecordError extends AppError<RecordErrorData> {
   constructor({ type }: RecordErrorParams) {
