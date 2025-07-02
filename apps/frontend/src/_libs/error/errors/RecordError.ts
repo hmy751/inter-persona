@@ -1,37 +1,24 @@
+import { AppError, AppErrorParams } from '../errors';
+
 import useAlertDialogStore from '@repo/store/useAlertDialogStore';
 import useConfirmDialogStore from '@repo/store/useConfirmDialogStore';
 import useToastStore from '@repo/store/useToastStore';
 
-export const handleRecordError = (error: RecordError) => {
-  const { manage, title, message, callback } = error.detail;
-
-  switch (manage) {
-    case 'alertDialog':
-      useAlertDialogStore.getState().setAlert(title, message);
-      break;
-    case 'confirmDialog':
-      useConfirmDialogStore.getState().setConfirm(title, message, () => {
-        if (callback) {
-          callback();
-        }
-      });
-      break;
-    case 'toast':
-      useToastStore.getState().addToast({
-        title,
-        description: message,
-        duration: 3000,
-      });
-      break;
-
-    default:
-      useToastStore.getState().addToast({
-        title: '알 수 없는 오류',
-        description: '알 수 없는 오류가 발생했습니다. 다시 시도해주세요.',
-        duration: 3000,
-      });
-  }
-};
+export enum RecordErrorType {
+  // Permission - corresponds to NotAllowedError
+  PERMISSION_DENIED = 'PERMISSION_DENIED',
+  PERMISSION_BLOCKED = 'PERMISSION_BLOCKED',
+  // Device - corresponds to NotFoundError, NotReadableError, OverconstrainedError
+  DEVICE_NOT_FOUND = 'DEVICE_NOT_FOUND',
+  DEVICE_IN_USE = 'DEVICE_IN_USE',
+  DEVICE_NOT_READABLE = 'DEVICE_NOT_READABLE',
+  // Browser - corresponds to TypeError, SecurityError
+  BROWSER_NOT_SUPPORTED = 'BROWSER_NOT_SUPPORTED',
+  API_NOT_SUPPORTED = 'API_NOT_SUPPORTED',
+  CONTEXT_NOT_ALLOWED = 'CONTEXT_NOT_ALLOWED',
+  // File - for BlobEvent handling
+  FILE_TOO_LARGE = 'FILE_TOO_LARGE',
+}
 
 const getMicrophonePermissionSetting = async () => {
   const isChrome = /chrome/i.test(navigator.userAgent) && !/edg/i.test(navigator.userAgent);
@@ -60,43 +47,18 @@ const getMicrophonePermissionSetting = async () => {
   });
 };
 
-export enum RecordErrorType {
-  // Permission - corresponds to NotAllowedError
-  PERMISSION_DENIED = 'PERMISSION_DENIED',
-  PERMISSION_BLOCKED = 'PERMISSION_BLOCKED',
-  // Device - corresponds to NotFoundError, NotReadableError, OverconstrainedError
-  DEVICE_NOT_FOUND = 'DEVICE_NOT_FOUND',
-  DEVICE_IN_USE = 'DEVICE_IN_USE',
-  DEVICE_NOT_READABLE = 'DEVICE_NOT_READABLE',
-  // Browser - corresponds to TypeError, SecurityError
-  BROWSER_NOT_SUPPORTED = 'BROWSER_NOT_SUPPORTED',
-  API_NOT_SUPPORTED = 'API_NOT_SUPPORTED',
-  CONTEXT_NOT_ALLOWED = 'CONTEXT_NOT_ALLOWED',
-  // File - for BlobEvent handling
-  FILE_TOO_LARGE = 'FILE_TOO_LARGE',
-  // Unknown - for uncategorized errors
-  UNKNOWN_ERROR = 'UNKNOWN_ERROR',
-}
-
-export interface RecordErrorDetail {
-  type: RecordErrorType;
+type RecordErrorDetail = {
   title: string;
   message: string;
   manage: 'alertDialog' | 'confirmDialog' | 'toast';
   callback?: () => void;
-}
+};
 
-export class RecordError extends Error {
-  constructor(
-    public detail: RecordErrorDetail,
-    public originalError?: Error
-  ) {
-    super(detail.message);
-    this.name = 'RecordError';
-  }
-}
+type RecordErrorData = {
+  type: RecordErrorType;
+} & RecordErrorDetail;
 
-const ERROR_MAPPINGS: Record<RecordErrorType, Omit<RecordErrorDetail, 'type'>> = {
+const RECORD_ERROR_MAPPINGS: Record<RecordErrorType, RecordErrorDetail> = {
   [RecordErrorType.PERMISSION_DENIED]: {
     title: 'Permission Denied',
     message: '마이크 사용 권한이 필요합니다. 설정 페이지 주소를 복사하시겠어요?',
@@ -143,17 +105,63 @@ const ERROR_MAPPINGS: Record<RecordErrorType, Omit<RecordErrorDetail, 'type'>> =
     message: '녹음 파일이 너무 큽니다. 더 짧게 녹음해주세요.',
     manage: 'toast',
   },
-  [RecordErrorType.UNKNOWN_ERROR]: {
-    title: 'Unknown Error',
-    message: '알 수 없는 오류가 발생했습니다. 다시 시도해주세요.',
-    manage: 'toast',
-  },
 };
 
-export const createRecordError = (type: RecordErrorType, originalError?: Error): RecordError => {
-  const errorDetail = {
-    ...ERROR_MAPPINGS[type],
-    type,
-  };
-  return new RecordError(errorDetail, originalError);
+export type RecordErrorDetailData = {
+  type: RecordErrorType;
+};
+
+type RecordErrorParams = AppErrorParams & { type: RecordErrorType };
+
+export class RecordError extends AppError<RecordErrorData> {
+  constructor({ type }: RecordErrorParams) {
+    const data = {
+      type,
+      ...RECORD_ERROR_MAPPINGS[type],
+    };
+
+    super({
+      code: 'RECORD_ERROR',
+      data,
+      message: data.message,
+    });
+
+    this.name = 'RecordError';
+  }
+}
+
+export const handleRecordAction = (error: RecordError) => {
+  console.error('🎙️ RecordError detected', {
+    errorDetails: error,
+    recordErrorType: error.data.type,
+  });
+
+  const { manage, title, message, callback } = error.data;
+
+  switch (manage) {
+    case 'alertDialog':
+      useAlertDialogStore.getState().setAlert(title, message);
+      break;
+    case 'confirmDialog':
+      useConfirmDialogStore.getState().setConfirm(title, message, () => {
+        if (callback) {
+          callback();
+        }
+      });
+      break;
+    case 'toast':
+      useToastStore.getState().addToast({
+        title,
+        description: message,
+        duration: 3000,
+      });
+      break;
+
+    default:
+      useToastStore.getState().addToast({
+        title: title || '알 수 없는 오류',
+        description: message || '알 수 없는 오류가 발생했습니다. 다시 시도해주세요.',
+        duration: 3000,
+      });
+  }
 };
