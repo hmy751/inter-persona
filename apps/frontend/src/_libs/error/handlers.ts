@@ -1,4 +1,4 @@
-import { AuthError, NetworkError, ClientDataValidationError } from './errors';
+import { AuthError, NetworkError, ResponseSchemaValidationError } from './errors';
 import useToastStore from '@repo/store/useToastStore';
 
 export const handleAuthAction = (error: AuthError): void => {
@@ -14,10 +14,10 @@ export const handleNetworkAction = (error: NetworkError): void => {
     .addToast({ title: '네트워크 오류', description: '서버와 통신할 수 없습니다. 연결 상태를 확인해주세요.' });
 };
 
-export const handleClientDataValidationAction = (error: ClientDataValidationError) => {
+export const handleResponseSchemaValidationAction = (error: ResponseSchemaValidationError) => {
   console.error('⛔️ Client-Server Contract Violation Mismatched data schema detected.', {
-    errorDetails: error,
-    receivedData: error.data,
+    validationIssues: error?.validationIssues,
+    receivedData: error?.data,
   });
   useToastStore.getState().addToast({
     title: '일시적인 오류',

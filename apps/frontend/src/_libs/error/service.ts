@@ -1,11 +1,11 @@
 import { HandleErrorOptions } from '@/_libs/types/error';
 import useAlertDialogStore from '@repo/store/useAlertDialogStore';
 import useToastStore from '@repo/store/useToastStore';
-import { APIError, AuthError, ClientDataValidationError, NetworkError } from './errors';
-import { handleAuthAction, handleClientDataValidationAction, handleNetworkAction } from './handlers';
+import { AuthError, ResponseSchemaValidationError, NetworkError, AppError } from './errors';
+import { handleAuthAction, handleResponseSchemaValidationAction, handleNetworkAction } from './handlers';
 
 class ErrorService {
-  private registeredHandlers = new Map<typeof APIError, (error: any) => void>();
+  private registeredHandlers = new Map<typeof AppError, (error: any) => void>();
   private logger = new ErrorLogger();
 
   constructor() {
@@ -22,9 +22,9 @@ class ErrorService {
     const { context } = options;
     this.logger.log(error, { context, options, bypassRegisteredHandlers });
 
-    // bypassRegisteredHandlers가 false이고, 에러가 APIError일 때만 전용 핸들러를 확인
-    if (!bypassRegisteredHandlers && error instanceof APIError) {
-      const handler = this.registeredHandlers.get(error.constructor as typeof APIError);
+    // bypassRegisteredHandlers가 false이고, 에러가 AppError일 때만 전용 핸들러를 확인
+    if (!bypassRegisteredHandlers && error instanceof AppError) {
+      const handler = this.registeredHandlers.get(error.constructor as typeof AppError);
       if (handler) {
         handler(error);
         return;
@@ -63,7 +63,7 @@ class ErrorService {
   private registerSpecialHandlers(): void {
     this.registeredHandlers.set(AuthError, handleAuthAction);
     this.registeredHandlers.set(NetworkError, handleNetworkAction);
-    this.registeredHandlers.set(ClientDataValidationError, handleClientDataValidationAction);
+    this.registeredHandlers.set(ResponseSchemaValidationError, handleResponseSchemaValidationAction);
     // 추가할 핸들러는 여기에 등록
   }
 }
