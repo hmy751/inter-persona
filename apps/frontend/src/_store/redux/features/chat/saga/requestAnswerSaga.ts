@@ -14,11 +14,10 @@ import { delay } from '@/_libs/utils';
 import { RootState } from '@/_store/redux/rootStore';
 import { fetchAnswer, AnswerData, fetchStartInterview, fetchGetInterviewStatus } from '@/_apis/interview';
 import { ChatContentSpeakerType } from '@/_store/redux/type';
-import { useToastStore } from '@repo/store/useToastStore';
-import { AI_NETWORK_ERROR_TOAST } from '../constants';
 import { GTMInterviewCompleted } from '@/_libs/utils/analysis/interview';
 import { getSessionId } from '@/_libs/utils/session';
 import { useFunnelIdStore } from '@/_store/zustand/useFunnelIdStore';
+import { errorService } from '@/_libs/error/service';
 interface RequestAnswerAction {
   type: string;
   payload: {
@@ -81,9 +80,13 @@ export function* requestAnswerSaga(
         funnel_id: useFunnelIdStore.getState().funnelId || '',
       });
     }
-  } catch (err) {
-    useToastStore.getState().addToast(AI_NETWORK_ERROR_TOAST);
+  } catch (error) {
     yield put(removeContent());
+    errorService.handle(error, {
+      type: 'toast',
+      title: 'AI 응답 에러',
+      description: '요청에 실패했습니다. 새로고침 하여 인터뷰를 다시 시도해주세요!',
+    });
   }
 }
 

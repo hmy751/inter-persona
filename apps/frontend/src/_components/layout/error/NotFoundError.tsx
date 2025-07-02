@@ -1,6 +1,6 @@
 'use client';
 
-import { APIError } from '@/_apis/fetcher';
+import { APIError } from '@/_libs/error/errors';
 import Button from '@repo/ui/Button';
 import Text from '@repo/ui/Text';
 import styles from './error.module.css';

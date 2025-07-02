@@ -12,7 +12,10 @@ import { ChatContentStatusType } from '@/_store/redux/type';
 import { selectCurrentRecordingAnswer, selectInterviewStatus } from '@/_store/redux/features/chat/selector';
 import clsx from 'clsx';
 import { IDLE_ICON_SRC, RECORDING_ICON_SRC, DISABLED_ICON_SRC } from './constants';
-import { RecordError, handleRecordError, createRecordError, RecordErrorType } from './_error';
+import { RecordError, RecordErrorType } from '@/_libs/error/errors/RecordError';
+import AppError from '@/_libs/error/errors';
+import { errorService } from '@/_libs/error/service';
+
 import useToastStore from '@repo/store/useToastStore';
 import { useCreateResult } from '@/_data/result';
 import { useParams } from 'next/navigation';
@@ -67,7 +70,7 @@ export default function RecordButton() {
       const { mediaDevices } = navigator;
 
       if (!mediaDevices?.getUserMedia) {
-        throw createRecordError(RecordErrorType.API_NOT_SUPPORTED);
+        throw new RecordError({ type: RecordErrorType.API_NOT_SUPPORTED });
       }
 
       let stream: MediaStream;
@@ -78,21 +81,21 @@ export default function RecordButton() {
         if (error instanceof Error) {
           switch (error.name) {
             case 'NotAllowedError':
-              throw createRecordError(RecordErrorType.PERMISSION_DENIED, error);
+              throw new RecordError({ type: RecordErrorType.PERMISSION_DENIED });
             case 'NotFoundError':
-              throw createRecordError(RecordErrorType.DEVICE_NOT_FOUND, error);
+              throw new RecordError({ type: RecordErrorType.DEVICE_NOT_FOUND });
             case 'NotReadableError':
-              throw createRecordError(RecordErrorType.DEVICE_NOT_READABLE, error);
+              throw new RecordError({ type: RecordErrorType.DEVICE_NOT_READABLE });
             case 'TrackStartError':
-              throw createRecordError(RecordErrorType.DEVICE_NOT_READABLE, error);
+              throw new RecordError({ type: RecordErrorType.DEVICE_NOT_READABLE });
             case 'OverconstrainedError':
-              throw createRecordError(RecordErrorType.DEVICE_NOT_FOUND, error);
+              throw new RecordError({ type: RecordErrorType.DEVICE_NOT_FOUND });
             default:
-              throw createRecordError(RecordErrorType.UNKNOWN_ERROR, error);
+              throw error;
           }
-        } else {
-          throw createRecordError(RecordErrorType.UNKNOWN_ERROR, new Error(String(error)));
         }
+
+        throw error;
       }
 
       // 2. 음량 감지를 위한 analyser 생성
@@ -101,11 +104,7 @@ export default function RecordButton() {
       try {
         audioContext = new window.AudioContext();
       } catch (error: unknown) {
-        if (error instanceof Error) {
-          throw createRecordError(RecordErrorType.CONTEXT_NOT_ALLOWED, error);
-        } else {
-          throw createRecordError(RecordErrorType.CONTEXT_NOT_ALLOWED, new Error(String(error)));
-        }
+        throw new RecordError({ type: RecordErrorType.CONTEXT_NOT_ALLOWED });
       }
 
       const analyserNode = audioContext.createAnalyser();
@@ -119,11 +118,7 @@ export default function RecordButton() {
         source = audioContext.createMediaStreamSource(stream);
         source.connect(analyserNode);
       } catch (error: unknown) {
-        if (error instanceof Error) {
-          throw createRecordError(RecordErrorType.DEVICE_NOT_READABLE, error);
-        } else {
-          throw createRecordError(RecordErrorType.DEVICE_NOT_READABLE, new Error(String(error)));
-        }
+        throw new RecordError({ type: RecordErrorType.DEVICE_NOT_READABLE });
       }
 
       // 4. recorder 초기화
@@ -134,11 +129,7 @@ export default function RecordButton() {
       try {
         await recorderRef.current.init(stream);
       } catch (error: unknown) {
-        if (error instanceof Error) {
-          throw createRecordError(RecordErrorType.DEVICE_NOT_READABLE, error);
-        } else {
-          throw createRecordError(RecordErrorType.DEVICE_NOT_READABLE, new Error(String(error)));
-        }
+        throw new RecordError({ type: RecordErrorType.DEVICE_NOT_READABLE });
       }
 
       // 6. 녹음 시작
@@ -156,33 +147,24 @@ export default function RecordButton() {
           funnel_id: funnelId || '',
         });
       } catch (error: unknown) {
-        if (error instanceof Error) {
-          throw createRecordError(RecordErrorType.UNKNOWN_ERROR, error);
-        } else {
-          throw createRecordError(RecordErrorType.UNKNOWN_ERROR, new Error(String(error)));
-        }
+        throw new AppError({ message: '녹음 시작하는데 실패했습니다.', data: error });
       }
 
       cleanupRef.current = detectSilence(analyserNode, dataArray, setRecordingStatus);
     } catch (error) {
-      if (error instanceof RecordError) {
-        handleRecordError(error);
-        return;
-      }
-
-      addToast({
-        title: '알 수 없는 오류',
-        description: '알 수 없는 오류가 발생했습니다. 다시 시도해주세요.',
-        duration: 3000,
-      });
-
       GTMAnswerSubmittedFailed({
         interview_id: interviewId as string,
         question_id: (contentsLength || 0 + 1).toString() || '',
         duration: (new Date().getTime() - recordingStartTimeDate.getTime()) / 1000,
         session_id: getSessionId() || '',
         funnel_id: funnelId || '',
-        message: '알 수 없는 오류가 발생했습니다. 다시 시도해주세요.',
+        message: error instanceof AppError ? error.message : '알 수 없는 오류가 발생했습니다. 다시 시도해주세요.',
+      });
+
+      errorService.handle(error, {
+        type: 'toast',
+        title: '녹음 에러',
+        description: '알 수 없는 오류가 발생했습니다. 다시 시도해주세요.',
       });
     }
   }, [addToast, funnelId, interviewId, contentsLength, isDisabledRecord, recordingStatus]);
@@ -192,7 +174,7 @@ export default function RecordButton() {
 
     try {
       if (recorderRef.current === null) {
-        throw createRecordError(RecordErrorType.UNKNOWN_ERROR);
+        throw new RecordError({ type: RecordErrorType.RECORDER_NOT_FOUND });
       }
 
       const { blob } = await recorderRef.current.stop();
@@ -208,7 +190,7 @@ export default function RecordButton() {
 
       // 파일 크기 체크 (예: 50MB 제한)
       if (blob.size > 50 * 1024 * 1024) {
-        throw createRecordError(RecordErrorType.FILE_TOO_LARGE);
+        throw new RecordError({ type: RecordErrorType.FILE_TOO_LARGE });
       }
 
       const audioFile = new File([blob], 'recording.wav', {
@@ -216,7 +198,7 @@ export default function RecordButton() {
       });
 
       if (!audioFile) {
-        throw createRecordError(RecordErrorType.UNKNOWN_ERROR);
+        throw new RecordError({ type: RecordErrorType.FAIL_AUDIO_FILE });
       }
 
       const params = {
@@ -240,33 +222,19 @@ export default function RecordButton() {
         funnel_id: funnelId || '',
       });
     } catch (error) {
-      if (error instanceof RecordError) {
-        handleRecordError(error);
-
-        GTMAnswerSubmittedFailed({
-          interview_id: interviewId as string,
-          question_id: (contentsLength || 0 + 1).toString() || '',
-          duration: (new Date().getTime() - recordingStartTimeDate.getTime()) / 1000,
-          session_id: getSessionId() || '',
-          funnel_id: funnelId || '',
-          message: error.message,
-        });
-        return;
-      }
-
-      addToast({
-        title: '알 수 없는 오류',
-        description: '알 수 없는 오류가 발생했습니다. 다시 시도해주세요.',
-        duration: 3000,
-      });
-
       GTMAnswerSubmittedFailed({
         interview_id: interviewId as string,
         question_id: (contentsLength || 0 + 1).toString() || '',
         duration: (new Date().getTime() - recordingStartTimeDate.getTime()) / 1000,
         session_id: getSessionId() || '',
         funnel_id: funnelId || '',
-        message: '알 수 없는 오류가 발생했습니다. 다시 시도해주세요.',
+        message: error instanceof AppError ? error.message : '알 수 없는 오류가 발생했습니다. 다시 시도해주세요.',
+      });
+
+      errorService.handle(error, {
+        type: 'toast',
+        title: '녹음 파일 오류',
+        description: '알 수 없는 오류가 발생했습니다. 다시 시도해주세요.',
       });
     }
   }, [addToast, dispatch, funnelId, interviewId, contentsLength]);

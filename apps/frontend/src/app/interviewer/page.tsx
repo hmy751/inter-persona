@@ -4,7 +4,7 @@ import InterviewerCard from '@/_components/pages/interviewer/InterviewerCard';
 import styles from './page.module.css';
 import Text from '@repo/ui/Text';
 import { useGetInterviewerList } from '@/_data/interviewer';
-import { APIError } from '@/_apis/fetcher';
+import { APIError } from '@/_libs/error/errors';
 
 export default function InterviewerChoicePage() {
   const { data, isLoading, error } = useGetInterviewerList();
@@ -14,7 +14,12 @@ export default function InterviewerChoicePage() {
   }
 
   if (error) {
-    throw new APIError('인터뷰어 목록 조회에 실패했습니다. 다시 시도해주세요.', 404, 'NOT_FOUND', error);
+    throw new APIError({
+      message: '인터뷰어 목록 조회에 실패했습니다. 다시 시도해주세요.',
+      status: 404,
+      code: 'NOT_FOUND',
+      data: error,
+    });
   }
 
   return (

@@ -8,7 +8,7 @@ import {
 } from '@/_apis/result';
 import { useRouter, useParams } from 'next/navigation';
 import useToastStore from '@repo/store/useToastStore';
-import { APIError } from '@/_apis/fetcher';
+import { APIError } from '@/_libs/error/errors';
 
 export const useCreateResult = () => {
   const router = useRouter();

@@ -18,6 +18,7 @@ import {
   InterviewCreateRequestSchema,
   InterviewCreateResponseSchema,
 } from '@repo/schema/interview';
+import { APIError } from '@/_libs/error/errors';
 
 /**
  * 인터뷰 조회
@@ -100,21 +101,23 @@ export interface SpeechToTextData {
 }
 
 export const fetchSpeechToText = async ({ formData }: SpeechToTextProps): Promise<SpeechToTextData | undefined> => {
-  try {
-    const result = await fetch('/api/interview', {
-      method: 'POST',
-      body: formData,
+  const result = await fetch('/api/interview', {
+    method: 'POST',
+    body: formData,
+  });
+
+  const data = await result.json();
+
+  if (!result.ok) {
+    throw new APIError({
+      data,
+      message: data?.message || 'STT 에러',
+      status: data.status,
+      code: data.code,
     });
-
-    const data: SpeechToTextData = await result.json();
-    if (!result.ok) {
-      throw Error('Http Error');
-    }
-
-    return data;
-  } catch (err) {
-    console.error(err);
   }
+
+  return data as SpeechToTextData;
 };
 
 /**

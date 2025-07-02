@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import NotFoundError from '@/_components/layout/error/NotFoundError';
 import ServerError from '@/_components/layout/error/ServerError';
-import { APIError } from '@/_apis/fetcher';
+import { APIError } from '@/_libs/error/errors';
 
 export default function Error({
   error,
