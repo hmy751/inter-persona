@@ -1,9 +1,16 @@
 import { HandleErrorOptions, AppErrorConstructor } from '@/_libs/types/error';
 import useAlertDialogStore from '@repo/store/useAlertDialogStore';
 import useToastStore from '@repo/store/useToastStore';
-import { AuthError, ClientServerMismatchedError, NetworkError, AppError } from './errors';
-import { handleAuthAction, handleClientServerMismatchedAction, handleNetworkAction } from './handlers';
-import { handleRecordAction, RecordError } from './errors/RecordError';
+import AppError, {
+  AuthError,
+  handleAuthAction,
+  ClientServerMismatchedError,
+  handleClientServerMismatchedAction,
+  NetworkError,
+  handleNetworkAction,
+  handleRecordAction,
+  RecordError,
+} from './errors';
 
 class ErrorService {
   private registeredHandlers = new Map<AppErrorConstructor, (error: any) => void>();

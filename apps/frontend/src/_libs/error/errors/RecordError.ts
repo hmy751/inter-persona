@@ -1,4 +1,4 @@
-import { AppError, AppErrorParams } from '../errors';
+import AppError, { AppErrorParams } from './index';
 
 import useAlertDialogStore from '@repo/store/useAlertDialogStore';
 import useConfirmDialogStore from '@repo/store/useConfirmDialogStore';
