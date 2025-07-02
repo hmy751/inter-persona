@@ -14,7 +14,7 @@ import { ChatContentSpeakerType } from '@/_store/redux/type';
 import { useToastStore } from '@repo/store/useToastStore';
 import { STT_ERROR_TOAST, STT_NETWORK_ERROR_TOAST } from '../constants';
 import { errorService } from '@/_libs/error/service';
-import { AppError } from '@/_libs/error/errors';
+import AppError from '@/_libs/error/errors';
 
 const selectInterviewId = (state: RootState) => state.chat.interviewId;
 const selectTrySpeechCount = (state: RootState) => state.chat.trySpeechCount;
@@ -82,7 +82,7 @@ export function* speechToTextSaga(
       type: 'toast',
       title: '녹음 변환 에러',
       description:
-        (error instanceof Error && error?.message) || '요청에 실패했습니다. 새로고침 하여 인터뷰를 다시 시도해주세요!',
+        error instanceof AppError ? error?.message : '요청에 실패했습니다. 새로고침 하여 인터뷰를 다시 시도해주세요!',
     });
   }
 }

@@ -13,7 +13,7 @@ import { selectCurrentRecordingAnswer, selectInterviewStatus } from '@/_store/re
 import clsx from 'clsx';
 import { IDLE_ICON_SRC, RECORDING_ICON_SRC, DISABLED_ICON_SRC } from './constants';
 import { RecordError, RecordErrorType } from '@/_libs/error/errors/RecordError';
-import { AppError } from '@/_libs/error/errors';
+import AppError from '@/_libs/error/errors';
 import { errorService } from '@/_libs/error/service';
 
 import useToastStore from '@repo/store/useToastStore';
