@@ -1,6 +1,6 @@
 import type { ZodError } from 'zod';
 
-type AppErrorParams<TData = unknown> = {
+export type AppErrorParams<TData = unknown> = {
   message: string;
   code?: string;
   data: TData;
