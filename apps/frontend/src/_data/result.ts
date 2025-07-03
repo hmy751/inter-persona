@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
   fetchCreateResult,
   fetchGetResult,
@@ -54,7 +54,7 @@ export const useCreateResult = () => {
 };
 
 export const useGetResult = (resultId: number) => {
-  return useQuery({
+  return useSuspenseQuery({
     queryKey: resultQueryKeys.detail(resultId),
     queryFn: () => fetchGetResult({ id: resultId }),
   });
