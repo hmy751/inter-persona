@@ -1,6 +1,6 @@
 'use client';
 
-import InterviewerCard from '@/_components/pages/interviewer/InterviewerCard';
+import InterviewerCard from '@/_components/pages/interviewer/interviewerSection/InterviewerCard';
 import styles from './page.module.css';
 import Text from '@repo/ui/Text';
 import { useGetInterviewerList } from '@/_data/interviewer';
