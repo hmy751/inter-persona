@@ -45,6 +45,11 @@ const slice = createSlice({
         state.interviewStatus = 'ongoing';
       }
     },
+    resetChatState: state => {
+      state.contents = [];
+      state.interviewId = null;
+      state.interviewStatus = 'ongoing';
+    },
     startChat: (state, action: PayloadAction<{ interviewId: number }>) => {
       state.interviewId = action.payload.interviewId;
     },
@@ -93,6 +98,7 @@ const slice = createSlice({
 
 export const {
   initializeChatState,
+  resetChatState,
   triggerContent,
   updateContent,
   removeContent,

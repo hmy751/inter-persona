@@ -6,9 +6,14 @@ import { APIError } from '@/_libs/error/errors';
 
 type UserInfoResponse = z.infer<typeof UserInfoResponseSchema>;
 
+export const userQueryKeys = {
+  base: ['user'] as const,
+  info: () => [...userQueryKeys.base, 'info'] as const,
+};
+
 export const useGetUser = () => {
   return useQuery<UserInfoResponse>({
-    queryKey: ['user', 'info'],
+    queryKey: userQueryKeys.info(),
     queryFn: async () => {
       const response = await fetchUserInfo();
       const parsedData = UserInfoResponseSchema.safeParse(response);

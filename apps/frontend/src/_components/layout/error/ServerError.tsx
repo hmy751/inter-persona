@@ -22,7 +22,6 @@ export default function ServerError({
         {error instanceof APIError ? error.message : '일시적인 네트워크 오류가 발생했습니다'}
       </Text>
       <Button
-        variant="outline"
         color="primary"
         size="md"
         onClick={() => {

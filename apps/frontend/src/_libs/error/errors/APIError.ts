@@ -1,4 +1,4 @@
-import AppError, { AppErrorParams } from './index';
+import { AppErrorParams, AppError } from './index';
 
 type APIErrorParams<TData = unknown> = AppErrorParams<TData> & { status: number };
 

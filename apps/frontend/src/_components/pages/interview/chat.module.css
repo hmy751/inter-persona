@@ -103,3 +103,86 @@
     background-position: -200% 0;
   }
 }
+
+.recordButtonWrapper {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.skeletonAvatar {
+  width: var(--avatar-size-xl);
+  height: var(--avatar-size-xl);
+  border-radius: var(--radius-full);
+  background-color: var(--gray-200);
+  position: relative;
+  overflow: hidden;
+}
+
+.skeletonText {
+  height: 1.2rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--gray-200);
+  position: relative;
+  overflow: hidden;
+}
+
+.skeletonAvatar::after,
+.skeletonText::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0,
+    rgba(255, 255, 255, 0.2) 20%,
+    rgba(255, 255, 255, 0.5) 60%,
+    rgba(255, 255, 255, 0)
+  );
+  animation: shimmer 2s infinite;
+}
+
+.skeletonChat {
+  height: 60px;
+  width: 70%;
+  border-radius: var(--radius-lg);
+  background-color: var(--gray-200);
+  position: relative;
+  overflow: hidden;
+}
+
+.skeletonChat::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0,
+    rgba(255, 255, 255, 0.2) 20%,
+    rgba(255, 255, 255, 0.5) 60%,
+    rgba(255, 255, 255, 0)
+  );
+  animation: shimmer 2s infinite;
+}
+
+.skeletonChatInterviewer {
+  align-self: flex-start;
+}
+
+.skeletonChatUser {
+  align-self: flex-end;
+}

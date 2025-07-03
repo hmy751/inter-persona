@@ -1,5 +1,5 @@
 import type { ZodError } from 'zod';
-import AppError from './index';
+import { AppError } from './index';
 import useToastStore from '@repo/store/useToastStore';
 
 type ClientServerMismatchedErrorParams = {

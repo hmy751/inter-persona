@@ -1,19 +1,15 @@
+'use client';
+
 import Text from '@repo/ui/Text';
 import styles from './QuestionEvaluationSection.module.css';
 import { useGetResult } from '@/_data/result';
 import { useParams } from 'next/navigation';
+import { ErrorFallbackProps } from '@/_components/layout/error/ErrorBoundary';
+import Button from '@repo/ui/Button';
 
-export default function QuestionEvaluationSection(): React.ReactElement {
-  const resultId = useParams().resultId;
-  const { data, isLoading, error } = useGetResult(Number(resultId));
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>no data</div>;
-  }
+function QuestionEvaluationSection(): React.ReactElement {
+  const resultId = Number(useParams().resultId);
+  const { data } = useGetResult(resultId);
 
   return (
     <div className={styles.wrapper}>
@@ -33,3 +29,34 @@ export default function QuestionEvaluationSection(): React.ReactElement {
     </div>
   );
 }
+
+function Loading() {
+  return (
+    <div className={styles.wrapper}>
+      <div className={`${styles.skeletonTitle} ${styles.skeleton}`} />
+      {Array.from({ length: 3 }).map((_, index) => (
+        <div className={styles.question} key={index}>
+          <div className={`${styles.skeletonHeader} ${styles.skeleton}`} />
+          <div className={`${styles.skeletonText} ${styles.skeleton}`} />
+          <div className={`${styles.skeletonText} ${styles.skeleton}`} style={{ width: '80%' }} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Error({ resetErrorBoundary }: ErrorFallbackProps) {
+  return (
+    <div className={styles.wrapper}>
+      <Text as="p" size="md" color="error">
+        질문별 평가를 불러오는 데 실패했습니다.
+      </Text>
+      <Button onClick={resetErrorBoundary}>다시 시도</Button>
+    </div>
+  );
+}
+
+export default QuestionEvaluationSection;
+
+QuestionEvaluationSection.Loading = Loading;
+QuestionEvaluationSection.Error = Error;

@@ -1,4 +1,4 @@
-import AppError, { APIError } from '../error/errors';
+import { APIError, AppError } from '../error/errors';
 
 export type AppErrorConstructor = new (...args: any[]) => AppError<any>;
 

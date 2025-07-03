@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
   fetchCreateResult,
   fetchGetResult,
@@ -9,6 +9,14 @@ import {
 import { useRouter, useParams } from 'next/navigation';
 import useToastStore from '@repo/store/useToastStore';
 import { APIError } from '@/_libs/error/errors';
+
+export const resultQueryKeys = {
+  base: ['result'] as const,
+  detail: (resultId: number) => [...resultQueryKeys.base, resultId] as const,
+  score: (resultId: number) => [...resultQueryKeys.detail(resultId), 'score'] as const,
+  total: (resultId: number) => [...resultQueryKeys.detail(resultId), 'total'] as const,
+  question: (resultId: number) => [...resultQueryKeys.detail(resultId), 'question'] as const,
+};
 
 export const useCreateResult = () => {
   const router = useRouter();
@@ -46,35 +54,41 @@ export const useCreateResult = () => {
 };
 
 export const useGetResult = (resultId: number) => {
-  return useQuery({
-    queryKey: ['result', resultId],
+  return useSuspenseQuery({
+    queryKey: resultQueryKeys.detail(resultId),
     queryFn: () => fetchGetResult({ id: resultId }),
   });
 };
 
 export const useGetResultScore = () => {
-  const resultId = useParams().resultId;
+  const params = useParams();
+  const resultId = Array.isArray(params.resultId) ? Number(params.resultId[0]) : Number(params.resultId);
 
   return useQuery({
-    queryKey: ['result', resultId, 'score'],
-    queryFn: () => fetchGetResultScore({ resultId: Number(resultId) }),
+    queryKey: resultQueryKeys.score(resultId),
+    queryFn: () => fetchGetResultScore({ resultId }),
+    enabled: !!resultId,
   });
 };
 
 export const useGetResultTotalEvaluation = () => {
-  const resultId = useParams().resultId;
+  const params = useParams();
+  const resultId = Array.isArray(params.resultId) ? Number(params.resultId[0]) : Number(params.resultId);
 
   return useQuery({
-    queryKey: ['result', resultId, 'total'],
-    queryFn: () => fetchGetResultTotalEvaluation({ resultId: Number(resultId) }),
+    queryKey: resultQueryKeys.total(resultId),
+    queryFn: () => fetchGetResultTotalEvaluation({ resultId }),
+    enabled: !!resultId,
   });
 };
 
 export const useGetResultQuestionEvaluation = () => {
-  const resultId = useParams().resultId;
+  const params = useParams();
+  const resultId = Array.isArray(params.resultId) ? Number(params.resultId[0]) : Number(params.resultId);
 
   return useQuery({
-    queryKey: ['result', resultId, 'question'],
-    queryFn: () => fetchGetResultQuestionEvaluation({ resultId: Number(resultId) }),
+    queryKey: resultQueryKeys.question(resultId),
+    queryFn: () => fetchGetResultQuestionEvaluation({ resultId }),
+    enabled: !!resultId,
   });
 };

@@ -1,7 +1,8 @@
 import { HandleErrorOptions, AppErrorConstructor } from '@/_libs/types/error';
 import useAlertDialogStore from '@repo/store/useAlertDialogStore';
 import useToastStore from '@repo/store/useToastStore';
-import AppError, {
+import {
+  AppError,
   AuthError,
   handleAuthAction,
   ClientServerMismatchedError,

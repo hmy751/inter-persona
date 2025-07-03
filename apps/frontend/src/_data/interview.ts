@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { delay } from '@/_libs/utils';
 import {
   fetchCreateInterview,
@@ -20,18 +20,26 @@ import { useFunnelIdStore } from '@/_store/zustand/useFunnelIdStore';
 import { GTMInterviewerSelectedSuccess, GTMInterviewerSelectedFailed } from '@/_libs/utils/analysis/interviewer';
 import { getSessionId } from '@/_libs/utils/session';
 
+export const interviewQueryKeys = {
+  base: ['interview'] as const,
+  detail: (interviewId: number) => [...interviewQueryKeys.base, interviewId] as const,
+  contents: (interviewId: number) => [...interviewQueryKeys.detail(interviewId), 'contents'] as const,
+  interviewer: (interviewId: number) => [...interviewQueryKeys.detail(interviewId), 'interviewer'] as const,
+  user: (interviewId: number) => [...interviewQueryKeys.detail(interviewId), 'user'] as const,
+  status: (interviewId: number) => [...interviewQueryKeys.detail(interviewId), 'status'] as const,
+};
+
 export const useGetInterview = (interviewId: number) => {
-  return useQuery<GetInterviewResponse, APIError>({
-    queryKey: ['interview', interviewId],
+  return useSuspenseQuery<GetInterviewResponse, APIError>({
+    queryKey: interviewQueryKeys.detail(interviewId),
     queryFn: () => fetchGetInterview({ interviewId }),
-    enabled: !!interviewId,
   });
 };
 
 // 인터뷰 컨텐츠 조회
 export const useGetInterviewContents = (interviewId: number) => {
   return useQuery<GetInterviewContentsResponse, APIError>({
-    queryKey: ['interview', interviewId],
+    queryKey: interviewQueryKeys.contents(interviewId),
     queryFn: () => fetchGetInterviewContents({ interviewId }),
     enabled: !!interviewId,
   });
@@ -121,16 +129,23 @@ export const useCreateInterview = (userId: number, interviewerId: number, catego
 // 인터뷰, 인터뷰어 조회
 export const useGetInterviewInterviewer = (interviewId: number) => {
   return useQuery<GetInterviewInterviewerResponse, APIError>({
-    queryKey: ['interview', interviewId, 'interviewer'],
+    queryKey: interviewQueryKeys.interviewer(interviewId),
     queryFn: () => fetchGetInterviewInterviewer({ interviewId }),
     enabled: !!interviewId,
+  });
+};
+
+export const useSuspenseGetInterviewInterviewer = (interviewId: number) => {
+  return useSuspenseQuery<GetInterviewInterviewerResponse, APIError>({
+    queryKey: interviewQueryKeys.interviewer(interviewId),
+    queryFn: () => fetchGetInterviewInterviewer({ interviewId }),
   });
 };
 
 // 인터뷰, 유저 조회
 export const useGetInterviewUser = (interviewId: number) => {
   return useQuery<GetInterviewUserResponse, APIError>({
-    queryKey: ['interview', interviewId, 'user'],
+    queryKey: interviewQueryKeys.user(interviewId),
     queryFn: () => fetchGetInterviewUser({ interviewId }),
     enabled: !!interviewId,
   });
@@ -139,7 +154,7 @@ export const useGetInterviewUser = (interviewId: number) => {
 // 인터뷰 상태 조회
 export const useGetInterviewStatus = (interviewId: number) => {
   return useQuery<GetInterviewStatusResponse, APIError>({
-    queryKey: ['interview', interviewId, 'status'],
+    queryKey: interviewQueryKeys.status(interviewId),
     queryFn: () => fetchGetInterviewStatus({ interviewId }),
   });
 };
