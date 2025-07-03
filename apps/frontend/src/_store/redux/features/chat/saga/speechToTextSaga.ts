@@ -14,7 +14,7 @@ import { ChatContentSpeakerType } from '@/_store/redux/type';
 import { useToastStore } from '@repo/store/useToastStore';
 import { STT_ERROR_TOAST, STT_NETWORK_ERROR_TOAST } from '../constants';
 import { errorService } from '@/_libs/error/service';
-import AppError from '@/_libs/error/errors';
+import { AppError } from '@/_libs/error/errors';
 
 const selectInterviewId = (state: RootState) => state.chat.interviewId;
 const selectTrySpeechCount = (state: RootState) => state.chat.trySpeechCount;
