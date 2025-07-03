@@ -30,10 +30,9 @@ export const interviewQueryKeys = {
 };
 
 export const useGetInterview = (interviewId: number) => {
-  return useQuery<GetInterviewResponse, APIError>({
+  return useSuspenseQuery<GetInterviewResponse, APIError>({
     queryKey: interviewQueryKeys.detail(interviewId),
     queryFn: () => fetchGetInterview({ interviewId }),
-    enabled: !!interviewId,
   });
 };
 

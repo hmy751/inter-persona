@@ -25,8 +25,6 @@ export default function Page({ params }: { params: { interviewId: string } }) {
     });
   }
 
-  const resetQueryKeys = [interviewQueryKeys.interviewer(interviewId)];
-
   return (
     <div className={styles.container}>
       <Text as="h2" size="lg" className={styles.title}>
@@ -36,14 +34,24 @@ export default function Page({ params }: { params: { interviewId: string } }) {
       <ErrorBoundary
         fallbackRender={InterviewerProfileSection.Error}
         resetConfig={{
-          queryKeysToRemove: resetQueryKeys,
+          queryKeysToRemove: [interviewQueryKeys.interviewer(interviewId)],
         }}
       >
         <Suspense fallback={<InterviewerProfileSection.Loading />}>
           <InterviewerProfileSection />
         </Suspense>
       </ErrorBoundary>
-      <ChatSection />
+      <ErrorBoundary
+        fallbackRender={ChatSection.Error}
+        resetConfig={{
+          queryKeysToRemove: [interviewQueryKeys.detail(interviewId)],
+          reduxNameToRemove: ['chat'],
+        }}
+      >
+        <Suspense fallback={<ChatSection.Loading />}>
+          <ChatSection />
+        </Suspense>
+      </ErrorBoundary>
     </div>
   );
 }
