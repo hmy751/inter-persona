@@ -1,6 +1,6 @@
 'use client';
 
-import { ErrorBoundary as ReactErrorBoundary } from 'react-error-boundary';
+import { ErrorBoundary as ReactErrorBoundary, FallbackProps as ReactFallbackProps } from 'react-error-boundary';
 import { useQueryErrorResetBoundary, useQueryClient, QueryKey } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import { errorService } from '@/_libs/error/service';
@@ -8,6 +8,8 @@ import { useDispatch } from 'react-redux';
 import { resetChatState } from '@/_store/redux/features/chat/slice';
 
 type ReduxStoreName = 'chat';
+
+export type ErrorFallbackProps = ReactFallbackProps;
 
 interface ResetConfig {
   queryKeysToRemove?: QueryKey[];
@@ -18,7 +20,7 @@ interface ResetConfig {
 interface Props {
   children: React.ReactNode;
   resetConfig: ResetConfig;
-  fallbackRender: React.ReactNode;
+  fallbackRender: (props: ErrorFallbackProps) => React.ReactNode;
 }
 
 export function ErrorBoundary({ children, resetConfig = {}, fallbackRender }: Props) {
@@ -35,7 +37,9 @@ export function ErrorBoundary({ children, resetConfig = {}, fallbackRender }: Pr
     }
 
     if (queryKeysToRemove) {
-      queryClient.resetQueries({ queryKey: queryKeysToRemove });
+      queryKeysToRemove.forEach(queryKey => {
+        queryClient.resetQueries({ queryKey: queryKey });
+      });
     } else {
       reset();
     }
@@ -54,7 +58,7 @@ export function ErrorBoundary({ children, resetConfig = {}, fallbackRender }: Pr
   return (
     <ReactErrorBoundary
       onReset={handleReset}
-      fallbackRender={() => fallbackRender}
+      fallbackRender={fallbackRender}
       onError={(error, info) => {
         errorService.handle(error, {
           type: 'silent',

@@ -58,3 +58,35 @@ export default function InterviewerCard({
     </div>
   );
 }
+
+function Loading() {
+  return (
+    <div className={styles.wrapper}>
+      <div className={`${styles.imageWrapper} ${styles.skeleton}`} style={{ height: '150px' }} />
+      <div className={styles.content}>
+        <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '90%' }} />
+        <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '40%' }} />
+        <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '60%' }} />
+        <div className={styles.buttonWrapper}>
+          <div className={`${styles.skeleton} ${styles.skeletonButton}`} />
+          <div className={`${styles.skeleton} ${styles.skeletonButton}`} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Error() {
+  return (
+    <div className={styles.wrapper}>
+      <div className={styles.content}>
+        <Text as="p" size="lg" color="error">
+          면접관 정보를 불러오는데 실패했습니다.
+        </Text>
+      </div>
+    </div>
+  );
+}
+
+InterviewerCard.Loading = Loading;
+InterviewerCard.Error = Error;
