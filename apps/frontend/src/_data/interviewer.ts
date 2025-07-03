@@ -6,11 +6,13 @@ import { ClientServerMismatchedError } from '@/_libs/error/errors';
 
 type InterviewerListResponse = z.infer<typeof InterviewerListResponseSchema>;
 
-export const QUERY_KEY = ['interviewer'] as QueryKey;
+export const interviewerQueryKeys = {
+  all: ['interviewer'] as const,
+};
 
 export const useSuspenseGetInterviewerList = () => {
   return useSuspenseQuery<InterviewerListResponse>({
-    queryKey: QUERY_KEY,
+    queryKey: interviewerQueryKeys.all,
     queryFn: async () => {
       const response = await fetchInterviewerList();
       const parsedData = InterviewerListResponseSchema.safeParse(response);

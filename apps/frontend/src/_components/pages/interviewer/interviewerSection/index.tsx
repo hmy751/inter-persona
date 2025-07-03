@@ -1,6 +1,6 @@
 'use client';
 
-import { useSuspenseGetInterviewerList, QUERY_KEY } from '@/_data/interviewer';
+import { useSuspenseGetInterviewerList, interviewerQueryKeys } from '@/_data/interviewer';
 import InterviewerCard from '@/_components/pages/interviewer/interviewerSection/InterviewerCard';
 import Text from '@repo/ui/Text';
 import { ErrorFallbackProps } from '@/_components/layout/error/ErrorBoundary';
@@ -49,4 +49,4 @@ export default function InterviewerSection() {
 InterviewerSection.Loading = Loading;
 InterviewerSection.Error = Error;
 
-export const resetQueryKeys = [QUERY_KEY];
+export const resetQueryKeys = [interviewerQueryKeys.all];
