@@ -1,4 +1,4 @@
-import { HandleErrorOptions, AppErrorConstructor } from '@/_libs/types/error';
+import { ErrorFallbackOptions, AppErrorConstructor } from '@/_libs/types/error';
 import useAlertDialogStore from '@repo/store/useAlertDialogStore';
 import useToastStore from '@repo/store/useToastStore';
 import {
@@ -24,12 +24,16 @@ class ErrorService {
   /**
    * 모든 에러 처리의 단일 진입점.
    * @param error 처리할 에러 객체
-   * @param options 에러 처리(주로 UI)에 대한 옵션
+   * @param errorFallbackOptions 에러 처리(주로 UI)에 대한 옵션
    * @param bypassRegisteredHandlers true로 설정하면, 등록된 전용 핸들러를 실행하지 않음
    */
-  public handle(error: unknown, options: HandleErrorOptions = {}, bypassRegisteredHandlers: boolean = false): void {
-    const { context } = options;
-    this.logger.log(error, { context, options, bypassRegisteredHandlers });
+  public handle(
+    error: unknown,
+    errorFallbackOptions: ErrorFallbackOptions = {},
+    bypassRegisteredHandlers: boolean = false
+  ): void {
+    const { context } = errorFallbackOptions;
+    this.logger.log(error, { context, errorFallbackOptions, bypassRegisteredHandlers });
 
     // bypassRegisteredHandlers가 false이고, 에러가 AppError일 때만 전용 핸들러를 확인
     if (!bypassRegisteredHandlers && error instanceof AppError) {
@@ -41,18 +45,19 @@ class ErrorService {
     }
 
     // 전용 핸들러를 건너뛰었거나 맞는 핸들러가 없는 경우
-    if (options.type) {
-      this.displayUI(error, options);
+    if (errorFallbackOptions.type) {
+      this.displayUI(error, errorFallbackOptions);
     } else {
       // type이 지정되지 않으면 Error Boundary로 전파 (기본 안전장치)
       throw error;
     }
   }
 
-  private displayUI(error: unknown, options: HandleErrorOptions): void {
+  private displayUI(error: unknown, errorFallbackOptions: ErrorFallbackOptions): void {
     const message =
-      (error instanceof AppError ? error.message : options.description) || '알 수 없는 오류가 발생했습니다.';
-    const { type = 'toast', title = '알림' } = options;
+      (error instanceof AppError ? error.message : errorFallbackOptions.description) ||
+      '알 수 없는 오류가 발생했습니다.';
+    const { type = 'toast', title = '알림' } = errorFallbackOptions;
 
     console.log(`🎨 Displaying UI (${type})`, { title, message });
 
@@ -82,7 +87,7 @@ class ErrorService {
 class ErrorLogger {
   log(
     error: unknown,
-    metadata: { context?: string; options: HandleErrorOptions; bypassRegisteredHandlers: boolean }
+    metadata: { context?: string; errorFallbackOptions: ErrorFallbackOptions; bypassRegisteredHandlers: boolean }
   ): void {
     console.error('📊 [Error Log]', {
       error,
