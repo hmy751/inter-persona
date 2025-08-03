@@ -172,8 +172,8 @@ importers:
         specifier: ^5.56.2
         version: 5.74.0(react@18.2.0)
       '@xstate/react':
-        specifier: ^6.0.0
-        version: 6.0.0(@types/react@18.3.20)(react@18.2.0)(xstate@5.20.1)
+        specifier: ^5
+        version: 5.0.5(@types/react@18.3.20)(react@18.2.0)(xstate@5.20.1)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -3662,11 +3662,11 @@ packages:
   '@webgpu/types@0.1.60':
     resolution: {integrity: sha512-8B/tdfRFKdrnejqmvq95ogp8tf52oZ51p3f4QD5m5Paey/qlX4Rhhy5Y8tgFMi7Ms70HzcMMw3EQjH/jdhTwlA==}
 
-  '@xstate/react@6.0.0':
-    resolution: {integrity: sha512-xXlLpFJxqLhhmecAXclBECgk+B4zYSrDTl8hTfPZBogkn82OHKbm9zJxox3Z/YXoOhAQhKFTRLMYGdlbhc6T9A==}
+  '@xstate/react@5.0.5':
+    resolution: {integrity: sha512-MfF/cPHa3lNKJmGFpUycMbNP25qBXyZXrxc8VYNroAu0Nnk0DV5WzAkTcQXma0xEC4dSwsoA+YQuKbZATtqvgg==}
     peerDependencies:
       react: 18.2.0
-      xstate: ^5.20.0
+      xstate: ^5.19.4
     peerDependenciesMeta:
       xstate:
         optional: true
@@ -7873,6 +7873,7 @@ packages:
   source-map@0.8.0-beta.0:
     resolution: {integrity: sha512-2ymg6oRBpebeZi9UUNsgQ89bhx01TcTkmNTGnNO88imTmbSgy4nfujrgVEFKWpMTEGA11EDkTt7mqObTPdigIA==}
     engines: {node: '>= 8'}
+    deprecated: The work that was done in this beta branch won't be included in future versions
 
   spdx-correct@3.2.0:
     resolution: {integrity: sha512-kN9dJbvnySHULIluDHy32WHRUu3Og7B9sbY7tsFLctQkIqnMh3hErYgdMjTYuqmcXX+lK5T1lnUt3G7zNswmZA==}
@@ -13368,7 +13369,7 @@ snapshots:
 
   '@webgpu/types@0.1.60': {}
 
-  '@xstate/react@6.0.0(@types/react@18.3.20)(react@18.2.0)(xstate@5.20.1)':
+  '@xstate/react@5.0.5(@types/react@18.3.20)(react@18.2.0)(xstate@5.20.1)':
     dependencies:
       react: 18.2.0
       use-isomorphic-layout-effect: 1.2.1(@types/react@18.3.20)(react@18.2.0)
