@@ -4,7 +4,7 @@ export type AppErrorConstructor = new (...args: any[]) => AppError<any>;
 
 export type ErrorType = 'silent' | 'boundary' | 'dialog' | 'toast';
 
-export interface HandleErrorOptions {
+export interface ErrorFallbackOptions {
   type?: ErrorType;
   title?: string;
   description?: string;
@@ -15,4 +15,4 @@ export interface ErrorHandler {
   (error: any): void;
 }
 
-export type DefaultErrorHandler = (error: APIError, options: HandleErrorOptions) => void;
+export type DefaultErrorHandler = (error: APIError, options: ErrorFallbackOptions) => void;
