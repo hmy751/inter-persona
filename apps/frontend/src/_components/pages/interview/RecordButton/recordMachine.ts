@@ -17,16 +17,17 @@ type RecordEvent =
   | { type: 'RECORD' }
   | { type: 'STOP' }
   | {
-      type: 'xstate.done.invoke.initializeReusableResources';
+      type: 'initializeAudioContext.onDone';
       output: { audioContext: AudioContext; analyserNode: AnalyserNode };
     }
-  | { type: 'xstate.error.invoke.initializeReusableResources'; error: Error }
-  | { type: 'xstate.done.invoke.getMediaStream'; output: MediaStream }
-  | { type: 'xstate.error.invoke.getMediaStream'; error: Error }
-  | { type: 'xstate.done.invoke.stopAndGetBlob'; output: Blob }
-  | { type: 'xstate.error.invoke.stopAndGetBlob'; error: Error }
+  | { type: 'initializeAudioContext.onError'; error: Error }
+  | { type: 'getMediaStreamAndConnectSourceNode.onDone'; output: MediaStream }
+  | { type: 'getMediaStreamAndConnectSourceNode.onError'; error: Error }
+  | { type: 'stopAndGetBlob.onDone'; output: Blob }
+  | { type: 'stopAndGetBlob.onError'; error: Error }
   | { type: 'COMPLETED' }
-  | { type: 'FAILED' };
+  | { type: 'FAILED' }
+  | { type: 'CLEAR_ERROR' };
 
 export const recorderActors = {
   initializeAudioContext: fromPromise(async () => {
@@ -71,7 +72,7 @@ export const recordMachine = setup({
       stream: null,
       recorder: null,
     }),
-    cleanupError: assign({
+    clearError: assign({
       error: null,
     }),
   },
@@ -108,6 +109,11 @@ export const recordMachine = setup({
       },
     },
     ready: {
+      on: {
+        CLEAR_ERROR: {
+          actions: ['clearError'],
+        },
+      },
       initial: 'waitingForRecord',
       states: {
         waitingForRecord: {
@@ -115,6 +121,7 @@ export const recordMachine = setup({
         },
         gettingPermission: {
           invoke: {
+            id: 'getMediaStreamAndConnectSourceNode',
             src: 'getMediaStreamAndConnectSourceNode',
             input: ({ context }) => ({ analyserNode: context.analyserNode!, audioContext: context.audioContext! }),
             onDone: {
@@ -150,6 +157,7 @@ export const recordMachine = setup({
         },
         processing: {
           invoke: {
+            id: 'stopAndGetBlob',
             src: 'stopAndGetBlob',
             input: ({ context }) => ({ recorder: context.recorder! }),
             onDone: {
