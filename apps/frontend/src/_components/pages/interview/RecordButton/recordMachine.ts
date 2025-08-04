@@ -49,15 +49,16 @@ export const recorderActors = {
     return blob;
   }),
   detectSilence: fromCallback(({ sendBack, input }) => {
-    const { analyser, options } = input as {
+    const { analyser } = input as {
       analyser: AnalyserNode;
-      options?: { silenceThreshold?: number; timeout?: number };
     };
     const dataArray = new Uint8Array(analyser.frequencyBinCount);
     const onSilence = () => sendBack({ type: 'STOP' });
+    const cleanup = detectSilence(analyser, dataArray, onSilence);
 
-    const cleanup = detectSilence(analyser, dataArray, onSilence, options);
-    return cleanup;
+    return () => {
+      cleanup();
+    };
   }),
 };
 
@@ -154,7 +155,6 @@ export const recordMachine = setup({
             ({ context }) => {
               context.stream?.getTracks().forEach(track => track.stop());
             },
-            'cleanupRecorderStream',
           ],
           on: { STOP: 'processing' },
         },
@@ -178,7 +178,7 @@ export const recordMachine = setup({
             COMPLETED: 'waitingForRecord',
             FAILED: 'waitingForRecord',
           },
-          exit: assign({ audioBlob: () => null }),
+          exit: [assign({ audioBlob: () => null }), 'cleanupRecorderStream'],
         },
       },
     },
