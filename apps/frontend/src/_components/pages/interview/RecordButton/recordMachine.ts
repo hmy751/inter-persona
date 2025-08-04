@@ -1,0 +1,176 @@
+import { assign, fromPromise, fromCallback, setup } from 'xstate';
+import Recorder from 'recorder-js';
+import { detectSilence } from './utils';
+import { AppError } from '@/_libs/error/errors';
+
+export type RecordContext = {
+  audioContext: AudioContext | null;
+  analyserNode: AnalyserNode | null;
+  stream: MediaStream | null;
+  recorder: Recorder | null;
+  audioBlob: Blob | null;
+  error: Error | AppError | null;
+};
+
+type RecordEvent =
+  | { type: 'SETUP' }
+  | { type: 'RECORD' }
+  | { type: 'STOP' }
+  | {
+      type: 'xstate.done.invoke.initializeReusableResources';
+      output: { audioContext: AudioContext; analyserNode: AnalyserNode };
+    }
+  | { type: 'xstate.error.invoke.initializeReusableResources'; error: Error }
+  | { type: 'xstate.done.invoke.getMediaStream'; output: MediaStream }
+  | { type: 'xstate.error.invoke.getMediaStream'; error: Error }
+  | { type: 'xstate.done.invoke.stopAndGetBlob'; output: Blob }
+  | { type: 'xstate.error.invoke.stopAndGetBlob'; error: Error }
+  | { type: 'COMPLETED' }
+  | { type: 'FAILED' };
+
+export const recorderActors = {
+  initializeAudioContext: fromPromise(async () => {
+    const audioContext = new window.AudioContext();
+    const analyserNode = audioContext.createAnalyser();
+    analyserNode.fftSize = 2048;
+    return { audioContext, analyserNode };
+  }),
+  getMediaStreamAndConnectSourceNode: fromPromise(
+    async ({ input }: { input: { audioContext: AudioContext; analyserNode: AnalyserNode } }) => {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const sourceNode = input.audioContext!.createMediaStreamSource(stream);
+      sourceNode.connect(input.analyserNode!);
+      return stream;
+    }
+  ),
+  stopAndGetBlob: fromPromise(async ({ input }: { input: { recorder: Recorder } }) => {
+    const { blob } = await input.recorder.stop();
+    return blob;
+  }),
+  detectSilence: fromCallback(({ sendBack, input }) => {
+    const { analyser } = input as { analyser: AnalyserNode };
+    const dataArray = new Uint8Array(analyser.frequencyBinCount);
+    const cleanup = detectSilence(analyser, dataArray, () => {
+      sendBack({ type: 'STOP' });
+    });
+    return cleanup;
+  }),
+};
+
+export const recordMachine = setup({
+  // setup을 사용할 시 주의사항은 클라이언트나 서버사이드 렌더링 환경을 꼭 고려해야한다.
+  types: {
+    context: {} as RecordContext,
+    events: {} as RecordEvent,
+  },
+  actors: {
+    ...recorderActors,
+  },
+  actions: {
+    cleanupRecorderStream: assign({
+      stream: null,
+      recorder: null,
+    }),
+    cleanupError: assign({
+      error: null,
+    }),
+  },
+}).createMachine({
+  id: 'recordButton',
+  context: {
+    // settingUp, 재사용
+    audioContext: null,
+    analyserNode: null,
+    // 매 녹음마다 초기화
+    stream: null,
+    recorder: null,
+    audioBlob: null,
+    error: null,
+  },
+  initial: 'idle',
+  states: {
+    idle: { on: { SETUP: 'settingUp' } },
+    settingUp: {
+      invoke: {
+        id: 'initializeAudioContext',
+        src: 'initializeAudioContext',
+        onDone: {
+          target: 'ready',
+          actions: assign({
+            audioContext: ({ event }) => event.output.audioContext,
+            analyserNode: ({ event }) => event.output.analyserNode,
+          }),
+        },
+        onError: {
+          target: 'failure',
+          actions: assign({ error: ({ event }) => event.error as Error }),
+        },
+      },
+    },
+    ready: {
+      initial: 'waitingForRecord',
+      states: {
+        waitingForRecord: {
+          on: { RECORD: 'gettingPermission' },
+        },
+        gettingPermission: {
+          invoke: {
+            src: 'getMediaStreamAndConnectSourceNode',
+            input: ({ context }) => ({ analyserNode: context.analyserNode!, audioContext: context.audioContext! }),
+            onDone: {
+              target: 'recording',
+              actions: assign({ stream: ({ event }) => event.output }),
+            },
+            onError: {
+              target: 'waitingForRecord',
+              actions: assign({ error: ({ event }) => event.error as Error }),
+            },
+          },
+        },
+        recording: {
+          entry: assign({
+            recorder: ({ context }) => {
+              const recorder = new Recorder(context.audioContext!);
+              recorder.init(context.stream!);
+              recorder.start();
+              return recorder;
+            },
+          }),
+          invoke: {
+            src: 'detectSilence',
+            input: ({ context }) => ({ analyser: context.analyserNode! }),
+          },
+          exit: [
+            ({ context }) => {
+              context.stream?.getTracks().forEach(track => track.stop());
+            },
+            'cleanupRecorderStream',
+          ],
+          on: { STOP: 'processing' },
+        },
+        processing: {
+          invoke: {
+            src: 'stopAndGetBlob',
+            input: ({ context }) => ({ recorder: context.recorder! }),
+            onDone: {
+              target: 'uploading',
+              actions: assign({ audioBlob: ({ event }) => event.output }),
+            },
+            onError: {
+              target: 'waitingForRecord',
+              actions: assign({ error: ({ event }) => event.error as Error }),
+            },
+          },
+        },
+        uploading: {
+          on: {
+            COMPLETED: 'waitingForRecord',
+            FAILED: 'waitingForRecord',
+          },
+          exit: assign({ audioBlob: () => null }),
+        },
+      },
+    },
+    failure: { type: 'final' },
+  },
+});
