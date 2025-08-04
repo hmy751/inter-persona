@@ -49,11 +49,14 @@ export const recorderActors = {
     return blob;
   }),
   detectSilence: fromCallback(({ sendBack, input }) => {
-    const { analyser } = input as { analyser: AnalyserNode };
+    const { analyser, options } = input as {
+      analyser: AnalyserNode;
+      options?: { silenceThreshold?: number; timeout?: number };
+    };
     const dataArray = new Uint8Array(analyser.frequencyBinCount);
-    const cleanup = detectSilence(analyser, dataArray, () => {
-      sendBack({ type: 'STOP' });
-    });
+    const onSilence = () => sendBack({ type: 'STOP' });
+
+    const cleanup = detectSilence(analyser, dataArray, onSilence, options);
     return cleanup;
   }),
 };
