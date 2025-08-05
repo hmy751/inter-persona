@@ -10,9 +10,10 @@ const customConfig: Config = {
   ...baseConfig,
   moduleDirectories: ['node_modules', '<rootDir>/'],
   moduleNameMapper: {
+    ...baseConfig.moduleNameMapper,
     '^@/(.*)$': '<rootDir>/src/$1',
   },
-  transformIgnorePatterns: ['/node_modules/(?!@repo/testing-config/)', '^.+\\.module\\.(css|sass|scss)$'],
+  transformIgnorePatterns: ['/node_modules/(?!(@repo/|uuid|react-error-boundary|msw|@tanstack))', '^.+\\.module\\.(css|sass|scss)$'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
 };
 

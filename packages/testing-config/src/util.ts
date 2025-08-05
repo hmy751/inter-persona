@@ -5,7 +5,7 @@ const getRootDir = () => {
 };
 
 const getMockPath = (pathString: string) => {
-  return path.join(getRootDir(), 'packages/testing-config/src/mocks', pathString);
+  return path.join(getRootDir(), 'packages/testing-config/mocks', pathString);
 };
 
 const getTestingConfigPath = (pathString: string) => {

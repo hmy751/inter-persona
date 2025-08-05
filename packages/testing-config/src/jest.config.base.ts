@@ -5,6 +5,16 @@ const baseConfig = {
   // preset: "ts-jest",
   collectCoverageFrom: ['**/*.{js,jsx,ts,tsx}', '!**/*.d.ts', '!**/node_modules/**'],
   moduleNameMapper: {
+    // 워크스페이스 패키지 매핑
+    '^@repo/constant/(.*)$': '<rootDir>/../../packages/constant/dist/$1.js',
+    '^@repo/schema/(.*)$': '<rootDir>/../../packages/schema/dist/$1.js',
+    '^@repo/store$': '<rootDir>/../../packages/store/index.ts',
+    '^@repo/store/(.*)$': '<rootDir>/../../packages/store/$1.ts',
+    
+    // ESM 패키지 모킹
+    '^uuid$': getMockPath('uuid.js'),
+    '^react-error-boundary$': getMockPath('react-error-boundary.js'),
+    
     '^.+\\.module\\.(css|sass|scss)$': 'identity-obj-proxy',
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
     '\\.(css|less|scss|sass)\\?modules$': 'identity-obj-proxy',
