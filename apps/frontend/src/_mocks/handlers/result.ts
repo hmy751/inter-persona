@@ -14,8 +14,8 @@ import { InterviewerSchema } from '@repo/schema/interviewer';
 import { baseURL } from '@/_apis/fetcher';
 import { DEFAULT_PROFILE_IMAGE_URL } from '@repo/constant/name';
 
-const CREATE_RESULT_PATH = `${baseURL}/result`;
-const GET_RESULT_PATH = `${baseURL}/result/:id`;
+const CREATE_RESULT_PATH = `${baseURL}/api/result`;
+const GET_RESULT_PATH = `${baseURL}/api/result/:id`;
 
 const results: Array<ReturnType<typeof GetResultResponseSchema.parse>> = [];
 

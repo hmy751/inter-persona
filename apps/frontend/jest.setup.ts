@@ -1,3 +1,8 @@
+import dotenv from 'dotenv';
+import path from 'path';
+
+dotenv.config({ path: path.resolve(process.cwd(), 'apps/frontend/.env.test') });
+
 import '@testing-library/jest-dom';
 
 import '@repo/testing-config/jest.setup.base';
