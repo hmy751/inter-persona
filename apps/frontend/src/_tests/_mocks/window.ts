@@ -1,18 +1,39 @@
 /**
  * window.navigator
  */
-export const mockStream = {};
-const mockGetUserMedia = jest.fn().mockResolvedValue(mockStream);
+const mockStopTrack = jest.fn();
+export const mockStream = {
+  getTracks: jest.fn(() => [{ stop: mockStopTrack }]),
+};
+export const mockGetUserMedia = jest.fn().mockResolvedValue(mockStream);
 
-if (!window.navigator.mediaDevices) {
-  Object.defineProperty(window.navigator, 'mediaDevices', {
-    writable: true,
+function ensureMediaDevices() {
+  if (!window.navigator.mediaDevices) {
+    Object.defineProperty(window.navigator, 'mediaDevices', {
+      writable: true,
+      configurable: true,
+      enumerable: true,
+      value: {},
+    });
+  }
+
+  Object.defineProperty(window.navigator.mediaDevices, 'getUserMedia', {
     configurable: true,
     enumerable: true,
-    value: {
-      getUserMedia: mockGetUserMedia,
-    },
+    writable: true,
+    value: mockGetUserMedia,
   });
+}
+
+ensureMediaDevices();
+
+export function resetMediaDevicesMock() {
+  mockStopTrack.mockReset();
+  mockStream.getTracks.mockReset();
+  mockStream.getTracks.mockImplementation(() => [{ stop: mockStopTrack }]);
+  mockGetUserMedia.mockReset();
+  mockGetUserMedia.mockResolvedValue(mockStream);
+  ensureMediaDevices();
 }
 
 /**
