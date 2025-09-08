@@ -79,3 +79,13 @@ const MockFormData = jest.fn().mockImplementation(() => mockFormData);
 Object.defineProperty(window, 'FormData', {
   value: MockFormData,
 });
+
+/**
+ * GTM window.dataLayer 목킹
+ */
+Object.defineProperty(window, 'dataLayer', {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  value: [],
+});
