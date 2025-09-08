@@ -12,6 +12,16 @@ import Recorder from 'recorder-js';
 import { mockStream, mockFormData } from '@/_tests/_mocks/window';
 import { renderWithProviders } from '@/_tests/_mocks/providers';
 import { createSuccessRecordingSetup, createTestSetup } from '@/_tests/_utils/recordingTest';
+import { useMachine } from '@xstate/react';
+
+jest.mock('@xstate/react');
+const mockUseMachine = useMachine as jest.Mock;
+const mockSend = jest.fn();
+
+jest.mock('@/_data/interview', () => ({
+  useGetInterview: () => mockUseGetInterview(),
+}));
+const mockUseGetInterview = jest.fn();
 
 afterEach(() => {
   jest.clearAllMocks();
@@ -19,24 +29,52 @@ afterEach(() => {
 });
 
 describe('녹음 버튼 UI 상태 테스트', () => {
-  it('초기에는 일반 버튼 상태로 시작한다.', async () => {
+  beforeEach(() => {
+    mockUseGetInterview.mockReturnValue({
+      data: {
+        interview: {
+          status: 'ongoing',
+          contents: [],
+        },
+      },
+      isLoading: false,
+    });
+  });
+
+  afterEach(() => {
+    mockSend.mockClear();
+    mockUseMachine.mockClear();
+    mockUseGetInterview.mockClear();
+  });
+
+  it('머신이 idle 상태일 때, 기본 아이콘을 보여준다.', async () => {
+    mockUseMachine.mockReturnValue([{ matches: (state: string) => state === 'idle', context: {} }, mockSend]);
+
     renderWithProviders(<RecordButton />);
 
-    const recordButton = screen.getByTestId('record-button');
+    // screen.debug();
+
+    const recordButton = await screen.findByTestId('record-button');
 
     expect(recordButton.getAttribute('src')).toBe(IDLE_ICON_SRC);
   });
 
-  it('녹음 버튼을 누르면, 녹음 상태로 변경된다.', async () => {
+  it('머신이 recording 상태일 때, 녹음 아이콘을 보여준다.', async () => {
+    mockUseMachine.mockReturnValue([
+      { matches: (state: { ready: 'recording' }) => state?.ready === 'recording', context: {} },
+      mockSend,
+    ]);
+
     renderWithProviders(<RecordButton />);
 
-    const recordButton = screen.getByTestId('record-button');
+    const recordButton = await screen.findByTestId('record-button');
+
     await userEvent.click(recordButton);
 
     expect(screen.getByTestId('record-button')).toHaveAttribute('src', RECORDING_ICON_SRC);
   });
 
-  it('응답에 실패하면, 비활성 상태로 변경된다.', async () => {
+  it('isDisabledRecord가 true일 때, 비활성화 아이콘을 보여준다.', async () => {
     const preloadedState = {
       chat: {
         interviewId: 1,
@@ -58,20 +96,40 @@ describe('녹음 버튼 UI 상태 테스트', () => {
     expect(await screen.findByTestId('record-button')).toHaveAttribute('src', DISABLED_ICON_SRC);
   });
 
-  it('녹음이 완료되면 초기 일반 상태로 돌아간다.', async () => {
+  it('머신이 recording 상태에서 버튼을 클릭하면, "STOP" 이벤트를 전송한다.', async () => {
+    mockUseMachine.mockReturnValue([
+      { matches: (state: { ready: 'recording' }) => state?.ready === 'recording', context: {} },
+      mockSend,
+    ]);
+
     renderWithProviders(<RecordButton />);
 
-    const recordButton = screen.getByTestId('record-button');
+    const recordButton = await screen.findByTestId('record-button');
 
     await userEvent.click(recordButton);
 
-    waitFor(() => {
-      expect(screen.getByTestId('record-button')).toHaveAttribute('src', RECORDING_ICON_SRC);
+    await waitFor(() => {
+      expect(mockSend).toHaveBeenLastCalledWith({ type: 'STOP' });
+    });
+  });
+
+  it('인터뷰가 완료되었을 때, "결과 보기" 버튼을 보여준다.', async () => {
+    mockUseMachine.mockReturnValue([{ matches: (state: string) => state === 'idle', context: {} }, mockSend]);
+
+    mockUseGetInterview.mockReturnValueOnce({
+      data: {
+        interview: {
+          status: 'completed',
+        },
+      },
+      isLoading: false,
     });
 
-    waitFor(() => {
-      expect(screen.getByTestId('record-button')).toHaveAttribute('src', IDLE_ICON_SRC);
-    });
+    renderWithProviders(<RecordButton />);
+
+    const resultButton = await screen.findByTestId('result-button');
+
+    expect(resultButton).toBeInTheDocument();
   });
 });
 

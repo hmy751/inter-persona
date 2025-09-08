@@ -44,7 +44,6 @@ export default function RecordButton() {
   const { addToast } = useToastStore();
   const { mutate, isPending } = useCreateResult();
   const { data, isLoading: interviewStatusLoading } = useGetInterview(Number(interviewId));
-
   const isCompletedInterview = data?.interview.status === 'completed' || interviewStatus === 'completed';
   const contentsLength = data?.interview.contents?.length;
 
@@ -194,7 +193,13 @@ export default function RecordButton() {
   return (
     <>
       {isCompletedInterview ? (
-        <Button onClick={handleClickResultButton} variant="primary" size="lg" isLoading={isPending}>
+        <Button
+          data-testid="result-button"
+          onClick={handleClickResultButton}
+          variant="primary"
+          size="lg"
+          isLoading={isPending}
+        >
           결과 보기
         </Button>
       ) : (
