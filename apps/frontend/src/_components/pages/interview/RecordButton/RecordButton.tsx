@@ -10,7 +10,6 @@ import { ChatContentStatusType } from '@/_store/redux/type';
 import { selectCurrentRecordingAnswer, selectInterviewStatus } from '@/_store/redux/features/chat/selector';
 import clsx from 'clsx';
 import { IDLE_ICON_SRC, RECORDING_ICON_SRC, DISABLED_ICON_SRC } from './constants';
-import { RecordError, RecordErrorType } from '@/_libs/error/errors/RecordError';
 import { AppError } from '@/_libs/error/errors';
 import { errorService } from '@/_libs/error/service';
 
@@ -74,7 +73,7 @@ export default function RecordButton() {
 
       send({ type: 'CLEAR_ERROR' });
     }
-  }, [snapshot.context.error, send, funnelId, interviewId, contentsLength]);
+  }, [snapshot.context, send, funnelId, interviewId, contentsLength]);
 
   useEffect(() => {
     if (snapshot.matches({ ready: 'recording' })) {
@@ -92,28 +91,18 @@ export default function RecordButton() {
   }, [snapshot, interviewId, contentsLength, funnelId]);
 
   useEffect(() => {
-    const { audioBlob } = snapshot.context;
+    const { audioFile, audioBlobSize } = snapshot.context;
 
-    if (snapshot.matches({ ready: 'uploading' }) && audioBlob) {
+    if (snapshot.matches({ ready: 'uploading' }) && audioFile && audioBlobSize) {
       const recordingStartTimeDate = new Date(recordingStartTime.current as string);
 
       GTMRecordingCompleted({
         interview_id: interviewId as string,
         question_id: ((contentsLength || 0) + 1).toString() || '',
         duration: (new Date().getTime() - recordingStartTimeDate.getTime()) / 1000,
-        file_size: audioBlob.size,
+        file_size: audioBlobSize,
         session_id: getSessionId() || '',
         funnel_id: funnelId || '',
-      });
-
-      if (audioBlob.size > 50 * 1024 * 1024) {
-        errorService.handle(new RecordError({ type: RecordErrorType.FILE_TOO_LARGE }));
-        send({ type: 'FAILED' });
-        return;
-      }
-
-      const audioFile = new File([audioBlob], 'recording.wav', {
-        type: 'audio/wav',
       });
 
       const params = {
