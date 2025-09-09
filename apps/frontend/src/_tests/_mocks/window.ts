@@ -60,7 +60,7 @@ Object.defineProperty(window, 'AudioContext', {
 /**
  * File 관련 mock
  */
-const mockFile = jest.fn().mockImplementation(() => ({
+export const mockFile = jest.fn().mockImplementation(() => ({
   type: 'audio/wav',
   name: 'recording.wav',
 }));
