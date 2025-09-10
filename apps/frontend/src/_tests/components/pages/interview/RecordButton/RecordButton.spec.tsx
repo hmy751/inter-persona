@@ -12,6 +12,7 @@ import { mockFormData, mockFile } from '@/_tests/_mocks/window';
 import { renderWithProviders } from '@/_tests/_mocks/providers';
 import { useMachine } from '@xstate/react';
 import { RecordError, RecordErrorType } from '@/_libs/error/errors/RecordError';
+import { errorService } from '@/_libs/error/service';
 
 const mockUseGetInterview = jest.fn();
 const setAlertMock = jest.fn();
@@ -24,35 +25,57 @@ const setConfirmMock = jest.fn().mockImplementation((title, description, callbac
 const addToastMock = jest.fn();
 
 jest.mock('@xstate/react');
+jest.mock('@/_libs/error/service', () => ({
+  errorService: {
+    handle: jest.fn(),
+  },
+}));
 jest.mock('@/_data/interview', () => ({
   useGetInterview: () => mockUseGetInterview(),
 }));
+
 jest.mock('@repo/store/useAlertDialogStore', () => {
-  const store = jest.fn(() => ({
-    setAlert: setAlertMock,
-  }));
-  (store as any).getState = jest.fn(() => ({
-    setAlert: setAlertMock,
-  }));
-  return store;
+  const originalModule = jest.requireActual('@repo/store/useAlertDialogStore');
+  return {
+    __esModule: true,
+    ...originalModule,
+    default: Object.assign(
+      jest.fn(() => ({ setAlert: setAlertMock })),
+      {
+        getState: () => ({ setAlert: setAlertMock }),
+      }
+    ),
+  };
 });
 jest.mock('@repo/store/useConfirmDialogStore', () => {
-  const store = jest.fn(() => ({
-    setConfirm: setConfirmMock,
-  }));
-  (store as any).getState = jest.fn(() => ({
-    setConfirm: setConfirmMock,
-  }));
-  return store;
+  const originalModule = jest.requireActual('@repo/store/useConfirmDialogStore');
+  return {
+    __esModule: true,
+    ...originalModule,
+    default: Object.assign(
+      jest.fn(() => ({
+        setConfirm: setConfirmMock,
+      })),
+      {
+        getState: () => ({
+          setConfirm: setConfirmMock,
+        }),
+      }
+    ),
+  };
 });
 jest.mock('@repo/store/useToastStore', () => {
-  const store = jest.fn(() => ({
-    addToast: addToastMock,
-  }));
-  (store as any).getState = jest.fn(() => ({
-    addToast: addToastMock,
-  }));
-  return store;
+  const originalModule = jest.requireActual('@repo/store/useToastStore');
+  return {
+    __esModule: true,
+    ...originalModule,
+    default: Object.assign(
+      jest.fn(() => ({ addToast: addToastMock })),
+      {
+        getState: () => ({ addToast: addToastMock }),
+      }
+    ),
+  };
 });
 
 const mockUseMachine = useMachine as jest.Mock;
@@ -232,27 +255,7 @@ describe('통합 및 예외처리 테스트', () => {
     expect(mediaFile.type).toBe('audio/wav');
   });
 
-  it('머신 context에 NotAllowedError가 있으면, 확인 다얼로그(setConfirm)를 띄운다.', async () => {
-    const notAllowedError = new RecordError({ type: RecordErrorType.PERMISSION_DENIED });
-
-    mockUseMachine.mockReturnValue([
-      {
-        matches: jest.fn().mockReturnValue(false),
-        context: { error: notAllowedError },
-      },
-      mockSend,
-    ]);
-
-    renderWithProviders(<RecordButton />);
-
-    await waitFor(() => {
-      expect(setConfirmMock).toHaveBeenCalledTimes(1);
-      expect(confirmCallbackMock).toHaveBeenCalledTimes(1);
-    });
-    expect(mockSend).toHaveBeenCalledWith({ type: 'CLEAR_ERROR' });
-  });
-
-  it('머신 context에 NotFoundError가 있으면, 경고 다이얼로그(setAlert)를 띄운다.', () => {
+  it('머신 context에 에러가 있으면, errorService를 호출한다.', async () => {
     const notFoundError = new RecordError({ type: RecordErrorType.DEVICE_NOT_FOUND });
 
     mockUseMachine.mockReturnValue([
@@ -265,24 +268,13 @@ describe('통합 및 예외처리 테스트', () => {
 
     renderWithProviders(<RecordButton />);
 
-    expect(setAlertMock).toHaveBeenCalledTimes(1);
-    expect(mockSend).toHaveBeenCalledWith({ type: 'CLEAR_ERROR' });
-  });
-
-  it('머신 context에 일반 에러가 있으면, 토스트(addToast)를 띄운다.', () => {
-    const genericError = new Error('Some random error');
-
-    mockUseMachine.mockReturnValue([
-      {
-        matches: jest.fn().mockReturnValue(false),
-        context: { error: genericError },
-      },
-      mockSend,
-    ]);
-
-    renderWithProviders(<RecordButton />);
-
-    expect(addToastMock).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(errorService.handle).toHaveBeenCalledWith(notFoundError, {
+        type: 'toast',
+        title: '녹음 에러',
+        description: '알 수 없는 오류가 발생했습니다. 다시 시도해주세요.',
+      });
+    });
     expect(mockSend).toHaveBeenCalledWith({ type: 'CLEAR_ERROR' });
   });
 });
