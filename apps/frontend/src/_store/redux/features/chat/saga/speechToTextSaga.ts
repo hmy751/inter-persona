@@ -11,8 +11,6 @@ import { delay } from '@/_libs/utils';
 import { RootState } from '@/_store/redux/rootStore';
 import { fetchSpeechToText, SpeechToTextData } from '@/_apis/interview';
 import { ChatContentSpeakerType } from '@/_store/redux/type';
-import { useToastStore } from '@repo/store/useToastStore';
-import { STT_ERROR_TOAST, STT_NETWORK_ERROR_TOAST } from '../constants';
 import { errorService } from '@/_libs/error/service';
 import { AppError } from '@/_libs/error/errors';
 
@@ -67,7 +65,7 @@ export function* speechToTextSaga(
     if (data.text === '' && trySpeechCount < 3) {
       yield put(removeContent());
       yield put(increaseTrySpeechCount());
-      throw new Error('음성이 제대로 입력되지 않았습니다. 답변을 다시 입력해주세요!');
+      throw new AppError({ message: '음성이 제대로 입력되지 않았습니다. 답변을 다시 입력해주세요!', data: null });
     }
 
     GTMSTTResultFailed({
@@ -76,8 +74,10 @@ export function* speechToTextSaga(
       funnel_id: useFunnelIdStore.getState().funnelId || '',
       error_message: '녹음 변환 에러',
     });
-  } catch (error) {
+
     yield put(removeContent());
+    throw Error;
+  } catch (error) {
     errorService.handle(error, {
       type: 'toast',
       title: '녹음 변환 에러',

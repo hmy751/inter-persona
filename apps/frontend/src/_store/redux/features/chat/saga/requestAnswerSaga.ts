@@ -81,7 +81,6 @@ export function* requestAnswerSaga(
       });
     }
   } catch (error) {
-    yield put(removeContent());
     errorService.handle(error, {
       type: 'toast',
       title: 'AI 응답 에러',
