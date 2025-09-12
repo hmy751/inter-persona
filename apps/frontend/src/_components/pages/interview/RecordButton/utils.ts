@@ -1,6 +1,6 @@
 // 현재 오디오 파형 데이터의 RMS(Root Mean Square, 제곱평균제곱근)을 계산한다.
 // RMS는 오디오 신호의 평균적인 에너지나 볼륨을 나타내는 척도이다.
-const calculateRMS = (analyser: AnalyserNode, dataArray: Uint8Array): number => {
+export const calculateRMS = (analyser: AnalyserNode, dataArray: Uint8Array): number => {
   // 현재 시간의 오디오 파형 데이터를 dateArray에 채워 넣는다.
   analyser.getByteTimeDomainData(dataArray);
 
@@ -41,6 +41,7 @@ export const detectSilence = (
       // 정적이 설정된 시간보다 길어지면 onSilence콜백을 실행한다.
       if (silentDuration > timeout) {
         onSilence();
+        cancelAnimationFrame(animationFrameId);
         return;
       }
     } else {

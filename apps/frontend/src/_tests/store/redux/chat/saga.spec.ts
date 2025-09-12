@@ -2,7 +2,6 @@ import { http } from 'msw';
 import { baseURL } from '@/_apis/fetcher';
 import { server } from '@/_mocks/server';
 import { runSaga } from 'redux-saga';
-import useToastStore from '@repo/store/useToastStore';
 
 import { speechToTextSaga } from '@/_store/redux/features/chat/saga/speechToTextSaga';
 import {
@@ -23,16 +22,20 @@ import {
   resetContentStatus,
 } from '@/_store/redux/features/chat/slice';
 import { ChatContentSpeakerType } from '@/_store/redux/type';
-import { STT_ERROR_TOAST, STT_NETWORK_ERROR_TOAST } from '@/_store/redux/features/chat/constants';
+import { errorService } from '@/_libs/error/service';
+
+jest.mock('@/_libs/error/service', () => ({
+  errorService: {
+    handle: jest.fn(),
+  },
+}));
 
 afterEach(() => {
   jest.clearAllMocks();
 });
 
 describe('사용자 답변 녹음, 비동기 통신 에러 처리 테스트', () => {
-  it('STT API 에러시 녹음 재요청 토스트 메시지를 표시한다.', async () => {
-    const setAddToastSpy = jest.spyOn(useToastStore.getState(), 'addToast');
-
+  it('STT API 에러시, 재요청 횟수를 증가하고 에러를 처리한다.', async () => {
     server.use(
       http.post('/api/interview', async () => {
         return Response.json({ text: '' });
@@ -62,13 +65,10 @@ describe('사용자 답변 녹음, 비동기 통신 에러 처리 테스트', ()
       removeContent(),
       increaseTrySpeechCount(),
     ]);
-    expect(setAddToastSpy).toHaveBeenCalledWith(STT_ERROR_TOAST);
+    expect(errorService.handle).toHaveBeenCalled();
   });
 
-  it('재요청 3회 이후에는 새로고침 토스트 메시지를 표시한다.', async () => {
-    const setAddToastSpy = jest.spyOn(useToastStore.getState(), 'addToast');
-    let attemptCount = 3;
-
+  it('재요청 3회 이후에는, 재요청 횟수를 증가시키지 않고 에러를 처리한다.', async () => {
     server.use(
       http.post('/api/interview', async () => {
         return Response.json({ text: '' });
@@ -84,42 +84,25 @@ describe('사용자 답변 녹음, 비동기 통신 에러 처리 테스트', ()
       },
     };
 
-    for (let i = 0; i < 3; i++) {
-      await runSaga(
-        {
-          dispatch: action => dispatched.push(action),
-          getState: () => ({ chat: { interviewId: 1, trySpeechCount: 0 } }),
-        },
-        speechToTextSaga,
-        action
-      ).toPromise();
-
-      expect(dispatched[i * 3]).toEqual(triggerContent({ speaker: ChatContentSpeakerType.user }));
-      expect(dispatched[i * 3 + 1]).toEqual(removeContent());
-      expect(dispatched[i * 3 + 2]).toEqual(increaseTrySpeechCount());
-
-      expect(setAddToastSpy).toHaveBeenCalledWith(STT_ERROR_TOAST);
-
-      attemptCount++;
-    }
-
     await runSaga(
       {
         dispatch: action => dispatched.push(action),
-        getState: () => ({ chat: { interviewId: 1, trySpeechCount: attemptCount } }),
+        getState: () => ({ chat: { interviewId: 1, trySpeechCount: 3 } }),
       },
       speechToTextSaga,
       action
     ).toPromise();
 
-    expect(setAddToastSpy).toHaveBeenCalledWith(STT_NETWORK_ERROR_TOAST);
+    expect(dispatched).toEqual([triggerContent({ speaker: ChatContentSpeakerType.user }), removeContent()]);
+
+    expect(errorService.handle).toHaveBeenCalled();
   });
 });
 
 describe('AI 응답 비동기 통신 에러 처리 테스트', () => {
   it('에러가 발생하면, 현재 진행중인 메시지를 삭제하고 이전 메시지의 에러상태를 업데이트 한다.', async () => {
     server.use(
-      http.post(`${baseURL}/interview/1/contents/answer`, async () => {
+      http.post(`${baseURL}/api/interview/1/contents/answer`, async () => {
         return Response.json({ content: null });
       })
     );
@@ -151,7 +134,7 @@ describe('AI 응답 비동기 통신 에러 처리 테스트', () => {
 
   it('다시 시도하기 요청이 오면, 이전 사용자 답변 메시지를 이용하여 다시 요청한다.', async () => {
     server.use(
-      http.post(`${baseURL}/interview/1/contents/answer`, async () => {
+      http.post(`${baseURL}/api/interview/1/contents/answer`, async () => {
         return Response.json({ content: null });
       })
     );
@@ -183,7 +166,7 @@ describe('AI 응답 비동기 통신 에러 처리 테스트', () => {
     expect(dispatched).toEqual(prevErrorDispatched);
 
     server.use(
-      http.post(`${baseURL}/interview/1/contents/answer`, async () => {
+      http.post(`${baseURL}/api/interview/1/contents/answer`, async () => {
         return Response.json({ content: 'response success' });
       })
     );
@@ -215,7 +198,7 @@ describe('AI 응답 비동기 통신 에러 처리 테스트', () => {
 
   it('취소하기 요청이 오면, 이전 메시지의 상태를 초기화 한다.', async () => {
     server.use(
-      http.post(`${baseURL}/interview/1/contents/answer`, async () => {
+      http.post(`${baseURL}/api/interview/1/contents/answer`, async () => {
         return Response.json({ content: null });
       })
     );

@@ -10,6 +10,7 @@ interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
   preloadedState?: Partial<RootState>;
   store?: AppStore;
   queryClient?: QueryClient;
+  spyOnDispatch?: boolean;
 }
 
 export function renderWithProviders(
@@ -18,9 +19,16 @@ export function renderWithProviders(
     preloadedState = {},
     store = makeStore(preloadedState),
     queryClient = createQueryClient(),
+    spyOnDispatch = false,
     ...renderOptions
   }: ExtendedRenderOptions = {}
-): RenderResult & { store: AppStore; queryClient: QueryClient } {
+): RenderResult & {
+  store: AppStore;
+  queryClient: QueryClient;
+  dispatchSpy?: jest.SpyInstance;
+} {
+  const dispatchSpy = spyOnDispatch ? jest.spyOn(store, 'dispatch') : undefined;
+
   function Wrapper({ children }: PropsWithChildren): JSX.Element {
     return (
       <Provider store={store}>
@@ -35,5 +43,6 @@ export function renderWithProviders(
     ...renderResult,
     store,
     queryClient,
+    dispatchSpy,
   };
 }

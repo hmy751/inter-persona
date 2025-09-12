@@ -2,8 +2,8 @@ import { http, HttpResponse, delay } from 'msw';
 import { InterviewerSchema, InterviewerResponseSchema, InterviewerListResponseSchema } from '@repo/schema/interviewer';
 import { baseURL } from '@/_apis/fetcher';
 
-const INTERVIEWER_LIST_API_PATH = `${baseURL}/interviewer`;
-const INTERVIEWER_DETAIL_API_PATH = `${baseURL}/interviewer/:id`;
+const INTERVIEWER_LIST_API_PATH = `${baseURL}/api/interviewer`;
+const INTERVIEWER_DETAIL_API_PATH = `${baseURL}/api/interviewer/:id`;
 
 const interviewersData = [
   InterviewerSchema.parse({

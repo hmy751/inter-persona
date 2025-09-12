@@ -18,14 +18,14 @@ import {
 import { baseURL } from '@/_apis/fetcher';
 import { DEFAULT_PROFILE_IMAGE_URL } from '@repo/constant/name';
 
-const CREATE_INTERVIEW_PATH = `${baseURL}/interview`;
-const GET_INTERVIEW_PATH = `${baseURL}/interview/:id`;
-const GET_INTERVIEW_CONTENTS_PATH = `${baseURL}/interview/:id/contents`;
-const START_INTERVIEW_PATH = `${baseURL}/interview/:id/start`;
-const SUBMIT_ANSWER_PATH = `${baseURL}/interview/:id/contents/answer`;
-const GET_INTERVIEW_STATUS_PATH = `${baseURL}/interview/:id/status`;
-const GET_INTERVIEW_INTERVIEWER_PATH = `${baseURL}/interview/:id/interviewer`;
-const GET_INTERVIEW_USER_PATH = `${baseURL}/interview/:id/user`;
+const CREATE_INTERVIEW_PATH = `${baseURL}/api/interview`;
+const GET_INTERVIEW_PATH = `${baseURL}/api/interview/:id`;
+const GET_INTERVIEW_CONTENTS_PATH = `${baseURL}/api/interview/:id/contents`;
+const START_INTERVIEW_PATH = `${baseURL}/api/interview/:id/start`;
+const SUBMIT_ANSWER_PATH = `${baseURL}/api/interview/:id/contents/answer`;
+const GET_INTERVIEW_STATUS_PATH = `${baseURL}/api/interview/:id/status`;
+const GET_INTERVIEW_INTERVIEWER_PATH = `${baseURL}/api/interview/:id/interviewer`;
+const GET_INTERVIEW_USER_PATH = `${baseURL}/api/interview/:id/user`;
 
 const mockUsers: Record<number, ReturnType<typeof UserSchema.parse>> = {
   1: UserSchema.parse({

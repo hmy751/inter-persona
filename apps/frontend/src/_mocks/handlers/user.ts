@@ -10,9 +10,9 @@ import {
 import { DEFAULT_PROFILE_IMAGE_URL } from '@repo/constant/name';
 import { baseURL } from '@/_apis/fetcher';
 
-const LOGIN_API_PATH = `${baseURL}/user/login`;
-const REGISTER_API_PATH = `${baseURL}/user/register`;
-const USER_INFO_API_PATH = `${baseURL}/user/info`;
+const LOGIN_API_PATH = `${baseURL}/api/user/login`;
+const REGISTER_API_PATH = `${baseURL}/api/user/register`;
+const USER_INFO_API_PATH = `${baseURL}/api/user/info`;
 
 const users = [
   {

@@ -1,18 +1,39 @@
 /**
  * window.navigator
  */
-export const mockStream = {};
-const mockGetUserMedia = jest.fn().mockResolvedValue(mockStream);
+const mockStopTrack = jest.fn();
+export const mockStream = {
+  getTracks: jest.fn(() => [{ stop: mockStopTrack }]),
+};
+export const mockGetUserMedia = jest.fn().mockResolvedValue(mockStream);
 
-if (!window.navigator.mediaDevices) {
-  Object.defineProperty(window.navigator, 'mediaDevices', {
-    writable: true,
+function ensureMediaDevices() {
+  if (!window.navigator.mediaDevices) {
+    Object.defineProperty(window.navigator, 'mediaDevices', {
+      writable: true,
+      configurable: true,
+      enumerable: true,
+      value: {},
+    });
+  }
+
+  Object.defineProperty(window.navigator.mediaDevices, 'getUserMedia', {
     configurable: true,
     enumerable: true,
-    value: {
-      getUserMedia: mockGetUserMedia,
-    },
+    writable: true,
+    value: mockGetUserMedia,
   });
+}
+
+ensureMediaDevices();
+
+export function resetMediaDevicesMock() {
+  mockStopTrack.mockReset();
+  mockStream.getTracks.mockReset();
+  mockStream.getTracks.mockImplementation(() => [{ stop: mockStopTrack }]);
+  mockGetUserMedia.mockReset();
+  mockGetUserMedia.mockResolvedValue(mockStream);
+  ensureMediaDevices();
 }
 
 /**
@@ -39,7 +60,7 @@ Object.defineProperty(window, 'AudioContext', {
 /**
  * File 관련 mock
  */
-const mockFile = jest.fn().mockImplementation(() => ({
+export const mockFile = jest.fn().mockImplementation(() => ({
   type: 'audio/wav',
   name: 'recording.wav',
 }));
@@ -57,4 +78,14 @@ export const mockFormData = {
 const MockFormData = jest.fn().mockImplementation(() => mockFormData);
 Object.defineProperty(window, 'FormData', {
   value: MockFormData,
+});
+
+/**
+ * GTM window.dataLayer 목킹
+ */
+Object.defineProperty(window, 'dataLayer', {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  value: [],
 });
